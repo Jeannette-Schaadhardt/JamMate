@@ -15,4 +15,4 @@ Create a review system allowing other users to drop comments Allow search functi
 Developing Locally (for us. this might get complicated the more dependencies we include, so we will expand more for our sake):
 
 1. npm install
-2. npm start - open browser on localhost:9002
+2. npm start - open browser on localhost:9001
