@@ -6,27 +6,33 @@ Jeannette Schaadhardt <br>
 Kevin Johnson
 
 ## The Goal:
+
 Develop a web app called JamMate for finding musicians and artists via social media-like functionality using JS / HTML / CSS, hosted on Google Cloud Platform.
 
 ## Requirements:
+
 Create a profile with various items like your instrument, experience level, preferred genre/styles, etc.
 Create posts detailing what you are looking for and allow users to post their own personal ads
 Enable users to upload audio and/or video samples of their music
 Create a review system allowing other users to drop comments Allow search functionality so users can filter by an acceptable radius, instrument, skill level, etc.
 
 ## Development:
+
 Developing Locally (for us. this might get complicated the more dependencies we include, so we will expand more for our sake.) <br>
 
 1. npm install
-2. npm i nodemon express
-   nodemon - for auto server restart after a change is detected
+2. npm i nodemon express ejs express-session
+   # nodemon - for auto server restart after a change is detected
 3. npm install express express-openid-connect --save
-   for auth0 compliance
-4. either<br>(command line) nodemon server.js <br> (visual studio code) start debugger.
-5. In browser go to localhost:9001
+   # for auth0 compliance
+4. gcloud init
+5. npm i @google-cloud/datastore
+6. gcloud config set project jammate-cs467
+   # Configure gcloud for your project
+7. either<br>(command line) nodemon server.js <br> (visual studio code) start debugger.
+8. In browser go to localhost:9001
 
 A sample work flow is to use Visual Studio Code, fetch the repository from Github, run the above commands, then with context on the server.js go to **Run -> Start Debugging**. This will recognize this as a nodejs application and run it accordingly.
-
 
 ## [Auth0](https://auth0.com/docs/quickstart/webapp/express/interactive)
 
@@ -35,10 +41,10 @@ A sample work flow is to use Visual Studio Code, fetch the repository from Githu
    should redirect to home page bug signed out
 
 You can create a fake account (helpful to save info for repeated tests!) <br>
-   eg.
-   betty@bop.com - email address <br>
-   Betty1234! - password <br>
-   should redirect to home page but signed in
+eg.
+betty@bop.com - email address <br>
+Betty1234! - password <br>
+should redirect to home page but signed in
 
 [auth0 docs](https://auth0.com/docs/quickstart/webapp/express/interactive) <br>
 So basically this 3rd party site lets a developer use their application
