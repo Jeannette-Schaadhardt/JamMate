@@ -22,7 +22,7 @@
                 <a class="nav-link" href="#">Link</a>
               </li>
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">   
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 </a>
                 <ul class="dropdown-menu">
                   <li><a class="dropdown-item" href="#">Action</a></li>
@@ -54,11 +54,11 @@
               const auth0Domain = 'dev-gblxtkrkmbzldfsv.us.auth0.com';
               const clientId = 'm8ieh2LZtQAtr5AcFevaw99k6tZ3KqCw';
               const redirectUri = window.location.origin; // Redirect back to the current page after login
-              
+
               const auth0LoginUrl = `https://${auth0Domain}/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=openid%20profile%20email&prompt=login`;
-              
+
               console.log('Redirecting to Auth0 login:', auth0LoginUrl);
-  
+
               // Redirect to Auth0 login
               window.location.href = auth0LoginUrl;
           });
