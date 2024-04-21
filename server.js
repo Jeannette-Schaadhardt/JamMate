@@ -25,6 +25,7 @@ app.use(auth(config));
 login.use(bodyParser.json());
 login.use('/login', login);// req.isAuthenticated is provided from the auth router
 
+// Stores browser session
 app.use(session({
     secret: secret,
     resave: false,
@@ -40,13 +41,9 @@ app.get('/', (req, res) => {
             let user = { "user": req.oidc.user, "jwt": req.oidc.idToken };
 
             postUser(user)
-            .then(result => {
-                const user = result.data;
-                console.log(user);
-                res.render('home', result.data);
+            .then(user => {
+                res.render('home', user);
             });
-
-
         }
         // User is not logged in
         else {
