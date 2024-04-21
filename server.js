@@ -25,6 +25,7 @@ app.use(auth(config));
 login.use(bodyParser.json());
 login.use('/login', login);// req.isAuthenticated is provided from the auth router
 
+// Stores browser session
 app.use(session({
     secret: secret,
     resave: false,
