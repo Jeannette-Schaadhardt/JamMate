@@ -34,15 +34,36 @@ app.use(session({
 /**
  * Handles homepage redirection
  */
-app.get('/', (req, res) => {
-    handleAuthenticationFlow(req, res, "home")
-});
 
+app.use(session({
+    secret: secret,
+    resave: false,
+    saveUninitialized: true,
+}));
 /**
- * Handles profile page redirection.
+ * Handles homepage redirection
  */
-app.get('/profile', (req, res) => {
-    handleAuthenticationFlow(req, res, "profile")
+app.get('/', (req, res) => {
+        const filePath = path.resolve(__dirname, './views/index.html');
+        const homePage = path.resolve(__dirname, './views/home.ejs');
+
+        // User is logged in
+        if (req.oidc.isAuthenticated()) {
+            let user = { "user": req.oidc.user, "jwt": req.oidc.idToken };
+
+            postUser(user)
+            .then(result => {
+                const user = result.data;
+                console.log(user);
+                res.render('home', result.data);
+            });
+
+
+        }
+        // User is not logged in
+        else {
+            res.sendFile(filePath);
+        }
 });
 
 app.listen(PORT, () => {
