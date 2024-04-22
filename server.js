@@ -32,28 +32,33 @@ app.use(session({
 }));
 
 app.get('/', (req, res) => {
-        const filePath = path.resolve(__dirname, './views/index.html');
-        const homePage = path.resolve(__dirname, './views/home.ejs');
+    handleAuthenticationFlow(req, res, "home")
+});
 
-        // User is logged in
-        if (req.oidc.isAuthenticated()) {
-            let user = { "user": req.oidc.user, "jwt": req.oidc.idToken };
-
-            postUser(user)
-            .then(result => {
-                const user = result.data;
-                console.log(user);
-                res.render('home', result.data);
-            });
-
-
-        }
-        // User is not logged in
-        else {
-            res.sendFile(filePath);
-        }
+app.get('/profile', (req, res) => {
+    handleAuthenticationFlow(req, res, "profile")
 });
 
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}...`);
 });
+
+function handleAuthenticationFlow(req, res, destination) {
+    const filePath = path.resolve(__dirname, './views/index.html');
+
+    // User is logged in
+    if (req.oidc.isAuthenticated()) {
+        let user = { "user": req.oidc.user, "jwt": req.oidc.idToken,  "loggedIn": true };
+        postUser(user)
+        .then(result => {
+            const user = result.data;
+            console.log(user);
+            res.render(destination, result.data);
+        });
+    }
+    // User is not logged in
+    else {
+        let data = { "user": req.oidc.user, "jwt": req.oidc.idToken,  "loggedIn": false };
+        res.render('home', data);
+    }
+}
