@@ -30,11 +30,16 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
 }));
-
+/**
+ * Handles homepage redirection
+ */
 app.get('/', (req, res) => {
     handleAuthenticationFlow(req, res, "home")
 });
 
+/**
+ * Handles profile page redirection.
+ */
 app.get('/profile', (req, res) => {
     handleAuthenticationFlow(req, res, "profile")
 });
@@ -43,6 +48,13 @@ app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}...`);
 });
 
+/**
+ * Handles re-authentication when trying to access webpages
+ *
+ * @param {*} req - holds user object and id
+ * @param {*} res
+ * @param {*} destination - Where we want to send user upon authentication.
+ */
 function handleAuthenticationFlow(req, res, destination) {
     const filePath = path.resolve(__dirname, './views/index.html');
 
@@ -56,7 +68,8 @@ function handleAuthenticationFlow(req, res, destination) {
             res.render(destination, result.data);
         });
     }
-    // User is not logged in
+
+    // User is not logged in so redirect home with undefined data and false log in status
     else {
         let data = { "user": req.oidc.user, "jwt": req.oidc.idToken,  "loggedIn": false };
         res.render('home', data);
