@@ -31,26 +31,46 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
 }));
-
+/**
+ * Handles homepage redirection
+ */
 app.get('/', (req, res) => {
-        const filePath = path.resolve(__dirname, './views/index.html');
-        const homePage = path.resolve(__dirname, './views/home.ejs');
+    handleAuthenticationFlow(req, res, "home")
+});
 
-        // User is logged in
-        if (req.oidc.isAuthenticated()) {
-            let user = { "user": req.oidc.user, "jwt": req.oidc.idToken };
-
-            postUser(user)
-            .then(user => {
-                res.render('home', user);
-            });
-        }
-        // User is not logged in
-        else {
-            res.sendFile(filePath);
-        }
+/**
+ * Handles profile page redirection.
+ */
+app.get('/profile', (req, res) => {
+    handleAuthenticationFlow(req, res, "profile")
 });
 
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}...`);
 });
+
+/**
+ * Handles re-authentication when trying to access webpages
+ *
+ * @param {*} req - holds user object and id
+ * @param {*} res
+ * @param {*} destination - Where we want to send user upon authentication.
+ */
+function handleAuthenticationFlow(req, res, destination) {
+    const filePath = path.resolve(__dirname, './views/index.html');
+
+    // User is logged in
+    if (req.oidc.isAuthenticated()) {
+        let user = { "user": req.oidc.user, "jwt": req.oidc.idToken,  "loggedIn": true };
+        postUser(user)
+        .then(result => {
+            res.render(destination, user);
+        });
+    }
+
+    // User is not logged in so redirect home with undefined data and false log in status
+    else {
+        let data = { "user": req.oidc.user, "jwt": req.oidc.idToken,  "loggedIn": false };
+        res.render('home', data);
+    }
+}
