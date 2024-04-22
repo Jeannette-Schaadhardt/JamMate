@@ -34,36 +34,15 @@ app.use(session({
 /**
  * Handles homepage redirection
  */
-
-app.use(session({
-    secret: secret,
-    resave: false,
-    saveUninitialized: true,
-}));
-/**
- * Handles homepage redirection
- */
 app.get('/', (req, res) => {
-        const filePath = path.resolve(__dirname, './views/index.html');
-        const homePage = path.resolve(__dirname, './views/home.ejs');
+    handleAuthenticationFlow(req, res, "home")
+});
 
-        // User is logged in
-        if (req.oidc.isAuthenticated()) {
-            let user = { "user": req.oidc.user, "jwt": req.oidc.idToken };
-
-            postUser(user)
-            .then(result => {
-                const user = result.data;
-                console.log(user);
-                res.render('home', result.data);
-            });
-
-
-        }
-        // User is not logged in
-        else {
-            res.sendFile(filePath);
-        }
+/**
+ * Handles profile page redirection.
+ */
+app.get('/profile', (req, res) => {
+    handleAuthenticationFlow(req, res, "profile")
 });
 
 app.listen(PORT, () => {
@@ -85,9 +64,7 @@ function handleAuthenticationFlow(req, res, destination) {
         let user = { "user": req.oidc.user, "jwt": req.oidc.idToken,  "loggedIn": true };
         postUser(user)
         .then(result => {
-            const user = result.data;
-            console.log(user);
-            res.render(destination, result.data);
+            res.render(destination, user);
         });
     }
 
