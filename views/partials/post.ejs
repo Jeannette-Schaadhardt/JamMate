@@ -1,0 +1,71 @@
+<tr>
+    <td scope="row" class="text-nowrap">
+        <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
+        <i class="bi bi-play-circle">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-play-circle" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+            <path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445"/>
+          </svg>
+        </i>
+        </button>
+          <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
+            <i class="fas fa-thumbs-up me-2"></i>Like
+          </button>
+    </td>
+    <td class="text-start">
+      <a href="#" class="font-weight-bold blue-text">
+        Title of audio file.
+      </a>
+      <div class="my-2">
+        <a href="#" class="blue-text">
+          <strong><%= user.nickname %></strong>
+        </a>
+        <span class="badge bg-secondary mx-1">metadata type 1</span><span
+          class="badge bg-primary mx-1">metadata type 2</span><span class="badge bg-warning mx-1">meta data 3</span>
+        <span>Date posted</span>
+        <div></div>
+      </div>
+    </td>
+    <td>
+        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+            <i class="fas fa-comment-alt me-2"></i>Comment
+        </button>
+
+          <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
+            <i class="fas fa-share me-2"></i>Share
+          </button>
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="3">
+        <div class="d-flex justify-content-between mb-3">
+            <div>
+              <a href="">
+                <i class="fas fa-thumbs-up text-primary"></i>
+                <i class="fas fa-heart text-danger"></i>
+                <span>124</span>
+              </a>
+            </div>
+            <div>
+                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                    <i class="fas fa-comment-alt me-2"></i>8 Comments
+                </button>
+            </div>
+          </div>
+        <div class="collapse" id="collapseExample">
+            <section>
+                <div class="card">
+                  <div class="card-body">
+                    <!-- Reactions -->
+                    <%- include('input_comment') %>
+                    <%- include('comment') %>
+                    <%- include('comment') %>
+                  </div>
+                  <!-- Interactions -->
+                </div>
+              </section>
+        </div>
+
+    </td>
+  </tr>
