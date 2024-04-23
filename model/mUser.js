@@ -1,10 +1,9 @@
 // citation: https://cloud.google.com/nodejs/docs/reference/datastore/latest
-// Imports the Google Cloud client library
 import { Datastore } from '@google-cloud/datastore';
-// Creates a client
+
 const datastore = new Datastore();
-// Creates a user
 const USER = "User";
+const POST = "Post";  // Defining kind at the top for consistency
 
 // A helper function that attempts to get the ID of an imput item
 // and assign it to the new ID on the returned item
@@ -55,6 +54,31 @@ export function postUser(user) {
       return userCheck[0].user;
     }
   })
+}
 
+export function createPost(userId, content, file) {
+  const postKey = datastore.key([POST]);
+  // Prepare data object including file information if available
+  const postData = {
+    userId: userId,
+    content: content,
+    timestamp: new Date(),
+    // Include file metadata if file is uploaded
+    fileName: file ? file.originalname : null,
+    filePath: file ? file.path : null,
+    fileType: file ? file.mimetype : null
+  };
+  
+  const postEntity = {
+    key: postKey,
+    data: postData
+  };
 
+  return datastore.save(postEntity).then(() => ({ id: postKey.id, ...postData }));
+}
+
+export async function getPosts() {
+  const query = datastore.createQuery(POST).order('timestamp', { descending: true });
+  const [posts] = await datastore.runQuery(query);
+  return posts.map(post => ({ id: post[datastore.KEY].id, ...post }));
 }

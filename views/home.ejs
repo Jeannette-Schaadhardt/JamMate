@@ -1,3 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JamMate - Home</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+  <h1>Welcome to JamMate, <%= user.nickname %>!</h1>
+  <p>Contact me for gigs at: <%= user.email %></p>
+
+  <!-- Multimedia Post Form -->
+  <form id="postForm" enctype="multipart/form-data">
+    <textarea name="content" rows="4" cols="50" placeholder="Write something or share a clip..."></textarea><br>
+    <input type="file" name="media" accept="video/*,audio/*"><br>
+    <button type="submit">Post</button>
+  </form>
+
+  <!-- Posts Container -->
+  <div id="posts">
+    <!-- Existing posts are displayed here -->
+  </div>
+
+  <script>
+    $(document).ready(function() {
+      $('#postForm').on('submit', function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        $.ajax({
+            url: '/create-post',
+            type: 'POST',
+            data: formData,
+            success: function(data) {
+                // Update the posts view
+                var newPost = '<div class="post"><p>' + data.content + '</p>';
+                if (data.filePath) {
+                    if (data.fileType.startsWith('video')) {
+                        newPost += '<video controls><source src="' + data.filePath + '" type="' + data.fileType + '"></video>';
+                    } else if (data.fileType.startsWith('audio')) {
+                        newPost += '<audio controls><source src="' + data.filePath + '" type="' + data.fileType + '"></audio>';
+                    }
+                }
+                newPost += '</div>';
+                $('#posts').prepend(newPost);
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+      });
+    });
+  </script>
+</body>
+</html>
+
+<!-- TODO: which one to pick? -->
+<!--
 <%- include('partials/header', {user: loggedIn}) %>
 <body>
 <table class="table table-hover table-forum text-center">
@@ -25,3 +83,4 @@
     <%- include('partials/footer') %>
 </footer>
 </html>
+-->
