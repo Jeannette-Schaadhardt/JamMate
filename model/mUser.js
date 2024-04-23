@@ -1,21 +1,42 @@
-
 // citation: https://cloud.google.com/nodejs/docs/reference/datastore/latest
-// Imports the Google Cloud client library
 import { Datastore } from '@google-cloud/datastore';
-// Creates a client
+
 const datastore = new Datastore();
-// Creates a user
 const USER = "User";
+const POST = "Post";  // Defining kind at the top for consistency
 
-// https://auth0.com/docs/secure/tokens/json-web-tokens
 export function postUser(jwt) {
-  // The datastore key associated with a USER entity
   const key = datastore.key(USER);
+  const userEntity = {
+    key: key,
+    data: jwt
+  };
+  return datastore.save(userEntity).then(() => ({ key, data: jwt }));
+}
 
-  // Save the new user in datastore, and store in this var
-  const res = datastore.save({ "key": key, "data": jwt })
-      .then(() => {
-          return { key, data: jwt }
-      });
-  return res;
+export function createPost(userId, content, file) {
+  const postKey = datastore.key([POST]);
+  // Prepare data object including file information if available
+  const postData = {
+    userId: userId,
+    content: content,
+    timestamp: new Date(),
+    // Include file metadata if file is uploaded
+    fileName: file ? file.originalname : null,
+    filePath: file ? file.path : null,
+    fileType: file ? file.mimetype : null
+  };
+  
+  const postEntity = {
+    key: postKey,
+    data: postData
+  };
+
+  return datastore.save(postEntity).then(() => ({ id: postKey.id, ...postData }));
+}
+
+export async function getPosts() {
+  const query = datastore.createQuery(POST).order('timestamp', { descending: true });
+  const [posts] = await datastore.runQuery(query);
+  return posts.map(post => ({ id: post[datastore.KEY].id, ...post }));
 }
