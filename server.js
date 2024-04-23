@@ -9,6 +9,7 @@ import { postUser, createPost, getPosts } from './model/mUser.js';
 import { getSecret, getConfig } from './state.js';
 
 const app = express();
+const login = express.Router();
 const upload = multer({ dest: 'uploads/' }); // Configure multer with a files destination
 
 const PORT = process.env.PORT || 9001;
@@ -17,14 +18,16 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const secret = getSecret(10);
 const config = getConfig(secret);
 
+login.use(bodyParser.json());
+login.use('/login', login);// req.isAuthenticated is provided from the auth router
+
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(auth(config));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve static files from uploads directory
 
-login.use(bodyParser.json());
-login.use('/login', login);// req.isAuthenticated is provided from the auth router
+
 
 // Stores browser session
 app.use(session({
@@ -53,7 +56,7 @@ app.post('/create-post', upload.single('media'), async (req, res) => {
         console.error('Error creating post:', err);
         res.status(500).send({error: 'Failed to create post'});
     }
-  
+});
 /**
  * Handles homepage redirection
  */
@@ -66,10 +69,6 @@ app.get('/', (req, res) => {
  */
 app.get('/profile', (req, res) => {
     handleAuthenticationFlow(req, res, "profile")
-});
-
-app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}...`);
 });
 
 /**
@@ -94,6 +93,10 @@ function handleAuthenticationFlow(req, res, destination) {
     // User is not logged in so redirect home with undefined data and false log in status
     else {
         let data = { "user": req.oidc.user, "jwt": req.oidc.idToken,  "loggedIn": false };
-        res.render('home', data);
+        res.render('homeLoggedOut', data);
     }
 }
+
+app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}...`);
+});
