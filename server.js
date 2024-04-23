@@ -21,28 +21,18 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(auth(config));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve static files from uploads directory
+
+login.use(bodyParser.json());
+login.use('/login', login);// req.isAuthenticated is provided from the auth router
+
+// Stores browser session
 app.use(session({
     secret: secret,
     resave: false,
     saveUninitialized: true
 }));
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve static files from uploads directory
-
-app.get('/', (req, res) => {
-    const filePath = path.resolve(__dirname, './views/index.html');
-
-    if (req.oidc.isAuthenticated()) {
-        let user = { "user": req.oidc.user, "jwt": req.oidc.idToken };
-        postUser(user).then(result => {
-            const user = result.data;
-            console.log(user);
-            res.render('home', result.data);
-        });
-    } else {
-        res.sendFile(filePath);
-    }
-});
 
 app.post('/create-post', upload.single('media'), async (req, res) => {
     if (!req.oidc.isAuthenticated()) {
@@ -63,8 +53,47 @@ app.post('/create-post', upload.single('media'), async (req, res) => {
         console.error('Error creating post:', err);
         res.status(500).send({error: 'Failed to create post'});
     }
+  
+/**
+ * Handles homepage redirection
+ */
+app.get('/', (req, res) => {
+    handleAuthenticationFlow(req, res, "home")
+});
+
+/**
+ * Handles profile page redirection.
+ */
+app.get('/profile', (req, res) => {
+    handleAuthenticationFlow(req, res, "profile")
 });
 
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}...`);
 });
+
+/**
+ * Handles re-authentication when trying to access webpages
+ *
+ * @param {*} req - holds user object and id
+ * @param {*} res
+ * @param {*} destination - Where we want to send user upon authentication.
+ */
+function handleAuthenticationFlow(req, res, destination) {
+    const filePath = path.resolve(__dirname, './views/index.html');
+
+    // User is logged in
+    if (req.oidc.isAuthenticated()) {
+        let user = { "user": req.oidc.user, "jwt": req.oidc.idToken,  "loggedIn": true };
+        postUser(user)
+        .then(result => {
+            res.render(destination, user);
+        });
+    }
+
+    // User is not logged in so redirect home with undefined data and false log in status
+    else {
+        let data = { "user": req.oidc.user, "jwt": req.oidc.idToken,  "loggedIn": false };
+        res.render('home', data);
+    }
+}

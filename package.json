@@ -2,6 +2,7 @@
   "type": "module",
   "dependencies": {
     "@google-cloud/datastore": "^8.7.0",
+    "bootstrap-icons": "^1.11.3",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
     "express-openid-connect": "^2.17.1",
