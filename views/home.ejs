@@ -7,9 +7,6 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
-  <h1>Welcome to JamMate, <%= user.nickname %>!</h1>
-  <p>Contact me for gigs at: <%= user.email %></p>
-
   <!-- Multimedia Post Form -->
   <form id="postForm" enctype="multipart/form-data">
     <textarea name="content" rows="4" cols="50" placeholder="Write something or share a clip..."></textarea><br>
@@ -54,33 +51,3 @@
 </body>
 </html>
 
-<!-- TODO: which one to pick? -->
-<!--
-<%- include('partials/header', {user: loggedIn}) %>
-<body>
-<table class="table table-hover table-forum text-center">
-    <thead>
-        <tr>
-            <th></th>
-            <th></th>
-            <th></th>
-        </tr>
-    </thead>
-<tbody>
-    <% if (loggedIn) { %>
-        <%- include('partials/post', {user: user}) %>
-    <% } else { %>
-        <% const user = {nickname: "JohnDoe", description: "Likes long walks" }; %>
-        <%- include('partials/post', {user: user}) %>
-    <% } %>
-
-</tbody>
-</table>
-
-
-</body>
-<footer>
-    <%- include('partials/footer') %>
-</footer>
-</html>
--->
