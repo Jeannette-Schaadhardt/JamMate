@@ -55,7 +55,7 @@ export function postUser(user) {
     }
   })
 }
-
+/*
 export function createPost(userId, content, file) {
   const postKey = datastore.key([POST]);
   // Prepare data object including file information if available
@@ -83,3 +83,4 @@ export async function getPosts() {
         return posts[0].map(fromDatastore);
     });
 }
+*/
