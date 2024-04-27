@@ -57,11 +57,27 @@ app.post('/create-post', upload.single('media'), async (req, res) => {
         res.status(500).send({error: 'Failed to create post'});
     }
 });
+
 /**
  * Handles homepage redirection
  */
 app.get('/', (req, res) => {
     handleAuthenticationFlow(req, res, "home")
+});
+
+/**
+ * Handles main feed redirection
+ */
+app.get('/mainFeed', async (req, res) => {
+    try {
+        const posts = await getPosts();
+        //res.json(posts);
+        //console.log("posts = ", posts);
+        res.render('mainFeed', { posts: posts });
+    } catch (err) {
+        console.error('Error getting post:', err);
+        res.status(500).send({error: 'Failed to create post'});
+    }
 });
 
 /**
