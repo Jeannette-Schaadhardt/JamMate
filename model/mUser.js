@@ -55,7 +55,7 @@ export function postUser(user) {
     }
   })
 }
-
+/*
 export function createPost(userId, content, file) {
   const postKey = datastore.key([POST]);
   // Prepare data object including file information if available
@@ -68,7 +68,7 @@ export function createPost(userId, content, file) {
     filePath: file ? file.path : null,
     fileType: file ? file.mimetype : null
   };
-  
+
   const postEntity = {
     key: postKey,
     data: postData
@@ -78,7 +78,9 @@ export function createPost(userId, content, file) {
 }
 
 export async function getPosts() {
-  const query = datastore.createQuery(POST).order('timestamp', { descending: true });
-  const [posts] = await datastore.runQuery(query);
-  return posts.map(post => ({ id: post[datastore.KEY].id, ...post }));
+  const query = datastore.createQuery(POST);
+    return datastore.runQuery(query).then((posts) => {
+        return posts[0].map(fromDatastore);
+    });
 }
+*/

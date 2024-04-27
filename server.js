@@ -5,8 +5,9 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { auth } from 'express-openid-connect';
 import session from 'express-session';
-import { postUser, createPost, getPosts } from './model/mUser.js';
+import { postUser } from './model/mUser.js';
 import { getSecret, getConfig } from './state.js';
+import { getPosts, createPost } from './model/mPost.js';
 
 const app = express();
 const login = express.Router();
@@ -44,9 +45,10 @@ app.post('/create-post', upload.single('media'), async (req, res) => {
     const content = req.body.content;
     const file = req.file;  // Multer processes the file upload
     const userId = req.oidc.user.sub;
+    const nickname = req.oidc.user.nickname;
 
     try {
-        const post = await createPost(userId, content, file);
+        const post = await createPost(userId, nickname, content, file);
         res.json({
             content: content,
             filePath: file ? `/uploads/${file.filename}` : null,
@@ -57,11 +59,19 @@ app.post('/create-post', upload.single('media'), async (req, res) => {
         res.status(500).send({error: 'Failed to create post'});
     }
 });
+
 /**
  * Handles homepage redirection
  */
 app.get('/', (req, res) => {
-    handleAuthenticationFlow(req, res, "home")
+    handleAuthenticationFlow(req, res, "index")
+});
+
+/**
+ * Handles create post redirection
+ */
+app.get('/post', (req, res) => {
+    handleAuthenticationFlow(req, res, "post")
 });
 
 /**
@@ -78,23 +88,25 @@ app.get('/profile', (req, res) => {
  * @param {*} res
  * @param {*} destination - Where we want to send user upon authentication.
  */
-function handleAuthenticationFlow(req, res, destination) {
-    const filePath = path.resolve(__dirname, './views/index.html');
-
+async function handleAuthenticationFlow(req, res, destination) {
     // User is logged in
     if (req.oidc.isAuthenticated()) {
         let user = { "user": req.oidc.user, "jwt": req.oidc.idToken,  "loggedIn": true };
+        const posts = await getPosts();
+
         postUser(user)
         .then(result => {
-            res.render(destination, user);
+            res.render(destination, { posts: posts, user: result, loggedIn: true });
         });
     }
 
     // User is not logged in so redirect home with undefined data and false log in status
     else {
+
         let data = { "user": req.oidc.user, "jwt": req.oidc.idToken,  "loggedIn": false };
         res.render('homeLoggedOut', data);
     }
+
 }
 
 app.listen(PORT, () => {
