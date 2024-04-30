@@ -55,32 +55,3 @@ export function postUser(user) {
     }
   })
 }
-/*
-export function createPost(userId, content, file) {
-  const postKey = datastore.key([POST]);
-  // Prepare data object including file information if available
-  const postData = {
-    userId: userId,
-    content: content,
-    timestamp: new Date(),
-    // Include file metadata if file is uploaded
-    fileName: file ? file.originalname : null,
-    filePath: file ? file.path : null,
-    fileType: file ? file.mimetype : null
-  };
-
-  const postEntity = {
-    key: postKey,
-    data: postData
-  };
-
-  return datastore.save(postEntity).then(() => ({ id: postKey.id, ...postData }));
-}
-
-export async function getPosts() {
-  const query = datastore.createQuery(POST);
-    return datastore.runQuery(query).then((posts) => {
-        return posts[0].map(fromDatastore);
-    });
-}
-*/
