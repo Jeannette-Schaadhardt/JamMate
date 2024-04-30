@@ -47,25 +47,16 @@ export function createPost(userId, nickname, content, file) {
 
     return datastore.save(postEntity).then(() => ({ id: postKey.id, ...postData }));
   }
-/*
-export async function getPosts() {
-    const query = datastore.createQuery(POST).order('timestamp', { descending: true });
-    const [posts] = await datastore.runQuery(query);
-    return posts.map(post => ({ id: post[datastore.KEY].id, ...post }));
-  }
-*/
 
-
-/*
-  export async function getPublicPosts() {
+  export async function getPosts(userId = null) {
     const query = datastore.createQuery(POST);
-    const [posts] = await datastore.runQuery(query);
-    return posts.map(datastore.fromDatastore);
-  }
-*/
-export async function getPosts() {
-  const query = datastore.createQuery(POST);
-    return datastore.runQuery(query).then((posts) => {
-        return posts[0].map(fromDatastore);
+    return datastore.runQuery(query).then((results) => {
+      const posts = results[0];
+      // Filter posts if userId is provided
+      if (userId) {
+        return posts.filter(post => post.userId === userId).map(fromDatastore);
+      } else {
+        return posts.map(fromDatastore);
+      }
     });
   }
