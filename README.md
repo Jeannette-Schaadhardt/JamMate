@@ -21,7 +21,7 @@ Create a review system allowing other users to drop comments Allow search functi
 Developing Locally (for us. this might get complicated the more dependencies we include, so we will expand more for our sake.) <br>
 
 1. npm install
-2. npm i nodemon express ejs express-session multer
+2. npm i nodemon express ejs express-session multer bootstrap-icons
    # nodemon - for auto server restart after a change is detected
 3. npm install express express-openid-connect --save
    # for auth0 compliance

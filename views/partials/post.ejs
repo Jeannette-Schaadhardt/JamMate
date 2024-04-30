@@ -5,39 +5,33 @@
                 <video controls><source src=<%= post_data.filePath %> type=<%= post_data.fileType %>></video>
             <% } else if (post_data.fileType.startsWith('audio')) { %>
                 <audio controls><source src=<%= post_data.filePath %> type=<%= post_data.fileType %>></audio>
-                <% } %>
-                <% } %>
-          <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
-            <i class="fas fa-thumbs-up me-2"></i>Like
-            <div>
-                <a href="">
-                  <i class="fas fa-thumbs-up text-primary"></i>
-                  <i class="fas fa-heart text-danger"></i>
-                  <span>124</span>
-                </a>
-            </div>
-          </button>
+            <% } %>
+        <% } %>
     </td>
-    <td class="text-start">
-      <a href="#" class="font-weight-bold blue-text">
-        <%= post_data.content %>
-      </a>
-      <div class="my-2">
-        <a href="#" class="blue-text">
-          <strong><%= post_data.nickname %></strong>
-        </a>
-        <span class="badge bg-secondary mx-1">metadata type 1</span><span
-          class="badge bg-primary mx-1">metadata type 2</span><span class="badge bg-warning mx-1">meta data 3</span>
+    <td>
+        <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
+            Like <%= post_data.likeCount %>
+        </button>
+    </td>
+    <td>
+        <div>
+            <%= post_data.content %> -
+            <a href="/user/<%=post_data.nickname %>" class="blue-text">
+                <strong><%= post_data.nickname %></strong>
+            </a>
+        </div>
+
+        <span class="badge bg-secondary mx-1">type 1</span><span
+          class="badge bg-primary mx-1">type 2</span><span class="badge bg-warning mx-1">type 3</span>
         <span><%= post_data.timestamp %></span>
-        <div></div>
       </div>
     </td>
     <td>
         <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-            <i class="fas fa-comment-alt me-2"></i>Comment
-            <a class="nav-link" href="/profile">Profile</a>
+            Comments
         </button>
-
+    </td>
+    <td>
           <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
             <i class="fas fa-share me-2"></i>Share
           </button>
@@ -45,14 +39,6 @@
   </tr>
   <tr>
     <td colspan="3">
-        <div class="d-flex justify-content-between mb-3">
-
-            <div>
-                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                    <i class="fas fa-comment-alt me-2"></i>8 Comments
-                </button>
-            </div>
-          </div>
         <div class="collapse" id="collapseExample">
             <section>
                 <div class="card">
@@ -60,12 +46,10 @@
                     <!-- Reactions -->
                     <%- include('input_comment') %>
                     <%- include('comment') %>
-                    <%- include('comment') %>
                   </div>
                   <!-- Interactions -->
                 </div>
               </section>
         </div>
-
     </td>
   </tr>

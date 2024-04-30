@@ -14,9 +14,6 @@
   <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
     <i class="fas fa-share me-2"></i>Edit Self-Bio
   </button>
-  <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
-    <a class="nav-link" href="/post">Create Post</a>
-  </button>
   <p>Contact me for gigs at <%= user.email %></p>
     <%- include('partials/post_form', {user: user}) %>
 
