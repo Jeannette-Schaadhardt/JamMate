@@ -46,6 +46,7 @@ app.post('/create-post', upload.single('media'), async (req, res) => {
     const file = req.file;  // Multer processes the file upload
     const userId = req.oidc.user.sub;
     const nickname = req.oidc.user.nickname;
+
     try {
         const post = await createPost(userId, nickname, content, file);
         res.json({
@@ -63,14 +64,21 @@ app.post('/create-post', upload.single('media'), async (req, res) => {
  * Handles homepage redirection
  */
 app.get('/', (req, res) => {
-    handleAuthenticationFlow(req, res, "homepage")
+    handleAuthenticationFlow(req, res, "index")
+});
+
+/**
+ * Handles create post redirection
+ */
+app.get('/post', (req, res) => {
+    handleAuthenticationFlow(req, res, "post")
 });
 
 /**
  * Handles profile page redirection.
  */
 app.get('/profile', (req, res) => {
-    handleAuthenticationFlow(req, res, "profilepage")
+    handleAuthenticationFlow(req, res, "profile")
 });
 
 /**
@@ -94,9 +102,9 @@ async function handleAuthenticationFlow(req, res, destination) {
 
     // User is not logged in so redirect home with undefined data and false log in status
     else {
-        const posts = await getPosts();
-        let user_data = { "user": req.oidc.user, "jwt": req.oidc.idToken,  "loggedIn": false };
-        res.render('homepage', {posts: posts, user: user_data, loggedIn: false});
+
+        let data = { "user": req.oidc.user, "jwt": req.oidc.idToken,  "loggedIn": false };
+        res.render('homeLoggedOut', data);
     }
 
 }
