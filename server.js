@@ -78,7 +78,6 @@ app.post('/create-post', upload.single('media'), async (req, res) => {
     const file = req.file;  // Multer processes the file upload
     const userId = req.oidc.user.sub;
     const nickname = req.oidc.user.nickname;
-
     try {
         const post = await createPost(userId, nickname, content, file);
         res.json({
@@ -118,19 +117,16 @@ app.delete('/delete-post/:postId', async (req, res) => {
 
 // Route handlers
 app.get('/', (req, res) => {
-    handleAuthenticationFlow(req, res, "index");
-});
-app.get('/post', (req, res) => {
-    handleAuthenticationFlow(req, res, "post");
+    handleAuthenticationFlow(req, res, "homepage")
 });
 app.get('/profile', (req, res) => {
-    handleAuthenticationFlow(req, res, "profile");
+    handleAuthenticationFlow(req, res, "profilepage")
 });
 
 async function handleAuthenticationFlow(req, res, destination) {
     if (req.oidc.isAuthenticated()) {
         let user = { "user": req.oidc.user, "jwt": req.oidc.idToken, "loggedIn": true };
-        const userId = req.oidc.user.sub; 
+        const userId = req.oidc.user.sub;
         let posts;
         if (destination === "profile") {
             // Fetch only user's posts for the profile page
@@ -142,9 +138,13 @@ async function handleAuthenticationFlow(req, res, destination) {
         postUser(user).then(result => {
             res.render(destination, { posts: posts, user: result, loggedIn: true });
         });
-    } else {
-        let data = { "user": req.oidc.user, "jwt": req.oidc.idToken, "loggedIn": false };
-        res.render('homeLoggedOut', data);
+    }
+
+    // User is not logged in so redirect home with undefined data and false log in status
+    else {
+        const posts = await getPosts();
+        let user_data = { "user": req.oidc.user, "jwt": req.oidc.idToken,  "loggedIn": false };
+        res.render('homepage', {posts: posts, user: user_data, loggedIn: false});
     }
 }
 
