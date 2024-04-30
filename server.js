@@ -16,7 +16,7 @@ const POST_KIND = 'Post'; // Define a kind for the Datastore entries
 
 import { postUser } from './model/mUser.js';
 import { getSecret, getConfig } from './state.js';
-import { getPosts } from './model/mPost.js'; // Assuming this is adjusted similarly
+import { getPosts, createPost } from './model/mPost.js'; // Assuming this is adjusted similarly
 
 const app = express();
 const login = express.Router();
@@ -44,38 +44,12 @@ app.use(session({
     saveUninitialized: true
 }));
 
-async function createPost(userId, nickname, content, file) {
-    const postKey = datastore.key([POST_KIND]);
-    const timestamp = new Date().toISOString();
-
-    const postData = {
-        userId,
-        nickname,
-        content,
-        timestamp,
-        fileName: file ? file.originalname : null,
-        filePath: file ? `/uploads/${file.filename}` : null,
-        fileType: file ? file.mimetype : null,
-    };
-
-    try {
-        await datastore.save({
-            key: postKey,
-            data: postData,
-        });
-        return postData; // Return postData for confirmation in the response
-    } catch (error) {
-        console.error("Failed to save post:", error);
-        throw error; // Re-throw to handle in the endpoint
-    }
-}
-
 app.post('/create-post', upload.single('media'), async (req, res) => {
     if (!req.oidc.isAuthenticated()) {
         return res.status(401).json({error: 'Not authenticated'});
     }
-    const content = req.body.content;
-    const file = req.file;  // Multer processes the file upload
+    const { content } = req.body;
+    const file = req.file;
     const userId = req.oidc.user.sub;
     const nickname = req.oidc.user.nickname;
 
