@@ -1,55 +1,55 @@
-<tr>
-    <td scope="row" class="text-nowrap">
-        <% if (post_data.filePath) { %>
-            <% if (post_data.fileType.startsWith('video')) { %>
-                <video controls><source src=<%= post_data.filePath %> type=<%= post_data.fileType %>></video>
-            <% } else if (post_data.fileType.startsWith('audio')) { %>
-                <audio controls><source src=<%= post_data.filePath %> type=<%= post_data.fileType %>></audio>
-            <% } %>
-        <% } %>
-    </td>
-    <td>
-        <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
-            Like <%= post_data.likeCount %>
-        </button>
-    </td>
-    <td>
-        <div>
-            <%= post_data.content %> -
-            <a href="/user/<%=post_data.nickname %>" class="blue-text">
-                <strong><%= post_data.nickname %></strong>
-            </a>
-        </div>
 
-        <span class="badge bg-secondary mx-1">type 1</span><span
-          class="badge bg-primary mx-1">type 2</span><span class="badge bg-warning mx-1">type 3</span>
-        <span><%= post_data.timestamp %></span>
-      </div>
-    </td>
-    <td>
-        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-            Comments
+<td scope="row" class="text-nowrap">
+    <% if (post_data.filePath) { %>
+        <% if (post_data.fileType.startsWith('video')) { %>
+            <video controls><source src=<%= post_data.filePath %> type=<%= post_data.fileType %>></video>
+        <% } else if (post_data.fileType.startsWith('audio')) { %>
+            <audio controls><source src=<%= post_data.filePath %> type=<%= post_data.fileType %>></audio>
+        <% } %>
+    <% } %>
+</td>
+<td>
+    <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
+        Like <%= post_data.likeCount %>
+    </button>
+</td>
+<td>
+    <div>
+        <%= post_data.content %> -
+        <a href="/user/<%=post_data.nickname %>" class="blue-text">
+            <strong><%= post_data.nickname %></strong>
+        </a>
+    </div>
+
+    <span class="badge bg-secondary mx-1">type 1</span><span
+        class="badge bg-primary mx-1">type 2</span><span class="badge bg-warning mx-1">type 3</span>
+    <span><%= post_data.timestamp %></span>
+    </div>
+</td>
+<td>
+    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+        Comments
+    </button>
+</td>
+<td>
+        <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
+        <i class="fas fa-share me-2"></i>Share
         </button>
-    </td>
-    <td>
-          <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
-            <i class="fas fa-share me-2"></i>Share
-          </button>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="3">
-        <div class="collapse" id="collapseExample">
-            <section>
-                <div class="card">
-                  <div class="card-body">
-                    <!-- Reactions -->
-                    <%- include('input_comment') %>
-                    <%- include('comment') %>
-                  </div>
-                  <!-- Interactions -->
+</td>
+</tr>
+<tr>
+<td colspan="3">
+    <div class="collapse" id="collapseExample">
+        <section>
+            <div class="card">
+                <div class="card-body">
+                <!-- Reactions -->
+                <%- include('input_comment') %>
+                <%- include('comment') %>
                 </div>
-              </section>
-        </div>
-    </td>
-  </tr>
+                <!-- Interactions -->
+            </div>
+            </section>
+    </div>
+</td>
+

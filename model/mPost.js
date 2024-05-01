@@ -16,30 +16,22 @@ function fromDatastore(item) {
     }
   }
 
-export function createPost(userId, nickname, content, file) {
+export async function createPost(userId, nickname, content, file) {
     const postKey = datastore.key([POST]);
     // Prepare data object including file information if available
     const timestamp = new Date().getTime();
     const dateTime = new Date(timestamp).toLocaleString();
-    // const seconds = Math.floor(timestamp / 1000);
-    // const minutes = Math.floor(seconds / 60);
-    // const hours = Math.floor(minutes / 60);
-    // const days = Math.floor(hours / 24);
 
     const postData = {
       userId: userId,
       nickname: nickname,
       content: content,
       timestamp: dateTime,
-      likeCount: 0,
       // Include file metadata if file is uploaded
       fileName: file ? file.originalname : null,
       filePath: file ? file.path : null,
       fileType: file ? file.mimetype : null
     };
-    //console.log("============== NEW POST ===============");
-    //console.log(postData);
-    //console.log("============== / NEW POST ===============");
 
     const postEntity = {
       key: postKey,
@@ -47,7 +39,7 @@ export function createPost(userId, nickname, content, file) {
     };
 
     return datastore.save(postEntity).then(() => ({ id: postKey.id, ...postData }));
-  }
+}
 
   export async function getPosts(userId = null) {
     const query = datastore.createQuery(POST);

@@ -16,7 +16,7 @@ const POST_KIND = 'Post'; // Define a kind for the Datastore entries
 
 import { postUser } from './model/mUser.js';
 import { getSecret, getConfig } from './state.js';
-import { getPosts, getPost, searchPosts, createPost } from './model/mPost.js';
+import { getPosts, getPost, searchPosts, createPost, deletePost } from './model/mPost.js';
 
 const app = express();
 const login = express.Router();
@@ -43,32 +43,6 @@ app.use(session({
     resave: false,
     saveUninitialized: true
 }));
-
-async function createPost(userId, nickname, content, file) {
-    const postKey = datastore.key([POST_KIND]);
-    const timestamp = new Date().toISOString();
-
-    const postData = {
-        userId,
-        nickname,
-        content,
-        timestamp,
-        fileName: file ? file.originalname : null,
-        filePath: file ? `/uploads/${file.filename}` : null,
-        fileType: file ? file.mimetype : null,
-    };
-
-    try {
-        await datastore.save({
-            key: postKey,
-            data: postData,
-        });
-        return postData; // Return postData for confirmation in the response
-    } catch (error) {
-        console.error("Failed to save post:", error);
-        throw error; // Re-throw to handle in the endpoint
-    }
-}
 
 app.post('/create-post', upload.single('media'), async (req, res) => {
     if (!req.oidc.isAuthenticated()) {
@@ -123,77 +97,51 @@ app.get('/profile', (req, res) => {
     handleAuthenticationFlow(req, res, "profilepage")
 });
 
-/**
- * Handles search page redirection.
- * We handle this differently for now so that we can use a searchPosts query instead.
- * We also don't want to redirect to the home page if the user isn't logged in.
- */
-app.get('/search', async (req, res) => {
-    // User is logged in
-    const posts = await searchPosts();
-    if (req.oidc.isAuthenticated()) {
-        let user = { "user": req.oidc.user, "jwt": req.oidc.idToken,  "loggedIn": true };
-        postUser(user)
-        .then(result => {
-            res.render("searchpage", { posts: posts, user: result, loggedIn: true });
-        });
-    }  else {
-        let user_data = { "user": req.oidc.user, "jwt": req.oidc.idToken,  "loggedIn": false };
-        res.render("searchpage", {posts: posts, user: user_data, loggedIn: false});
-    }
-});
 
 /**
- * Handles search page redirection.
- * We handle this differently for now so that we can use a searchPosts query instead.
- * We also don't want to redirect to the home page if the user isn't logged in.
- */
-app.get('/post', async (req, res) => {
-    // User is logged in
-    const post = await getPost();
-    if (req.oidc.isAuthenticated()) {
-        let user = { "user": req.oidc.user, "jwt": req.oidc.idToken,  "loggedIn": true };
-        postUser(user)
-        .then(result => {
-            res.render("postpage", { posts: posts, user: result, loggedIn: true });
-        });
-    }  else {
-        let user_data = { "user": req.oidc.user, "jwt": req.oidc.idToken,  "loggedIn": false };
-        res.render("postpage", {posts: posts, user: user_data, loggedIn: false});
-    }
-});
-
-/**
- * Handles re-authentication when trying to access webpages
+ * Handles authentication when trying to access webpages
  *
  * @param {*} req - holds user object and id
  * @param {*} res
  * @param {*} destination - Where we want to send user upon authentication.
  */
 async function handleAuthenticationFlow(req, res, destination) {
-    // User is logged in
-    let user = { "user": req.oidc.user, "jwt": req.oidc.idToken, "loggedIn": true };
-    const userId = req.oidc.user.sub;
+    // Determine if user is logged in
+    let user;
     let posts;
-    if (destination === "profile") {
-        // Fetch only user's posts for the profile page
-        posts = await getPosts(userId);
-    } else {
-        // Fetch all posts for other pages like the homepage
-        posts = await getPosts();
-    }
+    let userID;
     if (req.oidc.isAuthenticated()) {
+        user = { "user": req.oidc.user, "jwt": req.oidc.idToken, "loggedIn": true };
+        userID = req.oidc.user.sub;
+    } else {
+        user = { "user": req.oidc.user, "jwt": req.oidc.idToken,  "loggedIn": false };
+    }
+
+    // Gather the posts for the appropriate page.
+    if (destination === "profilepage" && user.loggedIn === true) {
+        // Fetch only user's posts for the profile page
+        posts = await getPosts(userID);
+    } else if (destination === "searchpage") {             // Fetch search posts
+        posts = await searchPosts();
+    } else if (destination === "postpage") {        // Fetch the individual post
+        posts = await getPost();
+    } else {
+        posts = await getPosts();                   // Fetch all posts for other pages like the homepage
+    }
+
+    // Render the destination page and be logged in.
+    if (user.loggedIn === true) {
         postUser(user)
         .then(result => {
             res.render(destination, { posts: posts, user: result, loggedIn: true });
         });
+    } else {     // User is not logged in so redirect home with undefined data and false login status
+    if (destination === "profilepage") {
+        res.render('homepage', {posts: posts, user: user, loggedIn: false});
     } else {
-    // User is not logged in so redirect home with undefined data and false log in status
-
-        let user_data = { "user": req.oidc.user, "jwt": req.oidc.idToken,  "loggedIn": false };
-        res.render('homepage', {posts: posts, user: user_data, loggedIn: false});
+        res.render(destination, { posts: posts, user: user, loggedIn: false });
     }
-};
+}};
 
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}...`);

@@ -12,7 +12,9 @@
     <table class="table table-hover table-forum text-center">
     <tbody>
             <% for(let i = 0; i < posts.length; i++) { %>
+                <tr>
                 <%- include('partials/post', {post_data: posts[i]}) %>
+                </tr>
             <% } %>
     </tbody>
     </table>
