@@ -42,7 +42,7 @@ export function createPost(userId, nickname, content, file) {
     return datastore.save(postEntity).then(() => ({ id: postKey.id, ...postData }));
 }
 
-  export async function getPosts(userId = null) {
+export async function getPosts(userId = null) {
     const query = datastore.createQuery(POST);
     return datastore.runQuery(query).then((results) => {
       const posts = results[0];

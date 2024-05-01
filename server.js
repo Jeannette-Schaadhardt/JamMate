@@ -16,8 +16,7 @@ const POST_KIND = 'Post'; // Define a kind for the Datastore entries
 
 import { postUser } from './model/mUser.js';
 import { getSecret, getConfig } from './state.js';
-import { getPosts, getPost, searchPosts, createPost} from './model/mPost.js';
-
+import { createPost, getPost, getPosts, searchPosts} from './model/mPost.js';
 const app = express();
 const login = express.Router();
 const upload = multer({ dest: 'uploads/' }); // Configure multer with a files destination
@@ -36,6 +35,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(auth(config));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve static files from uploads directory
+
+app.use((req, res, next) => {
+    if (req.url.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    }
+    next();
+  });
 
 // Stores browser session
 app.use(session({

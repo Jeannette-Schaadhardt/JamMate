@@ -8,16 +8,14 @@
   <title>JamMate</title>
 </head>
 <body class="container">
-<%- include('partials/header', {user: loggedIn}) %>
-  <h1><%= user.nickname %>'s Profile</h1>
-  <p> <%= user.description %></p>
-  <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
-    <i class="fas fa-share me-2"></i>Edit Self-Bio
-  </button>
-  <p>Contact me for gigs at <%= user.email %></p>
-    <%- include('partials/post_form', {user: user}) %>
-
-
+    <%- include('partials/header', {user: loggedIn}) %>
+    <h1><%= user.nickname %>'s Profile</h1>
+    <p> <%= user.description %></p>
+    <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
+      <i class="fas fa-share me-2"></i>Edit Self-Bio
+    </button>
+    <p>Contact me for gigs at <%= user.email %></p>
+      <%- include('partials/post_form', {user: user}) %>
 
 <table class="table table-hover table-forum text-center">
     <thead>
@@ -40,23 +38,14 @@
           <% }); %>
 </tbody>
 </table>
-
 <script>
-function deletePost(postId) {
-      if (confirm('Are you sure you want to delete this post?')) {
-          $.ajax({
-              url: '/delete-post/' + postId,
-              type: 'DELETE',
-              success: function(result) {
-                document.getElementById('deleteButton-'+postId).innerText = "Deleted";
-                $('#post-' + postId).remove();
-              },
-              error: function(xhr, status, error) {
-                  alert("Error deleting post: " + xhr.responseText);
-              }
-          });
-      }
-    }
+function handleEnter(e) {
+  if (e.keyCode === 13 && !e.shiftKey) { // Check if Enter is pressed without the Shift key
+  e.preventDefault(); // Prevent default action
+  submitPost(); // Call submitPost function
+  }
+}
+
 </script>
 </body>
 <footer>
