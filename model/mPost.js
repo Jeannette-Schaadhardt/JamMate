@@ -27,6 +27,7 @@ export async function createPost(userId, nickname, content, file) {
       nickname: nickname,
       content: content,
       timestamp: dateTime,
+      likeCount: 0,
       // Include file metadata if file is uploaded
       fileName: file ? file.originalname : null,
       filePath: file ? file.path : null,

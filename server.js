@@ -92,6 +92,7 @@ app.delete('/delete-post/:postId', async (req, res) => {
 // Route handlers
 app.get('/', (req, res) => {
     handleAuthenticationFlow(req, res, "homepage")
+    handleAuthenticationFlow(req, res, "homepage")
 });
 app.get('/profile', (req, res) => {
     handleAuthenticationFlow(req, res, "profilepage")
