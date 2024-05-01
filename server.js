@@ -16,7 +16,7 @@ const POST_KIND = 'Post'; // Define a kind for the Datastore entries
 
 import { postUser } from './model/mUser.js';
 import { getSecret, getConfig } from './state.js';
-import { getPosts, getPost, searchPosts, createPost, deletePost } from './model/mPost.js';
+import { getPosts, getPost, searchPosts, createPost} from './model/mPost.js';
 
 const app = express();
 const login = express.Router();
@@ -91,7 +91,6 @@ app.delete('/delete-post/:postId', async (req, res) => {
 
 // Route handlers
 app.get('/', (req, res) => {
-    handleAuthenticationFlow(req, res, "homepage")
     handleAuthenticationFlow(req, res, "homepage")
 });
 app.get('/profile', (req, res) => {

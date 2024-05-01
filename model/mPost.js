@@ -16,7 +16,7 @@ function fromDatastore(item) {
     }
   }
 
-export async function createPost(userId, nickname, content, file) {
+export function createPost(userId, nickname, content, file) {
     const postKey = datastore.key([POST]);
     // Prepare data object including file information if available
     const timestamp = new Date().getTime();
@@ -72,10 +72,10 @@ export async function searchPosts(searchTerm) {
 /*
 * getPost:
 *
-* TODO: uses a postID to be used when building and displaying an individual post. The use case is for sharing a link to a post.
-* @param[in] postID
+* TODO: uses a postId to be used when building and displaying an individual post. The use case is for sharing a link to a post.
+* @param[in] postId
 */
-export async function getPost(postID) {
+export async function getPost(postId) {
     const query = datastore.createQuery(POST);
     return datastore.runQuery(query).then((posts) => {
         return posts[0].map(fromDatastore);
