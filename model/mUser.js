@@ -24,11 +24,11 @@ export function getUser(user) {
     // userCheck is an array that is populated with a JS object (a User entity), where the object matches
     // an existing User or no User, using the 'sub' property.
     const userCheck = users[0].map(fromDatastore).filter(filteredUser => filteredUser.user.sub === user.user.sub);
-    if (userCheck.length === 0) {
-      console.log("user does not exist. creating one now");
-    } else {
-      console.log("user exists. do not create one");
-      }
+    // if (userCheck.length === 0) {
+    //   console.log("user does not exist. creating one now");
+    // } else {
+    //   console.log("user exists. do not create one");
+    //   }
     return userCheck;
   });
 }

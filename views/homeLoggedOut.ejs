@@ -12,8 +12,7 @@
     <% if (loggedIn) { %>
         <%- include('partials/post', {user: user}) %>
     <% } else { %>
-        <% const user = {nickname: "JohnDoe", description: "Likes long walks" }; %>
-        <%- include('partials/post', {user: user}) %>
+        <h2>Log in or sign up today!</h2>
     <% } %>
 
 </tbody>

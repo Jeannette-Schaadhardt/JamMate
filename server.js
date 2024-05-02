@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 import { auth } from 'express-openid-connect';
 import session from 'express-session';
 import { Datastore } from '@google-cloud/datastore'; // Assuming use of Google Cloud Datastore
-
+import { handleAuthenticationFlow, getSecret, getConfig } from './functions.js';
 // Configure Datastore
 const datastore = new Datastore({
     projectId: 'jammate-cs467', // Replace with your actual project ID
@@ -15,7 +15,6 @@ const datastore = new Datastore({
 const POST_KIND = 'Post'; // Define a kind for the Datastore entries
 
 import { postUser } from './model/mUser.js';
-import { getSecret, getConfig } from './state.js';
 import { getPosts } from './model/mPost.js'; // Assuming this is adjusted similarly
 
 const app = express();
@@ -126,28 +125,6 @@ app.get('/post', (req, res) => {
 app.get('/profile', (req, res) => {
     handleAuthenticationFlow(req, res, "profile");
 });
-
-async function handleAuthenticationFlow(req, res, destination) {
-    if (req.oidc.isAuthenticated()) {
-        let user = { "user": req.oidc.user, "jwt": req.oidc.idToken, "loggedIn": true };
-        const userId = req.oidc.user.sub; 
-        let posts;
-        if (destination === "profile") {
-            // Fetch only user's posts for the profile page
-            posts = await getPosts(userId);
-        } else {
-            // Fetch all posts for other pages like the homepage
-            posts = await getPosts();
-        }
-        postUser(user).then(result => {
-            res.render(destination, { posts: posts, user: result, loggedIn: true });
-        });
-    } else {
-        let data = { "user": req.oidc.user, "jwt": req.oidc.idToken, "loggedIn": false };
-        res.render('homeLoggedOut', data);
-    }
-}
-
 
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}...`);
