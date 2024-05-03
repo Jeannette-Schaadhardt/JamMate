@@ -1,13 +1,13 @@
-import { expressjwt } from "express-jwt";
-import ExpressJwtRequest from 'express-jwt';
-import jwksRsa from 'jwks-rsa';
-import { postUser } from './model/mUser.js';
-import { getPosts } from './model/mPost.js'; // Assuming this is adjusted similarly
+const { expressjwt: jwt } = require("express-jwt");
+const jwksRsa = require('jwks-rsa');
+const { postUser } = require('./model/mUser');
+const { getPosts } = require('./model/mPost.js');
 
 const DOMAIN = 'dev-gblxtkrkmbzldfsv.us.auth0.com';
+
 // From Stack Overflow:
 //https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
-export function getSecret(len) {
+function getSecret(len) {
     let res = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const charactersLength = characters.length;
@@ -19,7 +19,7 @@ export function getSecret(len) {
     return res;
 }
 // --------- auth0 authentication --------- //
-export function getConfig(secret) {
+function getConfig(secret) {
     const config = {
         authRequired: false,
         auth0Logout: true,
@@ -30,7 +30,7 @@ export function getConfig(secret) {
       };
     return config;
 }
-export function testJWT() {
+function testJWT() {
 // Citation
 // https://snyk.io/advisor/npm-package/jwks-rsa/functions/jwks-rsa.expressJwtSecret
 const testJWT = jwt({
@@ -47,33 +47,51 @@ const testJWT = jwt({
 }
 
 /**
- * Handles re-authentication when trying to access webpages
+ * Handles authentication when trying to access webpages
  *
  * @param {*} req - holds user object and id
  * @param {*} res
  * @param {*} destination - Where we want to send user upon authentication.
  */
-export async function handleAuthenticationFlow(req, res, destination) {
-    // User is logged in
+async function handleAuthenticationFlow(req, res, destination) {
+    // Determine if user is logged in
+    let user;
+    let posts;
+    let userID;
     if (req.oidc.isAuthenticated()) {
-        let user = { "user": req.oidc.user, "jwt": req.oidc.idToken,  "loggedIn": true };
-        const posts = await getPosts();
+        user = { "user": req.oidc.user, "jwt": req.oidc.idToken, "loggedIn": true };
+        userID = req.oidc.user.sub;
+    } else {
+        user = { "user": req.oidc.user, "jwt": req.oidc.idToken,  "loggedIn": false };
+    }
 
+    // Gather the posts for the appropriate page.
+    if (destination === "profilepage" && user.loggedIn === true) {
+        // Fetch only user's posts for the profile page
+        posts = await getPosts(userID);
+    } else if (destination === "searchpage") {             // Fetch search posts
+        posts = await searchPosts();
+    } else if (destination === "postpage") {        // Fetch the individual post
+        posts = await getPost();
+    } else {
+        posts = await getPosts();                   // Fetch all posts for other pages like the homepage
+    }
+
+    // Render the destination page and be logged in.
+    if (user.loggedIn === true) {
         postUser(user)
         .then(result => {
             res.render(destination, { posts: posts, user: result, loggedIn: true });
         });
+    } else {     // User is not logged in so redirect home with undefined data and false login status
+    if (destination === "profilepage") {
+        res.render('homepage', {posts: posts, user: user, loggedIn: false});
+    } else {
+        res.render(destination, { posts: posts, user: user, loggedIn: false });
     }
+}};
 
-    // User is not logged in so redirect home with undefined data and false log in status
-    else {
-
-        let data = { "user": req.oidc.user, "jwt": req.oidc.idToken,  "loggedIn": false };
-        res.render('homeLoggedOut', data);
-    }
-}
-
-export async function submitPost() {
+async function submitPost() {
     var formData = new FormData(document.getElementById('postForm'));
     $.ajax({
       url: '/create-post',
@@ -96,4 +114,8 @@ export async function submitPost() {
       }
     });
     return false;  // Prevent traditional form submission
+  }
+
+  module.exports = {
+    getSecret, getConfig, testJWT, handleAuthenticationFlow, submitPost
   }

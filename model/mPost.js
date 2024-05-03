@@ -1,5 +1,5 @@
 // citation: https://cloud.google.com/nodejs/docs/reference/datastore/latest
-import { Datastore } from '@google-cloud/datastore';
+const { Datastore } = require("@google-cloud/datastore");
 const datastore = new Datastore();
 
 const POST = "Post";  // Defining kind at the top for consistency
@@ -16,29 +16,23 @@ function fromDatastore(item) {
     }
   }
 
-export function createPost(userId, nickname, content, file) {
+function createPost(userId, nickname, content, file) {
     const postKey = datastore.key([POST]);
     // Prepare data object including file information if available
     const timestamp = new Date().getTime();
     const dateTime = new Date(timestamp).toLocaleString();
-    // const seconds = Math.floor(timestamp / 1000);
-    // const minutes = Math.floor(seconds / 60);
-    // const hours = Math.floor(minutes / 60);
-    // const days = Math.floor(hours / 24);
 
     const postData = {
       userId: userId,
       nickname: nickname,
       content: content,
       timestamp: dateTime,
+      likeCount: 0,
       // Include file metadata if file is uploaded
       fileName: file ? file.originalname : null,
       filePath: file ? file.path : null,
       fileType: file ? file.mimetype : null
     };
-    //console.log("============== NEW POST ===============");
-    //console.log(postData);
-    //console.log("============== / NEW POST ===============");
 
     const postEntity = {
       key: postKey,
@@ -46,9 +40,22 @@ export function createPost(userId, nickname, content, file) {
     };
 
     return datastore.save(postEntity).then(() => ({ id: postKey.id, ...postData }));
-  }
+}
 
-  export async function getPosts(userId = null) {
+/*
+* getPost:
+*
+* TODO: uses a postId to be used when building and displaying an individual post. The use case is for sharing a link to a post.
+* @param[in] postId
+*/
+async function getPost(postId) {
+  const query = datastore.createQuery(POST);
+  return datastore.runQuery(query).then((posts) => {
+      return posts[0].map(fromDatastore);
+  });
+}
+
+async function getPosts(userId = null) {
     const query = datastore.createQuery(POST);
     return datastore.runQuery(query).then((results) => {
       const posts = results[0];
@@ -60,3 +67,21 @@ export function createPost(userId, nickname, content, file) {
       }
     });
   }
+
+/*
+* searchPosts:
+*
+* TODO: takes a term, and ideally filters as well that can be applied after the initial search when you refresh the search.
+* It uses these to run a query on the datastore and attempts to sort based on relevance to the search term or the chosen sort method.
+* @param[in] searchTerm
+*/
+async function searchPosts(searchTerm) {
+    const query = datastore.createQuery(POST);
+    return datastore.runQuery(query).then((posts) => {
+        return posts[0].map(fromDatastore);
+    });
+}
+
+module.exports = {
+  fromDatastore, createPost, getPost, getPosts, searchPosts
+}

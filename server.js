@@ -1,12 +1,18 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import multer from 'multer'; // Import Multer
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { auth } from 'express-openid-connect';
-import session from 'express-session';
-import { Datastore } from '@google-cloud/datastore'; // Assuming use of Google Cloud Datastore
-import { handleAuthenticationFlow, getSecret, getConfig } from './functions.js';
+const express = require('express');
+const bodyParser = require('body-parser');
+const multer = require('multer');
+const path = require('path');
+const fileURLToPath = require('url');
+const { auth } = require('express-openid-connect');
+const session = require('express-session');
+const { Datastore } = require("@google-cloud/datastore");
+const { handleAuthenticationFlow, getSecret, getConfig } = require('./functions.js');
+const { postUser } = require('./model/mUser.js');
+const { createPost, getPost, getPosts, searchPosts } = require('./model/mPost.js');
+
+const app = express();
+const PORT = process.env.PORT || 9001;
+
 // Configure Datastore
 const datastore = new Datastore({
     projectId: 'jammate-cs467', // Replace with your actual project ID
@@ -14,15 +20,10 @@ const datastore = new Datastore({
 
 const POST_KIND = 'Post'; // Define a kind for the Datastore entries
 
-import { postUser } from './model/mUser.js';
-import { getPosts } from './model/mPost.js'; // Assuming this is adjusted similarly
-
-const app = express();
 const login = express.Router();
 const upload = multer({ dest: 'uploads/' }); // Configure multer with a files destination
 
-const PORT = process.env.PORT || 9001;
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const filePath = path.resolve(__dirname, './views/index.ejs');
 
 const secret = getSecret(10);
 const config = getConfig(secret);
@@ -34,7 +35,14 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(auth(config));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve static files from uploads directory
+app.use('/uploads', express.static(path.join(filePath, 'uploads'))); // Serve static files from uploads directory
+
+app.use((req, res, next) => {
+    if (req.url.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    }
+    next();
+  });
 
 // Stores browser session
 app.use(session({
@@ -43,41 +51,14 @@ app.use(session({
     saveUninitialized: true
 }));
 
-async function createPost(userId, nickname, content, file) {
-    const postKey = datastore.key([POST_KIND]);
-    const timestamp = new Date().toISOString();
-
-    const postData = {
-        userId,
-        nickname,
-        content,
-        timestamp,
-        fileName: file ? file.originalname : null,
-        filePath: file ? `/uploads/${file.filename}` : null,
-        fileType: file ? file.mimetype : null,
-    };
-
-    try {
-        await datastore.save({
-            key: postKey,
-            data: postData,
-        });
-        return postData; // Return postData for confirmation in the response
-    } catch (error) {
-        console.error("Failed to save post:", error);
-        throw error; // Re-throw to handle in the endpoint
-    }
-}
-
 app.post('/create-post', upload.single('media'), async (req, res) => {
     if (!req.oidc.isAuthenticated()) {
         return res.status(401).json({error: 'Not authenticated'});
     }
-    const content = req.body.content;
-    const file = req.file;  // Multer processes the file upload
+    const { content } = req.body;
+    const file = req.file;
     const userId = req.oidc.user.sub;
     const nickname = req.oidc.user.nickname;
-
     try {
         const post = await createPost(userId, nickname, content, file);
         res.json({
@@ -117,13 +98,10 @@ app.delete('/delete-post/:postId', async (req, res) => {
 
 // Route handlers
 app.get('/', (req, res) => {
-    handleAuthenticationFlow(req, res, "index");
-});
-app.get('/post', (req, res) => {
-    handleAuthenticationFlow(req, res, "post");
+    handleAuthenticationFlow(req, res, "homepage")
 });
 app.get('/profile', (req, res) => {
-    handleAuthenticationFlow(req, res, "profile");
+    handleAuthenticationFlow(req, res, "profilepage")
 });
 
 app.listen(PORT, () => {

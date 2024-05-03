@@ -1,6 +1,5 @@
 // citation: https://cloud.google.com/nodejs/docs/reference/datastore/latest
-import { Datastore } from '@google-cloud/datastore';
-
+const { Datastore } = require("@google-cloud/datastore");
 const datastore = new Datastore();
 const USER = "User";
 const POST = "Post";  // Defining kind at the top for consistency
@@ -17,7 +16,7 @@ function fromDatastore(item) {
   }
 }
 
-export function getUser(user) {
+function getUser(user) {
   const query = datastore.createQuery(USER);
 
   return datastore.runQuery(query).then((users) => {
@@ -34,7 +33,7 @@ export function getUser(user) {
 }
 
 // https://auth0.com/docs/secure/tokens/json-web-tokens
-export function postUser(user) {
+function postUser(user) {
   // The datastore key associated with a USER entity
   const key = datastore.key(USER);
 
@@ -45,13 +44,14 @@ export function postUser(user) {
     if (userCheck.length === 0) {
       // Save the new user in datastore, and store in this var
       return datastore.save({ "key": key, "data": user }).then((res) => {
-        //return { key, data: user }
-        console.log("user.user = ", user.user);
         return user.user;
       });
     } else {
-      console.log("userCheck[0].user = ", userCheck[0].user);
       return userCheck[0].user;
     }
   })
+}
+
+module.exports = {
+  fromDatastore, getUser, postUser
 }
