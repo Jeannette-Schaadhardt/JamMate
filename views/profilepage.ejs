@@ -12,7 +12,7 @@
     <h1><%= user.nickname %>'s Profile</h1>
     <p> <%= user.description %></p>
     <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
-      <i class="fas fa-share me-2"></i>Edit Self-Bio
+      <a class="nav-link" href="/user/edit">Edit Your Bio</a>
     </button>
     <p>Contact me for gigs at <%= user.email %></p>
       <%- include('partials/post_form', {user: user}) %>

@@ -33,7 +33,7 @@
     function submitPost() {
       var formData = new FormData(document.getElementById('postForm'));
       $.ajax({
-        url: '/create-post',
+        url: 'post',
         type: 'POST',
         data: formData,
         success: function(data) {
@@ -58,7 +58,7 @@
     function deletePost(postId) {
       if (confirm('Are you sure you want to delete this post?')) {
           $.ajax({
-              url: '/delete-post/' + postId,
+              url: 'post/' + postId,
               type: 'DELETE',
               success: function(result) {
                   $('#post-' + postId).remove();
