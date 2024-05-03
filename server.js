@@ -6,6 +6,9 @@ import { fileURLToPath } from 'url';
 import { auth } from 'express-openid-connect';
 import session from 'express-session';
 import { Datastore } from '@google-cloud/datastore'; // Assuming use of Google Cloud Datastore
+import { postUser } from './model/mUser.js';
+import { getSecret, getConfig } from './state.js';
+import { createPost, getPost, getPosts, searchPosts} from './model/mPost.js';
 
 // Configure Datastore
 const datastore = new Datastore({
@@ -13,10 +16,6 @@ const datastore = new Datastore({
 });
 
 const POST_KIND = 'Post'; // Define a kind for the Datastore entries
-
-import { postUser } from './model/mUser.js';
-import { getSecret, getConfig } from './state.js';
-import { getPosts, createPost } from './model/mPost.js'; // Assuming this is adjusted similarly
 
 const app = express();
 const login = express.Router();
@@ -37,6 +36,13 @@ app.use(bodyParser.json());
 app.use(auth(config));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve static files from uploads directory
 
+app.use((req, res, next) => {
+    if (req.url.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    }
+    next();
+  });
+
 // Stores browser session
 app.use(session({
     secret: secret,
@@ -52,7 +58,6 @@ app.post('/create-post', upload.single('media'), async (req, res) => {
     const file = req.file;
     const userId = req.oidc.user.sub;
     const nickname = req.oidc.user.nickname;
-
     try {
         const post = await createPost(userId, nickname, content, file);
         res.json({
@@ -92,36 +97,57 @@ app.delete('/delete-post/:postId', async (req, res) => {
 
 // Route handlers
 app.get('/', (req, res) => {
-    handleAuthenticationFlow(req, res, "index");
-});
-app.get('/post', (req, res) => {
-    handleAuthenticationFlow(req, res, "post");
+    handleAuthenticationFlow(req, res, "homepage")
 });
 app.get('/profile', (req, res) => {
-    handleAuthenticationFlow(req, res, "profile");
+    handleAuthenticationFlow(req, res, "profilepage")
 });
 
+
+/**
+ * Handles authentication when trying to access webpages
+ *
+ * @param {*} req - holds user object and id
+ * @param {*} res
+ * @param {*} destination - Where we want to send user upon authentication.
+ */
 async function handleAuthenticationFlow(req, res, destination) {
+    // Determine if user is logged in
+    let user;
+    let posts;
+    let userID;
     if (req.oidc.isAuthenticated()) {
-        let user = { "user": req.oidc.user, "jwt": req.oidc.idToken, "loggedIn": true };
-        const userId = req.oidc.user.sub; 
-        let posts;
-        if (destination === "profile") {
-            // Fetch only user's posts for the profile page
-            posts = await getPosts(userId);
-        } else {
-            // Fetch all posts for other pages like the homepage
-            posts = await getPosts();
-        }
-        postUser(user).then(result => {
+        user = { "user": req.oidc.user, "jwt": req.oidc.idToken, "loggedIn": true };
+        userID = req.oidc.user.sub;
+    } else {
+        user = { "user": req.oidc.user, "jwt": req.oidc.idToken,  "loggedIn": false };
+    }
+
+    // Gather the posts for the appropriate page.
+    if (destination === "profilepage" && user.loggedIn === true) {
+        // Fetch only user's posts for the profile page
+        posts = await getPosts(userID);
+    } else if (destination === "searchpage") {             // Fetch search posts
+        posts = await searchPosts();
+    } else if (destination === "postpage") {        // Fetch the individual post
+        posts = await getPost();
+    } else {
+        posts = await getPosts();                   // Fetch all posts for other pages like the homepage
+    }
+
+    // Render the destination page and be logged in.
+    if (user.loggedIn === true) {
+        postUser(user)
+        .then(result => {
             res.render(destination, { posts: posts, user: result, loggedIn: true });
         });
+    } else {     // User is not logged in so redirect home with undefined data and false login status
+    if (destination === "profilepage") {
+        res.render('homepage', {posts: posts, user: user, loggedIn: false});
     } else {
-        let data = { "user": req.oidc.user, "jwt": req.oidc.idToken, "loggedIn": false };
-        res.render('homeLoggedOut', data);
+        res.render(destination, { posts: posts, user: user, loggedIn: false });
     }
-}
-
+}};
 
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}...`);
