@@ -6,6 +6,9 @@ import { fileURLToPath } from 'url';
 import { auth } from 'express-openid-connect';
 import session from 'express-session';
 import { Datastore } from '@google-cloud/datastore'; // Assuming use of Google Cloud Datastore
+import { postUser } from './model/mUser.js';
+import { getSecret, getConfig } from './state.js';
+import { createPost, getPost, getPosts, searchPosts} from './model/mPost.js';
 
 // Configure Datastore
 const datastore = new Datastore({
@@ -14,9 +17,6 @@ const datastore = new Datastore({
 
 const POST_KIND = 'Post'; // Define a kind for the Datastore entries
 
-import { postUser } from './model/mUser.js';
-import { getSecret, getConfig } from './state.js';
-import { createPost, getPost, getPosts, searchPosts} from './model/mPost.js';
 const app = express();
 const login = express.Router();
 const upload = multer({ dest: 'uploads/' }); // Configure multer with a files destination
@@ -54,8 +54,8 @@ app.post('/create-post', upload.single('media'), async (req, res) => {
     if (!req.oidc.isAuthenticated()) {
         return res.status(401).json({error: 'Not authenticated'});
     }
-    const content = req.body.content;
-    const file = req.file;  // Multer processes the file upload
+    const { content } = req.body;
+    const file = req.file;
     const userId = req.oidc.user.sub;
     const nickname = req.oidc.user.nickname;
     try {
