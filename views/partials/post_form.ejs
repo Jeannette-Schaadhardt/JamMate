@@ -1,0 +1,58 @@
+<!-- Multimedia Post Form -->
+<div style="display:none;" id="postCreationForm">
+    <form id="postForm" enctype="multipart/form-data">
+        <textarea name="content" rows="4" cols="50" placeholder="Write something or share a clip..."></textarea><br>
+        <input type="file" name="media" accept="video/*,audio/*"><br>
+        <button type="submit">Post</button>
+    </form>
+</div>
+
+<button type="button" onclick="document.getElementById('postCreationForm').style.display='block';">Create Post</button>
+
+<!-- Posts Container -->
+<div id="posts">
+<!-- Existing posts are displayed here -->
+</div>
+
+
+<script>
+$(document).ready(function() {
+    $('#postForm').on('submit', function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        // Verify formData is properly captured
+        console.log(formData);
+        $.ajax({
+            url: '/create-post',
+            type: 'POST',
+            data: formData,
+            success: function(data) {
+                // Update the posts view
+                var newPost = '<div class="post" id="post-' + data.id + '">' +
+                    '<p>User: <%= user.nickname %>, PostId: '+data.id+', Content: "' +
+                    data.content + '", Posted at (' + new Date(data.timestamp).toLocaleString() + ')</p>' +
+                    '<button onclick="deletePost(\'' + data.id + '\')">Delete Post</button>';
+                if (data.filePath) {
+                    if (data.fileType.startsWith('video')) {
+                        newPost += '<video controls><source src="' + data.filePath + '" type="' + data.fileType + '"></video>';
+                    } else if (data.fileType.startsWith('audio')) {
+                        newPost += '<audio controls><source src="' + data.filePath + '" type="' + data.fileType + '"></audio>';
+                    }
+                }
+                newPost += '</div>';
+                $('#posts').prepend(newPost);
+                document.getElementById('postForm').reset(); // Reset the form
+                document.getElementById('postCreationForm').style.display='none'; // Hide the form again
+            },
+            error: function(xhr, status, error) {
+                console.log(error);
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    });
+});
+
+</script>
+
