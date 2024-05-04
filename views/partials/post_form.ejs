@@ -23,7 +23,7 @@ $(document).ready(function() {
         // Verify formData is properly captured
         console.log(formData);
         $.ajax({
-            url: '/create-post',
+            url: 'post',
             type: 'POST',
             data: formData,
             success: function(data) {
