@@ -27,11 +27,11 @@
     </thead>
 <tbody>
           <% posts.forEach(function(post) { %>
-            <div  class="post" id="post-<%= post.id %>">
+            <div  class="post" id="post-<%= post.postId %>">
                 <tr>
                     <%- include('partials/post', {post_data: post}) %>
                     <td>
-                        <button id="deleteButton-<%= post.id %>" onclick="deletePost(<%= post.id %>)">Delete Post</button>
+                        <button id="deleteButton-<%= post.postId %>" onclick="deletePost(<%= post.postId %>)">Delete Post <%= post.postId %></button>
                     </td>
                 </tr>
             </div>

@@ -69,8 +69,6 @@ async function handleAuthenticationFlow(req, res, destination) {
     if (destination === "profilepage" && user.loggedIn === true) {
         // Fetch only user's posts for the profile page
         posts = await getPosts(userID);
-    } else if (destination === "searchpage") {             // Fetch search posts
-        posts = await searchPosts();
     } else if (destination === "postpage") {        // Fetch the individual post
         posts = await getPost();
     } else {

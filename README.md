@@ -26,7 +26,7 @@ Developing Locally (for us. this might get complicated the more dependencies we 
 3. npm install express express-openid-connect --save
    # for auth0 compliance
 4. gcloud init
-5. npm i @google-cloud/datastore
+5. npm i @google-cloud/datastore @google-cloud/firestore
 6. gcloud config set project jammate-cs467
    # Configure gcloud for your project
 7. either<br>(command line) nodemon server.js <br> (visual studio code) start debugger.
