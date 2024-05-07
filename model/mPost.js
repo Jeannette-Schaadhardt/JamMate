@@ -23,7 +23,7 @@ function createPost(userId, nickname, content, file) {
       nickname: nickname,
       content: content,
       timestamp: dateTime,
-      likeCount: 0, // Initialize like count to zero
+      likeCount: 0, 
       fileName: null,
       fileData: null,
       fileType: null

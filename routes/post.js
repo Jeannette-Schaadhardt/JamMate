@@ -1,5 +1,4 @@
 const express = require('express');
-const { handleAuthenticationFlow } = require('../functions');
 const router = express.Router();
 const multer = require('multer');
 const storage = multer.memoryStorage()
@@ -27,21 +26,19 @@ router.post('/', upload.single('media'), async (req, res) => {
     }
 });
 
-router.delete('/:postId', async (req, res) => {
+router.delete('/delete-post/:postId', async (req, res) => {
     if (!req.oidc.isAuthenticated()) {
         return res.status(401).send('Not authenticated');
     }
-    const postId = req.params.postId;
-    const userId = req.oidc.user.sub; // User ID of the currently logged-in user
+    const postId = req.params.postId; // Extracting postId from the URL
+    const postKey = datastore.key(['Post', parseInt(postId, 10)]);
 
-    const postKey = datastore.key([POST_KIND, parseInt(postId)]);
     try {
         const [post] = await datastore.get(postKey);
         if (!post) {
             return res.status(404).send('Post not found');
         }
-        // Check if the logged-in user is the owner of the post
-        if (post.userId !== userId) {
+        if (post.userId !== req.oidc.user.sub) { // Checking ownership
             return res.status(403).send('Unauthorized to delete this post');
         }
         await datastore.delete(postKey);

@@ -61,6 +61,13 @@ document.getElementById('postForm').addEventListener('submit', function(event) {
     })
     .catch(error => console.error('Error:', error));
 });
+
+document.querySelector('#postForm textarea').addEventListener('keydown', function(event) {
+    if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault(); // Prevent default action (do not insert a newline)
+        document.getElementById('postForm').dispatchEvent(new Event('submit', { cancelable: true })); // Trigger form submission
+    }
+});
 </script>
 
 
