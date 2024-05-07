@@ -2,25 +2,25 @@ const express = require('express');
 const { handleAuthenticationFlow } = require('../functions');
 const router = express.Router();
 const multer = require('multer');
+const storage = multer.memoryStorage()
 const { createPost, getPost, getPosts, searchPosts } = require('../model/mPost.js');
 const { postUser } = require('../model/mUser.js');
 
-const upload = multer({ dest: 'uploads/' }); // Configure multer with a files destination
+const upload = multer({ storage: storage });
 
 router.post('/', upload.single('media'), async (req, res) => {
+    console.log("Received fields:", req.body);  // Log form fields to ensure data is coming in correctly
     if (!req.oidc.isAuthenticated()) {
         return res.status(401).json({error: 'Not authenticated'});
     }
-    const { content } = req.body;
-    const file = req.file;
-    const userId = req.oidc.user.sub;
-    const nickname = req.oidc.user.nickname;
     try {
+        const { content } = req.body;
+        const file = req.file;
+        const userId = req.oidc.user.sub;
+        const nickname = req.oidc.user.nickname;
         const post = await createPost(userId, nickname, content, file);
-        res.json({
-            ...post,
-            message: 'Post created successfully'
-        });
+        console.log("Post created:", post);  // Log the post data to be returned
+        res.json(post);
     } catch (err) {
         console.error('Error creating post:', err);
         res.status(500).send({error: 'Failed to create post'});

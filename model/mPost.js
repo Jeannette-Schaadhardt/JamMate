@@ -1,46 +1,66 @@
 // citation: https://cloud.google.com/nodejs/docs/reference/datastore/latest
 const { Datastore } = require("@google-cloud/datastore");
+const fs = require('fs');
 const datastore = new Datastore();
+const POST = "Post";
 
-const POST = "Post";  // Defining kind at the top for consistency
-
-// A helper function that attempts to get the ID of an imput item
-// and assign it to the new ID on the returned item
-// A code snippet from CS493
-function fromDatastore(item) {
+const fromDatastore = (item) => {
     try {
         item.id = item[datastore.KEY].id;
         return item;
     } catch {
         return -1;
     }
-  }
+};
 
 function createPost(userId, nickname, content, file) {
-    const postKey = datastore.key([POST]);
-    // Prepare data object including file information if available
-    const timestamp = new Date().getTime();
-    const dateTime = new Date(timestamp).toLocaleString();
+  const postKey = datastore.key([POST]);
+  const timestamp = new Date().getTime();
+  const dateTime = new Date(timestamp).toLocaleString();
 
-    const postData = {
+  const postData = {
       userId: userId,
       nickname: nickname,
       content: content,
       timestamp: dateTime,
-      likeCount: 0,
-      // Include file metadata if file is uploaded
-      fileName: file ? file.originalname : null,
-      filePath: file ? file.path : null,
-      fileType: file ? file.mimetype : null
-    };
+      likeCount: 0, // Initialize like count to zero
+      fileName: null,
+      fileData: null,
+      fileType: null
+  };
 
-    const postEntity = {
+  if (file) {
+      const fileBase64 = file.buffer.toString('base64');
+      postData.fileName = file.originalname;
+      postData.fileData = fileBase64;
+      postData.fileType = file.mimetype;
+  }
+
+  const postEntity = {
       key: postKey,
-      data: postData
-    };
+      data: [
+          { name: 'userId', value: postData.userId },
+          { name: 'nickname', value: postData.nickname },
+          { name: 'content', value: postData.content },
+          { name: 'timestamp', value: postData.timestamp },
+          { name: 'likeCount', value: postData.likeCount },
+          { name: 'fileName', value: postData.fileName, excludeFromIndexes: true },
+          { name: 'fileData', value: postData.fileData, excludeFromIndexes: true },
+          { name: 'fileType', value: postData.fileType, excludeFromIndexes: true }
+      ]
+  };
 
-    return datastore.save(postEntity).then(() => ({ id: postKey.id, ...postData }));
+  return datastore.save(postEntity).then(() => ({
+      id: postKey.id.toString(),
+      content: postData.content,
+      nickname: postData.nickname,
+      timestamp: postData.timestamp,
+      likeCount: postData.likeCount,
+      fileName: postData.fileName,
+      fileType: postData.fileType
+  }));
 }
+
 
 /*
 * getPost:

@@ -12,23 +12,24 @@ function fromDatastore(item) {
       item.id = item[datastore.KEY].id;
       return item;
   } catch {
-      return -1;
+      return null; // Changed from -1 to null for better error handling
   }
 }
 
 function getUser(user) {
-  const query = datastore.createQuery(USER);
+  if (!user || !user.user || !user.user.sub) {
+      console.error("Invalid user data provided.");
+      return Promise.reject(new Error("Invalid user data provided."));
+  }
 
+  const query = datastore.createQuery(USER);
   return datastore.runQuery(query).then((users) => {
-    // userCheck is an array that is populated with a JS object (a User entity), where the object matches
-    // an existing User or no User, using the 'sub' property.
-    const userCheck = users[0].map(fromDatastore).filter(filteredUser => filteredUser.user.sub === user.user.sub);
-    // if (userCheck.length === 0) {
-    //   console.log("user does not exist. creating one now");
-    // } else {
-    //   console.log("user exists. do not create one");
-    //   }
-    return userCheck;
+      console.log("Users from Datastore:", users[0]); // Log the raw user data
+      const userCheck = users[0].map(fromDatastore).filter(filteredUser => {
+          // Ensure `filteredUser` and `filteredUser.user` are defined
+          return filteredUser && filteredUser.user && filteredUser.user.sub === user.user.sub;
+      });
+      return userCheck;
   });
 }
 

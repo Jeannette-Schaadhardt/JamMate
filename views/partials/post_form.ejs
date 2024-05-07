@@ -11,7 +11,6 @@
         <button type="submit" class="btn btn-link btn-lg" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark">
             Post
         </button>
-          
     </form>
 </div>
 
@@ -19,64 +18,49 @@
     Create Post
 </button>
   
-
 <!-- Posts Container -->
 <div id="posts">
-<!-- Existing posts are displayed here -->
+    <!-- Existing posts are displayed here -->
 </div>
 
-
 <script>
-    document.getElementById('fileButton').addEventListener('click', function() {
-        document.getElementById('fileInput').click();
-    });
-
-    document.getElementById('fileInput').addEventListener('change', function() {
-    var fileLabel = document.getElementById('fileName');
-    var fileName = this.files.length ? this.files[0].name : 'No file chosen';
-    fileLabel.textContent = fileName; // Update the text content with the file name
+document.getElementById('fileButton').addEventListener('click', function() {
+    document.getElementById('fileInput').click();
 });
-    
-    $(document).ready(function() {
-        $('#postForm').on('submit', function(e) {
-            e.preventDefault();
-            var formData = new FormData(this);
-            console.log(Array.from(formData)); // Debugging: Verify formData contents
-            $.ajax({
-                url: 'post',
-                type: 'POST',
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function(data) {
-                    var newPost = '<div class="post" id="post-' + data.id + '">' +
-                                  '<p>User: <%= user.nickname %>, PostId: '+data.id+', Content: "' +
-                                  data.content + '", Posted at (' + new Date(data.timestamp).toLocaleString() + ')</p>' +
-                                  '<button onclick="deletePost(\'' + data.id + '\')">Delete Post</button>';
-                    if (data.filePath) {
-                        if (data.fileType.startsWith('video')) {
-                            newPost += '<video controls><source src="' + data.filePath + '" type="' + data.fileType + '"></video>';
-                        } else if (data.fileType.startsWith('audio')) {
-                            newPost += '<audio controls><source src="' + data.filePath + '" type="' + data.fileType + '"></audio>';
-                        }
-                    }
-                    newPost += '</div>';
-                    $('#posts').prepend(newPost);
-                    document.getElementById('postForm').reset(); // Reset the form after submission
-                    document.getElementById('postCreationForm').style.display='none'; // Hide the form again
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error during post creation:', error);
-                }
-            });
-        });
-        $('textarea[name="content"]').keydown(function(e) {
-        // Check if Enter is pressed without the Shift key
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault(); // Prevent default action (inserting newline)
-            $('#postForm').submit(); // Trigger form submission
+
+document.getElementById('fileInput').addEventListener('change', function() {
+    var fileLabel = document.getElementById('fileName');
+    var file = this.files[0];
+    var fileName = file ? file.name : 'No file chosen';
+    fileLabel.textContent = fileName; // Update the text content with the file name
+    console.log("File selected:", fileName);
+});
+
+document.getElementById('postForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    var formData = new FormData(this);
+
+    fetch('/post', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (response.ok) return response.json();
+        else throw new Error('Failed to fetch');
+    })
+    .then(data => {
+        console.log("Post success:", data);
+        if (data.content) {  // Check if content is defined
+            var newPostHTML = `<div>New Post: ${data.content}</div>`;
+            document.getElementById('posts').innerHTML += newPostHTML;
+        } else {
+            console.error('Content undefined in response:', data);
         }
-    });
-    });
-    </script>
+        document.getElementById('postForm').reset(); // Reset the form after submission
+        document.getElementById('postCreationForm').style.display = 'none'; // Hide the form again
+    })
+    .catch(error => console.error('Error:', error));
+});
+</script>
+
 
