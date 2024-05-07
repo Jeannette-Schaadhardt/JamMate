@@ -31,7 +31,10 @@
                 <tr>
                     <%- include('partials/post', {post_data: post}) %>
                     <td>
-                        <button id="deleteButton-<%= post.id %>" onclick="deletePost(<%= post.id %>)">Delete Post</button>
+                      <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark" onclick="deletePost(<%= post.id %>)" id="deleteButton-<%= post.id %>">
+                        Delete Post
+                      </button>
+                      
                     </td>
                 </tr>
             </div>

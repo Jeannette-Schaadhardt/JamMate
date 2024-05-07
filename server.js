@@ -15,7 +15,7 @@ const postRouter = require('./routes/post.js');  // router for Post
 
 // Configure Datastore
 const datastore = new Datastore({
-    projectId: 'jammate-cs467', // Replace with your actual project ID
+    projectId: 'jammate-cs467',
 });
 
 const POST_KIND = 'Post'; // Define a kind for the Datastore entries
