@@ -1,4 +1,3 @@
-// citation: https://cloud.google.com/nodejs/docs/reference/datastore/latest
 const { Firestore } = require("@google-cloud/firestore");
 const firestore = new Firestore();
 firestore.settings({ ignoreUndefinedProperties: true });

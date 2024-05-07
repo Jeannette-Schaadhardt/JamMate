@@ -29,7 +29,8 @@
             </tr>
         </thead>
     <tbody>
-            <% for(let i = 0; i < posts.length; i++) { %>
+            <h3>Top 10 Posts</h3>
+            <% for(let i = 0; i < 9; i++) { %>
                 <tr>
                 <%- include('partials/post', {post_data: posts[i]}) %>
                 </tr>
