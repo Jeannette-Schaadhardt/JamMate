@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const { auth } = require('express-openid-connect');
 const session = require('express-session');
-const { Datastore } = require("@google-cloud/datastore");
+const { Firestore } = require("@google-cloud/firestore");
 const { handleAuthenticationFlow, getSecret, getConfig } = require('./functions.js');
 
 const app = express();
@@ -13,8 +13,8 @@ const PORT = process.env.PORT || 9001;
 const userRouter = require('./routes/user.js');  // router for User
 const postRouter = require('./routes/post.js');  // router for Post
 const searchRouter = require('./routes/search.js');
-// Configure Datastore
-const datastore = new Datastore({
+// Configure Firestore
+const firestore = new Firestore({
     projectId: 'jammate-cs467', // Replace with your actual project ID
 });
 
