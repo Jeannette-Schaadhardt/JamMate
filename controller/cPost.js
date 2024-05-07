@@ -37,5 +37,3 @@ router.post('/create-post', jwt, upload.single('media'), async (req, res) => {
 router.get('/', (req, res) => {
     res.send('youre in /post');
 })
-
-export default router;

@@ -1,11 +1,38 @@
 <!-- Multimedia Post Form -->
 <div style="display:none;" id="postCreationForm">
     <form id="postForm" enctype="multipart/form-data">
-        <textarea name="content" rows="4" cols="50" placeholder="Write something or share a clip..."></textarea><br>
+        <textarea name="postText" rows="4" cols="50" placeholder="Write something or share a clip..."></textarea><br>
         <input type="file" name="media" accept="video/*,audio/*"><br>
+        <label for="instrument">Instrument:</label>
+        <input list="instrumentList" name="instrument">
+        <br>
+        <label for="genre">Genre:</label>
+        <input list="genreList" name="genre">
+        <br>
+        <label for="skillLevel">Skill Level:</label>
+        <select class="form-select" name="skill_level">
+            <option value="" selected>Select skill level</option>
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+        </select>
         <button type="submit">Post</button>
     </form>
 </div>
+
+<datalist id="instrumentList">
+    <option value="Guitar">
+    <option value="Piano">
+    <option value="Violin">
+    <!-- Add more instrument options as needed -->
+</datalist>
+
+<datalist id="genreList">
+    <option value="Rock">
+    <option value="Jazz">
+    <option value="Classical">
+    <!-- Add more genre options as needed -->
+</datalist>
 
 <button type="button" onclick="document.getElementById('postCreationForm').style.display='block';">Create Post</button>
 
@@ -28,10 +55,10 @@ $(document).ready(function() {
             data: formData,
             success: function(data) {
                 // Update the posts view
-                var newPost = '<div class="post" id="post-' + data.id + '">' +
-                    '<p>User: <%= user.nickname %>, PostId: '+data.id+', Content: "' +
+                var newPost = '<div class="post" id="post-' + data.postId + '">' +
+                    '<p>User: <%= user.nickname %>, PostId: '+data.postId+', Content: "' +
                     data.content + '", Posted at (' + new Date(data.timestamp).toLocaleString() + ')</p>' +
-                    '<button onclick="deletePost(\'' + data.id + '\')">Delete Post</button>';
+                    '<button onclick="deletePost(\'' + data.postId + '\')">Delete Post' + data.postId+' </button>';
                 if (data.filePath) {
                     if (data.fileType.startsWith('video')) {
                         newPost += '<video controls><source src="' + data.filePath + '" type="' + data.fileType + '"></video>';
