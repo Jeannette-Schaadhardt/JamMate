@@ -122,7 +122,14 @@ try {
 }
 async function getPost(postId) {
     const query = firestore.collection(COLLECTION_NAME).doc(postId);
-    return post = await query.get();
+    const post = await query.get();
+    const postData = post.data();
+    if (postData) {
+        postData.postId = post.id;
+        return postData;
+    } else {
+        return null; // Or handle the case where no document exists for the given postId
+    }
 }
 async function deletePost(postId) {
     const query = firestore.collection(COLLECTION_NAME).doc(postId);
@@ -130,6 +137,14 @@ async function deletePost(postId) {
     return;
 }
 
+async function deleteAllPosts(nickname) {
+    const querySnapshot = await firestore.collection(COLLECTION_NAME)
+                    .where("nickname", "==", nickname).get();
+    querySnapshot.forEach(doc=> {
+        doc.ref.delete();
+    });
+}
+
 module.exports = {
-  createPost, getPosts, deletePost, getPost
+  createPost, getPosts, deletePost, deleteAllPosts, getPost
 }

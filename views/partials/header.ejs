@@ -64,4 +64,18 @@
         });
     }
 }
+function deleteAllPosts(userId) {
+    if (confirm('Are you sure you want to delete this post?')) {
+        $.ajax({
+            url: '/post/all/' + userId,
+            type: 'DELETE',
+            success: function(result) {
+
+            },
+            error: function(xhr, status, error) {
+                alert("Error deleting post: " + xhr.responseText);
+            }
+        });
+    }
+}
 </script>

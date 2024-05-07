@@ -16,6 +16,7 @@
     </button>
     <p>Contact me for gigs at <%= user.email %></p>
       <%- include('partials/post_form', {user: user}) %>
+      <button onclick="deleteAllPosts('<%= user.nickname %>')">Delete all of <%= user.nickname%>'s posts</button>
 
 <table class="table table-hover table-forum text-center">
     <thead>
@@ -31,7 +32,7 @@
                 <tr>
                     <%- include('partials/post', {post_data: post}) %>
                     <td>
-                        <button id="deleteButton-<%= post.postId %>" onclick="deletePost(<%= post.postId %>)">Delete Post <%= post.postId %></button>
+                        <button id="deleteButton-<%= post.postId %>" onclick="deletePost('<%= post.postId %>')">Delete Post <%= post.postId %></button>
                     </td>
                 </tr>
             </div>

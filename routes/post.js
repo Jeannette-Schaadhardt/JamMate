@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const { createPost, getPost, deletePost } = require('../model/mPost.js');
-
+const { createPost, getPost, deletePost, deleteAllPosts } = require('../model/mPost.js');
+const { getUsers} = require('../model/mUser.js');
 const upload = multer({ dest: 'uploads/' }); // Configure multer with a files destination
 
 router.post('/', upload.single('media'), async (req, res) => {
@@ -41,6 +41,27 @@ router.delete('/:postId', async (req, res) => {
             return res.status(403).send('Unauthorized to delete this post');
         }
         await deletePost(postId);
+        res.status(200).send({ message: 'Post deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting post:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+router.delete('/all/:userId', async (req, res) => {
+    if (!req.oidc.isAuthenticated()) {
+        return res.status(401).send('Not authenticated');
+    }
+    const targetUserId = req.params.userId; // UserId of the posts to delete.
+    const userId = req.oidc.user.sub; // User ID of the currently logged-in user
+
+    try {
+        let userEntities = await getUsers(null, null, userId);
+        // Check if the logged-in user is the owner of the post
+        if (targetUserId !== userEntities[0].user.nickname) {
+            return res.status(403).send('Unauthorized to delete posts');
+        }
+        await deleteAllPosts(userEntities[0].user.nickname);
         res.status(200).send({ message: 'Post deleted successfully' });
     } catch (error) {
         console.error('Error deleting post:', error);
