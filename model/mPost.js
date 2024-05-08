@@ -1,64 +1,43 @@
-// citation: https://cloud.google.com/nodejs/docs/reference/datastore/latest
-const { Datastore } = require("@google-cloud/datastore");
-const fs = require('fs');
-const datastore = new Datastore();
-const POST = "Post";
+const { Firestore } = require("@google-cloud/firestore");
+const firestore = new Firestore();
+firestore.settings({ ignoreUndefinedProperties: true });
+const COLLECTION_NAME = "Post";  // Defining kind at the top for consistency
 
-const fromDatastore = (item) => {
-    try {
-        item.id = item[datastore.KEY].id;
-        return item;
-    } catch {
-        return -1;
-    }
-};
+async function createPost(userId, nickname, content, file) {
+  try {
+      const timestamp = new Date().getTime();
+      const dateTime = new Date(timestamp).toLocaleString();
 
-function createPost(userId, nickname, content, file) {
-  const postKey = datastore.key([POST]);
-  const timestamp = new Date().getTime();
-  const dateTime = new Date(timestamp).toLocaleString();
+      const postData = {
+          userId: userId,
+          nickname: nickname,
+          content: content,
+          timestamp: dateTime,
+          likeCount: 0,
+          fileName: null,
+          fileData: null,
+          fileType: null
+      };
 
-  const postData = {
-      userId: userId,
-      nickname: nickname,
-      content: content,
-      timestamp: dateTime,
-      likeCount: 0, 
-      fileName: null,
-      fileData: null,
-      fileType: null
-  };
+      if (file) {
+          const fileBase64 = file.buffer.toString('base64');
+          postData.fileName = file.originalname;
+          postData.fileData = fileBase64;
+          postData.fileType = file.mimetype;
+      }
 
-  if (file) {
-      const fileBase64 = file.buffer.toString('base64');
-      postData.fileName = file.originalname;
-      postData.fileData = fileBase64;
-      postData.fileType = file.mimetype;
+      // Create a new document in the Firestore collection
+      const postRef = await firestore.collection(COLLECTION_NAME).add(postData);
+      console.log('Document successfully written to Firestore with ID:', postRef.id);
+
+      // Return the new post's data, including the Firestore-generated ID
+      return {
+          id: postRef.id,
+          ...postData
+      };
+  } catch (error) {
+      console.error('Error creating post:', error);
   }
-
-  const postEntity = {
-      key: postKey,
-      data: [
-          { name: 'userId', value: postData.userId },
-          { name: 'nickname', value: postData.nickname },
-          { name: 'content', value: postData.content },
-          { name: 'timestamp', value: postData.timestamp },
-          { name: 'likeCount', value: postData.likeCount },
-          { name: 'fileName', value: postData.fileName, excludeFromIndexes: true },
-          { name: 'fileData', value: postData.fileData, excludeFromIndexes: true },
-          { name: 'fileType', value: postData.fileType, excludeFromIndexes: true }
-      ]
-  };
-
-  return datastore.save(postEntity).then(() => ({
-      id: postKey.id.toString(),
-      content: postData.content,
-      nickname: postData.nickname,
-      timestamp: postData.timestamp,
-      likeCount: postData.likeCount,
-      fileName: postData.fileName,
-      fileType: postData.fileType
-  }));
 }
 
 
@@ -74,34 +53,119 @@ async function getPost(postId) {
       return posts[0].map(fromDatastore);
   });
 }
-
-async function getPosts(userId = null) {
-    const query = datastore.createQuery(POST);
-    return datastore.runQuery(query).then((results) => {
-      const posts = results[0];
-      // Filter posts if userId is provided
-      if (userId) {
-        return posts.filter(post => post.userId === userId).map(fromDatastore);
-      } else {
-        return posts.map(fromDatastore);
-      }
-    });
-  }
-
 /*
-* searchPosts:
+* getPosts:
 *
-* TODO: takes a term, and ideally filters as well that can be applied after the initial search when you refresh the search.
-* It uses these to run a query on the datastore and attempts to sort based on relevance to the search term or the chosen sort method.
-* @param[in] searchTerm
+* @param[in] postId - Optional, used to get a single post.
+* @param[in] userId - Optional, used for getting posts from a specific user.
+* @param[in] instrument - Optional, used for displaying only posts of a certain instrument.
+* @param[in] lat - Optional, used for displaying posts located near given lat
+* @param[in] lon - Optional, used for displaying posts located near given lon
+* @param[in] range - Optional, used for displaying posts within range of lat, lon.
 */
-async function searchPosts(searchTerm) {
-    const query = datastore.createQuery(POST);
-    return datastore.runQuery(query).then((posts) => {
-        return posts[0].map(fromDatastore);
+async function getPosts(userId = null, postId = null,
+    instrument = null, genre=null, descriptor=null,
+    lat = null, lon = null, range = null,
+    start_date = null, end_date = null) {
+try {
+    // Query Firestore to get all posts
+    let query = firestore.collection(COLLECTION_NAME);
+
+    // If userId is provided, filter posts based on userId
+    if (postId) {
+        query = query.where('postId', '==', postId);
+
+    } else {
+        if (userId) {
+            query = query.where('userId', '==', userId);
+        }
+        if (instrument) {
+            query = query.where('instrument', '==', instrument)
+        }
+        if (genre) {
+            query = query.where('genre', '==', genre);
+        }
+        if (lat && lon && range) {
+            const latRadians = centerLat * Math.PI / 180;
+            const latDegreeOfOneKm = 1 / 111.32; // Approximately 111.32 kilometers per degree of latitude
+            const latRange = rangeInKm * latDegreeOfOneKm;
+            const minLat = centerLat - latRange;
+            const maxLat = centerLat + latRange;
+
+            // Calculate longitude boundaries
+            const lonDegreeOfOneKm = 1 / (111.32 * Math.cos(latRadians)); // Approximately 111.32 kilometers per degree of longitude at equator
+            const lonRange = rangeInKm * lonDegreeOfOneKm;
+            const minLon = centerLon - lonRange;
+            const maxLon = centerLon + lonRange;
+            query = query
+            .where('location', '>=', new firestore.GeoPoint(minLat, minLon))
+            .where('location', '<=', new firestore.GeoPoint(maxLat, maxLon));
+        }
+        if (start_date) {
+            query = query.where('timestamp', '>=',
+            start_date);
+        }
+        if (end_date) {
+            query = query.where('timestamp', '<=',
+            end_date);
+        }
+    }
+
+    // Execute the query
+    const querySnapshot = await query.get();
+
+
+    // Array to hold the retrieved posts
+    const posts = [];
+
+    // Iterate through the documents returned by the query
+    querySnapshot.forEach(doc => {
+        // Convert each document data to a JavaScript object and push it to the posts array
+        const postData = doc.data();
+        postData.postId = doc.id;
+    posts.push(postData);
+    });
+
+    // Apply additional filter for descriptor inclusion
+    if (descriptor) {
+        // Filter posts to include only those where the descriptor is found in the description
+        const filteredPosts = posts.filter(post => post.content.includes(descriptor));
+        return filteredPosts;
+        }
+
+    // Return the posts array
+    return posts;
+} catch (error) {
+    // Handle any errors
+    console.error('Error fetching posts:', error);
+    throw error; // Throw the error for the caller to handle
+}
+}
+async function getPost(postId) {
+    const query = firestore.collection(COLLECTION_NAME).doc(postId);
+    const post = await query.get();
+    const postData = post.data();
+    if (postData) {
+        postData.postId = post.id;
+        return postData;
+    } else {
+        return null; // Or handle the case where no document exists for the given postId
+    }
+}
+async function deletePost(postId) {
+    const query = firestore.collection(COLLECTION_NAME).doc(postId);
+    await query.delete();
+    return;
+}
+
+async function deleteAllPosts(nickname) {
+    const querySnapshot = await firestore.collection(COLLECTION_NAME)
+                    .where("nickname", "==", nickname).get();
+    querySnapshot.forEach(doc=> {
+        doc.ref.delete();
     });
 }
 
 module.exports = {
-  fromDatastore, createPost, getPost, getPosts, searchPosts
+  createPost, getPosts, deletePost, deleteAllPosts, getPost
 }

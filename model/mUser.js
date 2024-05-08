@@ -1,58 +1,59 @@
-// citation: https://cloud.google.com/nodejs/docs/reference/datastore/latest
-const { Datastore } = require("@google-cloud/datastore");
-const datastore = new Datastore();
-const USER = "User";
-const POST = "Post";  // Defining kind at the top for consistency
+const { Firestore } = require("@google-cloud/firestore");
+const firestore = new Firestore();
+const COLLECTION_NAME = "User";
 
-// A helper function that attempts to get the ID of an imput item
-// and assign it to the new ID on the returned item
-// A code snippet from CS493
-function fromDatastore(item) {
-  try {
-      item.id = item[datastore.KEY].id;
-      return item;
-  } catch {
-      return null; // Changed from -1 to null for better error handling
-  }
-}
+async function getUsers(userEntity = null, username=null, userId=null) {
+    try {
+      // Query Firestore to find the user
+      let query = firestore.collection(COLLECTION_NAME);
+      if (userEntity != null) {
+        query = query.where('user.sub', '==', userEntity.user.sub);
+      } else if (username != null) {
+        query = query.where('user.name', '==', username);
+      } else if (userId != null) {
+        query = query.where('user.sub', '==', userId);
+      }
+      let query_result = await query.get();
 
-function getUser(user) {
-  if (!user || !user.user || !user.user.sub) {
-      console.error("Invalid user data provided.");
-      return Promise.reject(new Error("Invalid user data provided."));
-  }
+      // Array to hold found users
+      const users = [];
 
-  const query = datastore.createQuery(USER);
-  return datastore.runQuery(query).then((users) => {
-      console.log("Users from Datastore:", users[0]); // Log the raw user data
-      const userCheck = users[0].map(fromDatastore).filter(filteredUser => {
-          // Ensure `filteredUser` and `filteredUser.user` are defined
-          return filteredUser && filteredUser.user && filteredUser.user.sub === user.user.sub;
+      // Iterate through the documents returned by the query
+      query_result.forEach(doc => {
+        // Convert each document data to a JavaScript object and push it to the userCheck array
+        users.push(doc.data());
       });
-      return userCheck;
-  });
-}
+
+      // Return the users array
+      return users;
+    } catch (error) {
+      // Handle any errors
+      console.error('Error fetching user:', error);
+      throw error; // Throw the error for the caller to handle
+    }
+  }
 
 // https://auth0.com/docs/secure/tokens/json-web-tokens
-function postUser(user) {
-  // The datastore key associated with a USER entity
-  const key = datastore.key(USER);
-
-  // Check if User already exists in the database
-  // If User exists, return the User without saving in database
-  return getUser(user).then((userCheck) => {
-
-    if (userCheck.length === 0) {
-      // Save the new user in datastore, and store in this var
-      return datastore.save({ "key": key, "data": user }).then((res) => {
-        return user.user;
-      });
-    } else {
-      return userCheck[0].user;
+async function postUser(userEntity) {
+    const query = firestore.collection(COLLECTION_NAME)
+    try {
+        const userExists = await query.
+        where('user.email', '==', userEntity.user.email).
+        get();
+        if (userExists.empty) {
+            await query.add(userEntity);
+            return userEntity.user;
+        } else {
+            const existingUser = userExists.docs[0].data();
+            return existingUser.user;
+        }
+    } catch (error) {
+        console.error('Error posting user:'.error);
+        throw error;
     }
-  })
 }
 
 module.exports = {
-  fromDatastore, getUser, postUser
+  getUsers, postUser
 }
+
