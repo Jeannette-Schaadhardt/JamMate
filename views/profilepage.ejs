@@ -9,10 +9,10 @@
 </head>
 <body class="container">
     <%- include('partials/header', {user: loggedIn}) %>
-    <h1><%= user.nickname %>'s Profile</h1>
+    <<h1><%= user.nickname %>'s Profile</h1>
     <p> <%= user.description %></p>
     <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
-      <a class="nav-link" href="/user/edit">Edit Your Bio</a>
+      <a href="/user/edit">Edit Your Bio</a>
     </button>
     <p>Contact me for gigs at <%= user.email %></p>
       <%- include('partials/post_form', {user: user}) %>
@@ -32,22 +32,17 @@
                 <tr>
                     <%- include('partials/post', {post_data: post}) %>
                     <td>
-                        <button id="deleteButton-<%= post.postId %>" onclick="deletePost('<%= post.postId %>')">Delete Post <%= post.postId %></button>
+                      <button type="button" data-mdb-button-init data-mdb-ripple-init
+                      class="btn btn-link btn-lg" data-mdb-ripple-color="dark"
+                      id="deleteButton-<%= post.postId %>" onclick="deletePost('<%= post.postId %>')">
+                      Delete Post <%= post.postId %></button>
+                      </button>
                     </td>
                 </tr>
             </div>
           <% }); %>
 </tbody>
 </table>
-<script>
-function handleEnter(e) {
-  if (e.keyCode === 13 && !e.shiftKey) { // Check if Enter is pressed without the Shift key
-  e.preventDefault(); // Prevent default action
-  submitPost(); // Call submitPost function
-  }
-}
-
-</script>
 </body>
 <footer>
     <%- include('partials/footer') %>

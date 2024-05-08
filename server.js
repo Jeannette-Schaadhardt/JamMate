@@ -12,6 +12,7 @@ app.set('view engine', 'ejs');
 const PORT = process.env.PORT || 9001;
 const userRouter = require('./routes/user.js');  // router for User
 const postRouter = require('./routes/post.js');  // router for Post
+
 const searchRouter = require('./routes/search.js');
 // Configure Firestore
 const firestore = new Firestore({

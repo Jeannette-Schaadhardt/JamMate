@@ -1,11 +1,9 @@
 
 <td scope="row" class="text-nowrap">
-    <% if (post_data.filePath) { %>
-        <% if (post_data.fileType.startsWith('video')) { %>
-            <video controls><source src=<%= post_data.filePath %> type=<%= post_data.fileType %>></video>
-        <% } else if (post_data.fileType.startsWith('audio')) { %>
-            <audio controls><source src=<%= post_data.filePath %> type=<%= post_data.fileType %>></audio>
-        <% } %>
+    <% if (post_data.fileType && post_data.fileType.startsWith('audio')) { %>
+        <audio controls>
+            <source src="data:<%= post_data.fileType %>;base64,<%= post_data.fileData %>" type="<%= post_data.fileType %>">
+        </audio>
     <% } %>
 </td>
 <td>

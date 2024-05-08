@@ -3,34 +3,45 @@ const firestore = new Firestore();
 firestore.settings({ ignoreUndefinedProperties: true });
 const COLLECTION_NAME = "Post";  // Defining kind at the top for consistency
 
-async function createPost(userId, postText, file, userName,
-     instrument, genre, skillLevel, location) {
+async function createPost(userId, content, file, nickname, instrument, genre, skillLevel, location) {
     try {
-        // Prepare data object including file information if available
         const timestamp = new Date().getTime();
-
         const postData = {
-        userId: userId,
-        content: postText,
-        instrument: instrument,
-        genre: genre,
-        nickname: userName,
-        skillLevel: skillLevel,
-        timestamp: timestamp,
-        location: location,
-        likeCount: 0,
-        // Include file metadata if file is uploaded
-        fileName: file ? file.originalname : null,
-        filePath: file ? file.path : null,
-        fileType: file ? file.mimetype : null
+            userId,
+            content,
+            instrument,
+            genre,
+            nickname,
+            skillLevel,
+            timestamp,
+            location,
+            likeCount: 0,
+            fileName: null,
+            fileData: null,
+            fileType: null
         };
-        const postQuery = await firestore.collection(COLLECTION_NAME).
-            add(postData);
-        return {postId: postQuery.id, ...postData };
-    }catch (error) {
+
+        if (file) {
+            const fileBase64 = file.buffer.toString('base64');
+            postData.fileName = file.originalname;
+            postData.fileData = fileBase64;
+            postData.fileType = file.mimetype;
+        }
+
+        const postDocRef = firestore.collection(COLLECTION_NAME).doc();
+         return await postDocRef.set(postData).then(() => {
+            console.log('Document successfully written to Firestore.');
+            delete postData.fileData;
+            return {
+              postData
+            };
+          })
+
+    } catch (error) {
+        // Handle error
         console.error('Error creating post:', error);
     }
-};
+}
 
 /*
 * getPosts:

@@ -56,3 +56,4 @@ async function postUser(userEntity) {
 module.exports = {
   getUsers, postUser
 }
+
