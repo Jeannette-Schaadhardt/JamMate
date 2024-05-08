@@ -22,7 +22,15 @@
         <% } %>
 
         <form class="d-flex" action="/search" method="GET" role="search">
-            <input class="form-control me-2" type="search" name="term" placeholder="Search" aria-label="Search">
+            <div class="input-group">
+                <input class="form-control me-2" type="search" name="term" placeholder="Search" aria-label="Search">
+                <select class="form-select" name="search_type">
+                    <option value="instrument">Instrument</option>
+                    <option value="user">User</option>
+                    <option value="genre">Genre</option>
+                    <option value="descriptor">Post</option>
+                </select>
+            </div>
             <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
       </div>
@@ -33,7 +41,7 @@
     function deletePost(postId) {
     if (confirm('Are you sure you want to delete this post?')) {
         $.ajax({
-            url: '/delete-post/' + postId,
+            url: '/post/' + postId,
             type: 'DELETE',
             success: function(result) {
                 var buttonElement = document.getElementById('deleteButton-'+postId);
@@ -49,6 +57,20 @@
                     console.error("post not found: post-" + postId);
                 }
                 $('#post-' + postId).remove();
+            },
+            error: function(xhr, status, error) {
+                alert("Error deleting post: " + xhr.responseText);
+            }
+        });
+    }
+}
+function deleteAllPosts(userId) {
+    if (confirm('Are you sure you want to delete this post?')) {
+        $.ajax({
+            url: '/post/all/' + userId,
+            type: 'DELETE',
+            success: function(result) {
+
             },
             error: function(xhr, status, error) {
                 alert("Error deleting post: " + xhr.responseText);

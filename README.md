@@ -21,12 +21,12 @@ Create a review system allowing other users to drop comments Allow search functi
 Developing Locally (for us. this might get complicated the more dependencies we include, so we will expand more for our sake.) <br>
 
 1. npm install
-2. npm i nodemon express ejs express-session multer bootstrap-icons
+2. npm i nodemon express ejs express-session multer bootstrap-icons express-jwt jwks-rsa
    # nodemon - for auto server restart after a change is detected
 3. npm install express express-openid-connect --save
    # for auth0 compliance
 4. gcloud init
-5. npm i @google-cloud/datastore
+5. npm i @google-cloud/firestore
 6. gcloud config set project jammate-cs467
    # Configure gcloud for your project
 7. either<br>(command line) nodemon server.js <br> (visual studio code) start debugger.

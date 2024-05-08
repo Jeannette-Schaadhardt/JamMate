@@ -40,7 +40,6 @@ async function createPost(userId, nickname, content, file) {
   }
 }
 
-
 /*
 * getPost:
 *
@@ -113,7 +112,6 @@ try {
 
     // Execute the query
     const querySnapshot = await query.get();
-
 
     // Array to hold the retrieved posts
     const posts = [];

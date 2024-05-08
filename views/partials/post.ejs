@@ -19,9 +19,13 @@
         </a>
     </div>
 
-    <span class="badge bg-secondary mx-1">type 1</span><span
-        class="badge bg-primary mx-1">type 2</span><span class="badge bg-warning mx-1">type 3</span>
-    <span><%= post_data.timestamp %></span>
+    <span class="badge bg-secondary mx-1"><%= post_data.instrument %></span>
+    <span class="badge bg-primary mx-1"><%= post_data.genre%></span>
+        <span class="badge bg-warning mx-1"><%= post_data.skill_level%></span>
+    <span>
+        <% const localDateTime = new Date(post_data.timestamp).toLocaleString(); %>
+        <%= localDateTime %>
+    </span>
     </div>
 </td>
 <td>

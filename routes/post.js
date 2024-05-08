@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
+
 const storage = multer.memoryStorage()
 const { postUser } = require('../model/mUser.js');
 const { createPost, getPost, deletePost, deleteAllPosts } = require('../model/mPost.js');
@@ -8,12 +9,12 @@ const { getUsers} = require('../model/mUser.js');
 
 const upload = multer({ storage: storage });
 
-
 router.post('/', upload.single('media'), async (req, res) => {
     console.log("Received fields:", req.body);  // Log form fields to ensure data is coming in correctly
     if (!req.oidc.isAuthenticated()) {
         return res.status(401).json({error: 'Not authenticated'});
     }
+
     try {
         const { content } = req.body;
         const file = req.file;
