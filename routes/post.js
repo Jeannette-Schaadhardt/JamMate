@@ -14,28 +14,23 @@ router.post('/', upload.single('media'), async (req, res) => {
     if (!req.oidc.isAuthenticated()) {
         return res.status(401).json({error: 'Not authenticated'});
     }
-
+    const q = req.body;
+    const oidc = req.oidc.user;
     try {
-        const { content } = req.body;
-        const file = req.file;
-        const userId = req.oidc.user.sub;
-        const nickname = req.oidc.user.nickname;
-        const post = await createPost(userId, nickname, content, file);
-        console.log("Post created:", post);  // Log the post data to be returned
+        const post = await createPost(oidc.sub, q.postText, req.file,
+            oidc.nickname, q.instrument, q.genre, q.skillLevel, oidc.location);
         res.json(post);
-
     } catch (err) {
         console.error('Error creating post:', err);
         res.status(500).send({error: 'Failed to create post'});
     }
 });
 
-router.delete('/delete-post/:postId', async (req, res) => {
+router.delete('/:postId', async (req, res) => {
     if (!req.oidc.isAuthenticated()) {
         return res.status(401).send('Not authenticated');
     }
     const postId = req.params.postId; // Extracting postId from the URL
-    const postKey = datastore.key(['Post', parseInt(postId, 10)]);
 
     try {
         const post = await getPost(postId);

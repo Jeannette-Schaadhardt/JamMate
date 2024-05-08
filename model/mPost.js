@@ -3,55 +3,46 @@ const firestore = new Firestore();
 firestore.settings({ ignoreUndefinedProperties: true });
 const COLLECTION_NAME = "Post";  // Defining kind at the top for consistency
 
-async function createPost(userId, nickname, content, file) {
-  try {
-      const timestamp = new Date().getTime();
-      const dateTime = new Date(timestamp).toLocaleString();
+async function createPost(userId, content, file, nickname, instrument, genre, skillLevel, location) {
+    try {
+        const timestamp = new Date().getTime();
+        const postData = {
+            userId,
+            content,
+            instrument,
+            genre,
+            nickname,
+            skillLevel,
+            timestamp,
+            location,
+            likeCount: 0,
+            fileName: null,
+            fileData: null,
+            fileType: null
+        };
 
-      const postData = {
-          userId: userId,
-          nickname: nickname,
-          content: content,
-          timestamp: dateTime,
-          likeCount: 0,
-          fileName: null,
-          fileData: null,
-          fileType: null
-      };
+        if (file) {
+            const fileBase64 = file.buffer.toString('base64');
+            postData.fileName = file.originalname;
+            postData.fileData = fileBase64;
+            postData.fileType = file.mimetype;
+        }
 
-      if (file) {
-          const fileBase64 = file.buffer.toString('base64');
-          postData.fileName = file.originalname;
-          postData.fileData = fileBase64;
-          postData.fileType = file.mimetype;
-      }
+        const postDocRef = firestore.collection(COLLECTION_NAME).doc();
+         return await postDocRef.set(postData).then(() => {
+            console.log('Document successfully written to Firestore.');
+            delete postData.fileData;
+            return {
+              postData
+            };
+          })
 
-      // Create a new document in the Firestore collection
-      const postRef = await firestore.collection(COLLECTION_NAME).add(postData);
-      console.log('Document successfully written to Firestore with ID:', postRef.id);
-
-      // Return the new post's data, including the Firestore-generated ID
-      return {
-          id: postRef.id,
-          ...postData
-      };
-  } catch (error) {
-      console.error('Error creating post:', error);
-  }
+    } catch (error) {
+        // Handle error
+        console.error('Error creating post:', error);
+    }
 }
 
-/*
-* getPost:
-*
-* TODO: uses a postId to be used when building and displaying an individual post. The use case is for sharing a link to a post.
-* @param[in] postId
-*/
-async function getPost(postId) {
-  const query = datastore.createQuery(POST);
-  return datastore.runQuery(query).then((posts) => {
-      return posts[0].map(fromDatastore);
-  });
-}
 /*
 * getPosts:
 *
