@@ -181,14 +181,19 @@ async function getPost(postId) {
 async function deletePost(postId) {
     const query = firestore.collection(COLLECTION_NAME).doc(postId);
     await query.delete();
+    const bucket = storage.bucket(BUCKET_NAME);
+    const blob = bucket.file(postId);
+    await blob.delete()                 // Delete from Google Cloud Storage
     return;
 }
 
-async function deleteAllPosts(nickname) {
+async function deleteAllPosts(userId) {
+    const bucket = storage.bucket(BUCKET_NAME);
     const querySnapshot = await firestore.collection(COLLECTION_NAME)
-                    .where("nickname", "==", nickname).get();
-    querySnapshot.forEach(doc=> {
-        doc.ref.delete();
+                    .where("userId", "==", userId).get();
+    querySnapshot.forEach(async doc=> {
+        bucket.file(doc.id).delete();   // Delete the media from the Google Cloud Storage (I don't think await is necessary.)
+        doc.ref.delete();               // Delete the firestore document
     });
 }
 

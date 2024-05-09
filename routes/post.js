@@ -56,13 +56,13 @@ router.delete('/all/:userId', async (req, res) => {
     const userId = req.oidc.user.sub; // User ID of the currently logged-in user
 
     try {
-        let userEntities = await getUsers(null, null, userId);
         // Check if the logged-in user is the owner of the post
-        if (targetUserId !== userEntities[0].user.nickname) {
+        if (targetUserId == userId) {
+            await deleteAllPosts(userId);
+            res.status(200).send({ message: 'Post deleted successfully' });
+        } else {
             return res.status(403).send('Unauthorized to delete posts');
         }
-        await deleteAllPosts(userEntities[0].user.nickname);
-        res.status(200).send({ message: 'Post deleted successfully' });
     } catch (error) {
         console.error('Error deleting post:', error);
         res.status(500).send('Internal Server Error');
