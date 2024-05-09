@@ -30,11 +30,18 @@
         </thead>
     <tbody>
             <h3>Top 10 Posts</h3>
-            <% for(let i = 0; i < 9; i++) { %>
+            <% try { %>
+                <% for(let i = 0; i < 9; i++) { %>
+                    <tr>
+                    <%- include('partials/post', {post_data: posts[i]}) %>
+                    </tr>
+                <% } %>
+            <% } catch {%>
                 <tr>
-                <%- include('partials/post', {post_data: posts[i]}) %>
+                    <%- include('partials/noPosts') %>
                 </tr>
             <% } %>
+
     </tbody>
     </table>
 </body>
