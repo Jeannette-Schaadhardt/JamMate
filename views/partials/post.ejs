@@ -1,7 +1,7 @@
 <td scope="row" class="text-nowrap">
-    <% if (post_data.fileType && post_data.fileType.startsWith('audio')) { %>
+    <% if (post_data.fileType != null &&post_data.fileURL != null && post_data.fileType.startsWith('audio')) { %>
         <audio controls>
-            <source src="data:<%= post_data.fileType %>;base64,<%= post_data.fileData %>" type="<%= post_data.fileType %>">
+            <source src="<%=post_data.fileURL %>" type="<%= post_data.fileType %>">
         </audio>
     <% } %>
 </td>

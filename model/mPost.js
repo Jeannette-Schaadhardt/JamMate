@@ -1,7 +1,27 @@
 const { Firestore } = require("@google-cloud/firestore");
 const firestore = new Firestore();
-firestore.settings({ ignoreUndefinedProperties: true });
+const {Storage } = require("@google-cloud/storage");
+const cloud_storage = new Storage();
+firestore.settings({ ignoreUndefinedProperties: true }); // Allows us to createPosts with undefined properties.
 const COLLECTION_NAME = "Post";  // Defining kind at the top for consistency
+
+async function uploadFile(file, docRef) {
+    try {
+        // Get a reference to the file storage location
+        const fileRef = cloud_storage.ref().child('media/${docRef.id}/${file.name}');
+        // Upload file to Cloud Storage
+        const snapshot = await fileRef.put(file);
+        // Get download URL
+        const fileURL = await snapshot.ref.getDownloadURL();
+        // Update firestore document with download URL
+        await docRef.update({ fileURL});
+
+        console.log('File uploaded successfully: ', fileURL);
+        return true;
+    } catch (error) {
+        console.error('Error uploading file:', error);
+    }
+}
 
 async function createPost(userId, content, file, nickname, instrument, genre, skillLevel, location) {
     try {
@@ -17,26 +37,19 @@ async function createPost(userId, content, file, nickname, instrument, genre, sk
             location,
             likeCount: 0,
             fileName: null,
-            fileData: null,
-            fileType: null
+            fileType: null,
+            fileURL: null
         };
-
         if (file) {
-            const fileBase64 = file.buffer.toString('base64');
             postData.fileName = file.originalname;
-            postData.fileData = fileBase64;
             postData.fileType = file.mimetype;
         }
-
-        const postDocRef = firestore.collection(COLLECTION_NAME).doc();
-         return await postDocRef.set(postData).then(() => {
-            console.log('Document successfully written to Firestore.');
-            delete postData.fileData;
-            return {
-              postData
-            };
-          })
-
+        const postDocRef = await firestore.collection(COLLECTION_NAME).add(postData);
+        if (file) {
+            const success_upload = await uploadFile(file)
+            if (!success_upload) throw error;
+        }
+        return postData;
     } catch (error) {
         // Handle error
         console.error('Error creating post:', error);
