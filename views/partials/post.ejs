@@ -1,9 +1,13 @@
 <td scope="row" class="text-nowrap">
-    <% if (post_data.fileType != null &&post_data.fileURL != null && post_data.fileType.startsWith('audio')) { %>
+    <% if (post_data.fileType != null &&post_data.fileURL != null) { %>    <!-- We make sure that fileType and fileURL are not NULL -->
+        <% if (post_data.fileType.startsWith('audio')) { %>                 <!-- Otherwise we get an error when we use startsWith()-->
         <audio controls>
             <source src="<%=post_data.fileURL %>" type="<%= post_data.fileType %>">
         </audio>
-    <% } %>
+    <% } } else { %>
+        <!--Just Diagnostics for now. Can replace with something nicer-->
+        <p>Media File Unavailable fileType=<%=post_data.fileType%>, fileURL =<%=post_data.fileURL%> </p>
+        <% } %>
 </td>
 <td>
     <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark">

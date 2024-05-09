@@ -1,0 +1,8 @@
+[
+	{
+	"origin": ["http://localhost:9001"],
+	"method": ["GET", "FETCH", "HEAD"],
+	"responseHeader": ["*"],
+	"maxAgeSeconds": 3600
+	}
+]

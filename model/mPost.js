@@ -1,23 +1,42 @@
 const { Firestore } = require("@google-cloud/firestore");
 const firestore = new Firestore();
 const {Storage } = require("@google-cloud/storage");
-const cloud_storage = new Storage();
+const storage = new Storage();
 firestore.settings({ ignoreUndefinedProperties: true }); // Allows us to createPosts with undefined properties.
 const COLLECTION_NAME = "Post";  // Defining kind at the top for consistency
+const BUCKET_NAME = "jammate-cs467_cloudbuild"
+const GOOGLE_CLOUD_API = "https://storage.googleapis.com"
 
-async function uploadFile(file, docRef) {
+
+async function uploadFile(file, postId, fileType) {
     try {
-        // Get a reference to the file storage location
-        const fileRef = cloud_storage.ref().child('media/${docRef.id}/${file.name}');
-        // Upload file to Cloud Storage
-        const snapshot = await fileRef.put(file);
-        // Get download URL
-        const fileURL = await snapshot.ref.getDownloadURL();
-        // Update firestore document with download URL
-        await docRef.update({ fileURL});
+        // We set up the bucket and file based on the post's Id
+        const bucket = storage.bucket(BUCKET_NAME);
+        const blob = bucket.file(postId);
+        // Somehow this knows that we are grabbing the file due to some code magic.
+        const blobStream = blob.createWriteStream({
+            metadata: {
+                contentType: fileType   // We set the type to audio or video for GCS's sake.
+            }
+        })
+        blobStream.on('error', (err) => {
+            console.error('Error uploading file:', err);
+        });
 
-        console.log('File uploaded successfully: ', fileURL);
-        return true;
+        // Once finished then we want to make the file public because I don't quite understand
+        // yet how to access the URL based soley off of credentials.
+        blobStream.on('finish', async () => {
+            try {
+                await blob.makePublic();
+                // Get a reference to the file storage location
+                console.log('File uploaded successfully');
+                return true;
+            } catch (error) {
+                console.error('Error making file public:', error);
+            }
+        });
+    // Stop writing so other functions don't write to our File.
+    blobStream.end(file.buffer);
     } catch (error) {
         console.error('Error uploading file:', error);
     }
@@ -44,10 +63,15 @@ async function createPost(userId, content, file, nickname, instrument, genre, sk
             postData.fileName = file.originalname;
             postData.fileType = file.mimetype;
         }
+        // We add the new firestore document.
         const postDocRef = await firestore.collection(COLLECTION_NAME).add(postData);
         if (file) {
-            const success_upload = await uploadFile(file)
-            if (!success_upload) throw error;
+            // If there is a file then we attempt to upload the file to GCS (google cloud storage)
+            successUpload = await uploadFile(file, postDocRef.id, postData.fileType);
+            // Update firestore document with download URL
+            const fileURL = {fileURL: `${GOOGLE_CLOUD_API}/${BUCKET_NAME}/${postDocRef.id}`};
+            await postDocRef.update(fileURL);
+            postData.fileURL = fileURL;
         }
         return postData;
     } catch (error) {

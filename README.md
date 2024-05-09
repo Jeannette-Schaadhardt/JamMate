@@ -26,7 +26,7 @@ Developing Locally (for us. this might get complicated the more dependencies we 
 3. npm install express express-openid-connect --save
    # for auth0 compliance
 4. gcloud init
-5. npm i @google-cloud/firestore
+5. npm i @google-cloud/firestore @google-cloud/storage
 6. gcloud config set project jammate-cs467
    # Configure gcloud for your project
 7. either<br>(command line) nodemon server.js <br> (visual studio code) start debugger.
@@ -59,3 +59,9 @@ Bootstrap can be utilized by going to the [Bootstrap Docs](https://getbootstrap.
 
 For online development you do not need to do any npm installs or change the .js file.<br>
 Instead just have the CDM style sheet link and the CDM javascript link placed in the html file as shown [here](https://getbootstrap.com/docs/5.3/getting-started/introduction/).
+
+## Misc_Files
+
+cors-file.json - within the terminal of our project you can use this: <br>
+"gcloud storage buckets update gs://jammate-cs467_cloudbuild --cors-file=./misc_files/cors-file.json"
+<br> to update the Cross-Origin Source protocol for our GCS bucket.
