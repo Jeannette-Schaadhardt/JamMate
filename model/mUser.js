@@ -9,7 +9,7 @@ async function getUsers(userEntity = null, username=null, userId=null) {
       if (userEntity != null) {
         query = query.where('user.sub', '==', userEntity.user.sub);
       } else if (username != null) {
-        query = query.where('user.name', '==', username);
+        query = query.where('user.nickname', '==', username);
       } else if (userId != null) {
         query = query.where('user.sub', '==', userId);
       }

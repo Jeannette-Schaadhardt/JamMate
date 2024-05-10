@@ -44,6 +44,9 @@ async function uploadFile(file, postId, fileType) {
 
 async function createPost(userId, content, file, nickname, instrument, genre, skillLevel, location) {
     try {
+        if (nickname != null) nickname = nickname.toLowerCase();
+        if (instrument != null) instrument = instrument.toLowerCase();
+        if (genre != null) genre = genre.toLowerCase();
         const timestamp = new Date().getTime();
         const postData = {
             userId,
@@ -91,8 +94,8 @@ async function createPost(userId, content, file, nickname, instrument, genre, sk
 * @param[in] range - Optional, used for displaying posts within range of lat, lon.
 */
 async function getPosts(userId = null, postId = null,
-    instrument = null, genre=null, descriptor=null,
-    lat = null, lon = null, range = null,
+    instrument = null, genre=null, skillLevel = null, descriptor=null,
+    lat = null, lon = null, rangeInMiles = null,
     start_date = null, end_date = null) {
 try {
     // Query Firestore to get all posts
@@ -112,21 +115,13 @@ try {
         if (genre) {
             query = query.where('genre', '==', genre);
         }
-        if (lat && lon && range) {
-            const latRadians = centerLat * Math.PI / 180;
-            const latDegreeOfOneKm = 1 / 111.32; // Approximately 111.32 kilometers per degree of latitude
-            const latRange = rangeInKm * latDegreeOfOneKm;
-            const minLat = centerLat - latRange;
-            const maxLat = centerLat + latRange;
-
-            // Calculate longitude boundaries
-            const lonDegreeOfOneKm = 1 / (111.32 * Math.cos(latRadians)); // Approximately 111.32 kilometers per degree of longitude at equator
-            const lonRange = rangeInKm * lonDegreeOfOneKm;
-            const minLon = centerLon - lonRange;
-            const maxLon = centerLon + lonRange;
-            query = query
-            .where('location', '>=', new firestore.GeoPoint(minLat, minLon))
-            .where('location', '<=', new firestore.GeoPoint(maxLat, maxLon));
+        if (skillLevel) {
+            query = query.where('skillLevel', '==', skillLevel);
+        }
+        // The lat and lon here is based off the user performing the search.
+        if (lat && lon && rangeInMiles) {
+            // Calculate the boundaries of our Coordinate Box based on range.
+            query = FilterOnRangeBoundaries(query);
         }
         if (start_date) {
             query = query.where('timestamp', '>=',
@@ -153,12 +148,14 @@ try {
     });
 
     // Apply additional filter for descriptor inclusion
-    if (descriptor) {
+    if (descriptor != null) {
         // Filter posts to include only those where the descriptor is found in the description
-        const filteredPosts = posts.filter(post => post.content.includes(descriptor));
+        const filteredPosts = posts.filter(post => {
+            const lowerCaseContent = post.content?.toLowerCase() ?? null;
+            return lowerCaseContent.includes(descriptor);
+        });
         return filteredPosts;
-        }
-
+    }
     // Return the posts array
     return posts;
 } catch (error) {
@@ -166,6 +163,24 @@ try {
     console.error('Error fetching posts:', error);
     throw error; // Throw the error for the caller to handle
 }
+// Helper function to handle setting the boundaries for the location filtering.
+    function FilterOnRangeBoundaries(query) {
+        const latRadians = lat * Math.PI / 180;
+        const latDegreeOfOneMile = 1 / 69.;
+        const latRange = rangeInMiles * latDegreeOfOneMile;
+        const minLat = lat - latRange;
+        const maxLat = lat + latRange;
+
+        // Calculate the Longitude Min and Max (range in degrees changes based off of the latitude);
+        const lonDegreeOfOneMile = 1 / (69. * Math.cos(latRadians));
+        const lonRange = rangeInMiles * lonDegreeOfOneMile;
+        const minLon = lon - lonRange;
+        const maxLon = lon + lonRange;
+        query = query
+            .where('location', '>=', new firestore.GeoPoint(minLat, minLon))
+            .where('location', '<=', new firestore.GeoPoint(maxLat, maxLon));
+        return query;
+    }
 }
 async function getPost(postId) {
     const query = firestore.collection(COLLECTION_NAME).doc(postId);
