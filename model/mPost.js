@@ -195,6 +195,7 @@ async function getPost(postId) {
 }
 async function deletePost(postId) {
     const query = firestore.collection(COLLECTION_NAME).doc(postId);
+    //TODO: refresh if required!
     await query.delete();
     const bucket = storage.bucket(BUCKET_NAME);
     const blob = bucket.file(postId);

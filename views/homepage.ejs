@@ -9,9 +9,15 @@
 </head>
 <body class="container">
     <%- include('partials/header', {user: loggedIn}) %>
+
     <h1>Musician Feed</h1>
+
+    <%- include('partials/ad', {ad_data: ads.content}) %>
+
         <% if (loggedIn) { %>
             <%- include('partials/post_form', {user: user}) %>
+            <%- include('partials/ad_form', {user: user}) %>
+
         <% } else {%>
             <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
                 <!--<i class="fas fa-share me-2"></i>Create Post -->
@@ -29,16 +35,11 @@
             </tr>
         </thead>
     <tbody>
-            <h3>Top 10 Posts</h3>
-            <% try { %>
-                <% for(let i = 0; i < 9; i++) { %>
-                    <tr>
-                    <%- include('partials/post', {post_data: posts[i]}) %>
-                    </tr>
-                <% } %>
-            <% } catch {%>
+
+        <h3>Top 10 Posts</h3>
+            <% for(let i = 0; i < 9; i++) { %>
                 <tr>
-                    <%- include('partials/noPosts') %>
+                <%- include('partials/post', {post_data: posts[i]}) %>
                 </tr>
             <% } %>
 

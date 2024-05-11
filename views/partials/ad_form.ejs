@@ -1,0 +1,73 @@
+<!-- Ad Form -->
+<div style="display:none;" id="adCreationForm">
+    <form id="adForm" enctype="multipart/form-data">
+        <textarea name="content" rows="4" cols="50" placeholder="Advertise here..."></textarea><br>
+        <input type="file" name="media" id="fileInput" accept="video/*,audio/*" style="display: none;">
+
+        <button type="button" id="fileButton" class="btn btn-link btn-lg" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark">
+          Choose File
+        </button>
+        <span id="fileName">No file chosen</span><br>
+        <button type="submit" class="btn btn-link btn-lg" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark">
+            Post advertisement
+        </button>
+    </form>
+</div>
+
+
+<button type="button" class="btn btn-link btn-lg" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark" onclick="document.getElementById('adCreationForm').style.display='block';">
+    Create Ad
+</button>
+
+<!-- Ads Container -->
+<div id="ads">
+    <!-- Existing ads are displayed here -->
+</div>
+
+<script>
+document.getElementById('fileButton').addEventListener('click', function() {
+    document.getElementById('fileInput').click();
+});
+
+document.getElementById('fileInput').addEventListener('change', function() {
+    var fileLabel = document.getElementById('fileName');
+    var file = this.files[0];
+    var fileName = file ? file.name : 'No file chosen';
+    fileLabel.textContent = fileName; // Update the text content with the file name
+    console.log("File selected:", fileName);
+});
+
+document.getElementById('adForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    var formData = new FormData(this);
+
+    fetch('/ad', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (response.ok) return response.json();
+        else throw new Error('Failed to fetch');
+    })
+    .then(data => {
+        console.log("Ad success:", data);
+        if (data.content) {  // Check if content is defined
+            var newAdHTML = `<div>New Ad: ${data.content}</div>`;
+            document.getElementById('ads').innerHTML += newAdHTML;
+        } else {
+            console.error('Content undefined in response:', data);
+        }
+        document.getElementById('adForm').reset(); // Reset the form after submission
+        document.getElementById('adCreationForm').style.display = 'none'; // Hide the form again
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+document.querySelector('#adForm textarea').addEventListener('keydown', function(event) {
+    if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault(); // Prevent default action (do not insert a newline)
+        document.getElementById('adForm').dispatchEvent(new Event('submit', { cancelable: true })); // Trigger form submission
+    }
+});
+</script>
+
