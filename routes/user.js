@@ -8,11 +8,15 @@ router.get('/', (req, res) => {
 });
 
 router.get('/edit', (req, res) => {
-    res.send('edit your profile');
+    //res.send('edit your profile');
+    handleAuthenticationFlow(req, res, "editBio");
 });
 
 router.get('/:id', (req, res) => {
     res.send(`Get User with ID ${req.params.id}`);
 });
 
+router.post('/update-bio', (req, res) => {
+    res.send(req.params);
+});
 module.exports = router;

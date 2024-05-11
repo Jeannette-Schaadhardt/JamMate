@@ -143,6 +143,7 @@ async function getPost(postId) {
 }
 async function deletePost(postId) {
     const query = firestore.collection(COLLECTION_NAME).doc(postId);
+    //TODO: refresh if required!
     await query.delete();
     return;
 }
