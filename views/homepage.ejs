@@ -6,45 +6,51 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <title>JamMate</title>
+
 </head>
+<div class="p-3 mb-2 bg-dark">
 <body class="container">
+    <div class="p-3 mb-2 bg-light">
     <%- include('partials/header', {user: loggedIn}) %>
+
     <h1>Musician Feed</h1>
         <% if (loggedIn) { %>
             <%- include('partials/post_form', {user: user}) %>
+            <%- include('partials/ad_form', {user: user}) %>
+
         <% } else {%>
             <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
                 <!--<i class="fas fa-share me-2"></i>Create Post -->
                 <a class="nav-link" href="/login">Create Post</a>
             </button>
         <% } %>
+    <div>
+        <%- include('partials/ad', { ad_data: ads.content }) %>
+    </div>
     <table class="table table-hover table-forum text-center">
-        <thead>
-            <tr>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
+        <thead class="border">
+            <tr class="inline-div">
+                <h3>Top 10 Posts</h3>
             </tr>
         </thead>
-    <tbody>
-            <h3>Top 10 Posts</h3>
-            <% try { %>
-                <% for(let i = 0; i < 9; i++) { %>
-                    <tr>
-                    <%- include('partials/post', {post_data: posts[i]}) %>
-                    </tr>
-                <% } %>
-            <% } catch {%>
+    <tbody class="container" >
+
+        <% if (posts.length > 0 ) { %>
+            <% for(let i = 0; i < Math.min(9, posts.length); i++) { %>
                 <tr>
-                    <%- include('partials/noPosts') %>
+                <%- include('partials/post', {user: loggedIn, post_data: posts[i]}) %>
                 </tr>
+            <% } %>
+        <% } else { %>
+            <%- include('partials/noPosts') %>
             <% } %>
 
     </tbody>
     </table>
+    </div>
 </body>
+</div>
+
 <footer>
     <%- include('partials/footer') %>
 </footer>

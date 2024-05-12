@@ -2,6 +2,7 @@ const { expressjwt: jwt } = require("express-jwt");
 const jwksRsa = require('jwks-rsa');
 const { postUser } = require('./model/mUser');
 const { getPosts } = require('./model/mPost.js');
+const { getAds } = require('./model/mAd.js');
 
 const DOMAIN = 'dev-gblxtkrkmbzldfsv.us.auth0.com';
 
@@ -57,6 +58,7 @@ async function handleAuthenticationFlow(req, res, destination) {
     // Determine if user is logged in
     let user;
     let posts;
+    let ads;
     let userID;
     if (req.oidc.isAuthenticated()) {
         user = { "user": req.oidc.user, "jwt": req.oidc.idToken, "loggedIn": true };
@@ -75,17 +77,22 @@ async function handleAuthenticationFlow(req, res, destination) {
         posts = await getPosts();                   // Fetch all posts for other pages like the homepage
     }
 
+    ads = await getAds();
+    console.log("Number of current ads = ", ads.length);
+    let randomAdIndex = Math.floor(Math.random() * ads.length);
+
     // Render the destination page and be logged in.
     if (user.loggedIn === true) {
+        ads = ads[randomAdIndex];
         postUser(user)
         .then(result => {
-            res.render(destination, { posts: posts, user: result, loggedIn: true });
+            res.render(destination, { ads: ads, posts: posts, user: result, loggedIn: true });
         });
     } else {     // User is not logged in so redirect home with undefined data and false login status
     if (destination === "profilepage") {
-        res.render('homepage', {posts: posts, user: user, loggedIn: false});
+        res.render('homepage', { ads: ads, posts: posts, user: user, loggedIn: false});
     } else {
-        res.render(destination, { posts: posts, user: user, loggedIn: false });
+        res.render(destination, { ads: ads, posts: posts, user: user, loggedIn: false });
     }
 }};
 
@@ -114,6 +121,30 @@ async function submitPost() {
     return false;  // Prevent traditional form submission
   }
 
-  module.exports = {
-    getSecret, getConfig, testJWT, handleAuthenticationFlow, submitPost
+  async function submitAd() {
+    var formData = new FormData(document.getElementById('adForm'));
+    $.ajax({
+      url: '/create-ad',
+      type: 'POST',
+      data: formData,
+      success: function(data) {
+        var newAd = '<div class="ad" id="ad-' + data.id + '">' +
+                      '<p>User: <%= user.nickname %>, Content: "' + data.content + '", Posted at (' + new Date(data.timestamp).toLocaleString() + ')</p>' +
+                      '<button onclick="deleteAd(\'' + data.id + '\')">Delete Ad</button>' +
+                      '</div>';
+        $('#ads').prepend(newAd);
+        document.getElementById('adForm').reset(); // Reset the form
+        document.getElementById('adCreationForm').style.display='none'; // Hide the form again
+      },
+      cache: false,
+      contentType: false,
+      processData: false,
+      error: function(xhr, status, error) {
+        alert("Error: " + xhr.responseText);
+      }
+    });
+    return false;  // Prevent traditional form submission
   }
+
+  module.exports = {
+    getSecret, getConfig, testJWT, handleAuthenticationFlow, submitPost, submitAd  }

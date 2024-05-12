@@ -12,7 +12,8 @@ app.set('view engine', 'ejs');
 const PORT = process.env.PORT || 9001;
 const userRouter = require('./routes/user.js');  // router for User
 const postRouter = require('./routes/post.js');  // router for Post
-const searchRouter = require('./routes/search.js'); // router for Search requests
+const adRouter = require('./routes/ad.js'); // router for Ad
+const searchRouter = require('./routes/search.js');
 
 const filePath = path.resolve(__dirname, './views/index.ejs');
 const secret = getSecret(10);
@@ -26,6 +27,7 @@ app.use('/uploads', express.static(path.join(filePath, 'uploads'))); // Serve st
 app.use('/user', userRouter);
 app.use('/post', postRouter);
 app.use('/search', searchRouter);
+app.use('/ad', adRouter);
 
 app.use(session({
     secret: secret,
