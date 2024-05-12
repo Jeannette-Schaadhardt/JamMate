@@ -1,0 +1,29 @@
+
+
+/* Style for the login button */
+.button-login {
+    background-color: #0d541d; /* Green */
+    border: none;
+    color: #ffffff;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+/* Style for the logout button */
+.button-logout {
+    background-color: #530f15; /* Red */
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
