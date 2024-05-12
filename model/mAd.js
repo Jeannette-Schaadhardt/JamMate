@@ -78,13 +78,13 @@ async function getAd(postId) {
     }
 }
 
-async function deletePost(postId) {
+async function deleteAd(postId) {
     const query = firestore.collection(COLLECTION_NAME).doc(postId);
     await query.delete();
     return;
 }
 
-async function deleteAllPosts(nickname) {
+async function deleteAllAds(nickname) {
     const querySnapshot = await firestore.collection(COLLECTION_NAME)
                     .where("nickname", "==", nickname).get();
     querySnapshot.forEach(doc=> {
@@ -93,5 +93,5 @@ async function deleteAllPosts(nickname) {
 }
 
 module.exports = {
-  createAd, getAd, getAds, deleteAllPosts, deletePost
+  createAd, getAd, getAds, deleteAllAds, deleteAd
 }

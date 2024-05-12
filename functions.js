@@ -147,5 +147,4 @@ async function submitPost() {
   }
 
   module.exports = {
-    getSecret, getConfig, testJWT, handleAuthenticationFlow, submitPost, submitAd
-  }
+    getSecret, getConfig, testJWT, handleAuthenticationFlow, submitPost, submitAd  }

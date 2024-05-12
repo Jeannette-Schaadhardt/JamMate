@@ -1,5 +1,7 @@
+
+
 <!--  Drop-down to Create a Post  -->
-<button type="button" class="btn btn-link btn-lg" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark" onclick="document.getElementById('postCreationForm').style.display='block';">
+<button type="button" class="btn btn-link btn-lg" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark" onclick="toggleElement('postCreationForm')">
     Create Post
 </button>
 
@@ -96,4 +98,5 @@ document.querySelector('#postForm textarea').addEventListener('keydown', functio
         document.getElementById('postForm').dispatchEvent(new Event('submit', { cancelable: true })); // Trigger form submission
     }
 });
+
 </script>

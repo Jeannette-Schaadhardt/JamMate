@@ -35,11 +35,14 @@
         </thead>
     <tbody class="container" >
 
-
-            <% for(let i = 0; i < 9; i++) { %>
+        <% if (posts.length > 0 ) { %>
+            <% for(let i = 0; i < Math.min(9, posts.length); i++) { %>
                 <tr>
                 <%- include('partials/post', {user: loggedIn, post_data: posts[i]}) %>
                 </tr>
+            <% } %>
+        <% } else { %>
+            <%- include('partials/noPosts') %>
             <% } %>
 
     </tbody>

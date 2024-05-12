@@ -14,10 +14,6 @@ const userRouter = require('./routes/user.js');  // router for User
 const postRouter = require('./routes/post.js');  // router for Post
 const adRouter = require('./routes/ad.js'); // router for Ad
 const searchRouter = require('./routes/search.js');
-// Configure Firestore
-const firestore = new Firestore({
-    projectId: 'jammate-cs467', // Replace with your actual project ID
-});
 
 const filePath = path.resolve(__dirname, './views/index.ejs');
 const secret = getSecret(10);
