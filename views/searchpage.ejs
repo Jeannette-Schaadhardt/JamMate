@@ -19,7 +19,7 @@
         <input class="form-control" type="text" name="instrument" list="instruments" placeholder="Instrument">
 
         <!-- Skill level -->
-        <select class="form-select" name="skill_level">
+        <select class="form-select" name="skillLevel">
             <option value="" selected>Select skill level</option>
             <option value="beginner">Beginner</option>
             <option value="intermediate">Intermediate</option>
@@ -45,11 +45,13 @@
 
 <table class="table table-hover table-forum text-center">
     <tbody>
-            <% for(let i = 0; i < posts.length; i++) { %>
+<% if (posts.length > 0 ) { %>
+            <% for(let i = 0; i < Math.min(9, posts.length); i++) { %>
                 <tr>
-                <%- include('partials/post', {post_data: posts[i]}) %>
+                <%- include('partials/post', {user: loggedIn, post_data: posts[i]}) %>
                 </tr>
             <% } %>
+        <% } %>
     </tbody>
 </table>
     <datalist id="instruments">

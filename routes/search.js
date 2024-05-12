@@ -11,6 +11,7 @@ router.get('/', async(req, res) => {
     let lat = null;
     let lon = null;
     let range = null;
+    // We want to use our user's location to perform the range calculations.
     if (req.oidc.isAuthenticated()) {
         userId = req.oidc.user.sub;
         const users = await getUsers(null, null, userId)
@@ -19,7 +20,7 @@ router.get('/', async(req, res) => {
             if (userObject.user.location) {
                 lat = userObject.user.location[0];
                 lon = userObject.user.location[1];
-                if (userObject.range) {
+                if (userObject.user.range) {
                     range = userObject.user.range;
                 }
             }
@@ -30,21 +31,33 @@ router.get('/', async(req, res) => {
         loggedIn = false;
     }
     let posts;
-    const searchTerm = req.query.term;
+
+    // First we handle the basic search function that is found in the header.
+    // So we get the searchTerm if its available and set it toLowerCase();
+    const searchTerm = req.query.term?.toLowerCase() ?? null;
     const searchType = req.query.search_type;
+    // Then if there is a searchType we know we are doing a basic search.
     if (searchType != null) {
         posts = await handleBasicSearch(searchType, posts, searchTerm, lat, lon, range);
-    }
-    else {
+    } else {    // Otherwise we are doing a advanced search.
         let q = req.query;
-        let users = await getUsers(null, q.username);
-        let userId = null
-        if (users[0]) {
-            userId = users[0].userId;
-        }
+        let userId = null;
+        // Use the username in the query to get the UserId for ease in getting their posts.
+        let users = await getUsers(null, q.username?.toLowerCase() ?? null);
+        if (users[0]) userId = users[0].userId;
+        // Convert date string to TimeStamp
+        const startDateTimeStamp = q.start_date.value ? new Date(q.start_date.value).getTime() : null;
+        const endDateTimeStamp = q.end_date.value ? new Date(q.end_date.value).getTime() : null;
+        // Set all of the fields .toLowerCase() to avoid issues with case sensitivity.
         posts = await getPosts(userId, null,
-            q.instrument, q.genre, q.descriptor, lat, lon, q.range,
-            q.start_date, q.end_date);
+            // Perform qualified lowerCase() operations on the strings.
+            q.instrument?.toLowerCase() ?? null,
+            q.genre?.toLowerCase() ?? null,
+            q.skillLevel?.toLowerCase() ?? null,
+            q.descriptor?.toLowerCase() ?? null,
+            lat, lon, q.range,
+            startDateTimeStamp,
+            endDateTimeStamp);
     }
     res.render('searchpage', {posts: posts, user: userObject, loggedIn: loggedIn});
 });

@@ -1,7 +1,45 @@
 const { Firestore } = require("@google-cloud/firestore");
 const firestore = new Firestore();
-firestore.settings({ ignoreUndefinedProperties: true });
+const {Storage } = require("@google-cloud/storage");
+const storage = new Storage();
+firestore.settings({ ignoreUndefinedProperties: true }); // Allows us to createPosts with undefined properties.
 const COLLECTION_NAME = "Ad";  // Defining kind at the top for consistency
+const BUCKET_NAME = "jammate-cs467_cloudbuild"
+const GOOGLE_CLOUD_API = "https://storage.googleapis.com"
+
+async function uploadFile(file, adId, fileType) {
+    try {
+        // We set up the bucket and file based on the ad's Id
+        const bucket = storage.bucket(BUCKET_NAME);
+        const blob = bucket.file(adId);
+        // Somehow this knows that we are grabbing the file due to some code magic.
+        const blobStream = blob.createWriteStream({
+            metadata: {
+                contentType: fileType   // We set the type to audio or video for GCS's sake.
+            }
+        })
+        blobStream.on('error', (err) => {
+            console.error('Error uploading file:', err);
+        });
+
+        // Once finished then we want to make the file public because I don't quite understand
+        // yet how to access the URL based soley off of credentials.
+        blobStream.on('finish', async () => {
+            try {
+                await blob.makePublic();
+                // Get a reference to the file storage location
+                console.log('File uploaded successfully');
+                return true;
+            } catch (error) {
+                console.error('Error making file public:', error);
+            }
+        });
+    // Stop writing so other functions don't write to our File.
+    blobStream.end(file.buffer);
+    } catch (error) {
+        console.error('Error uploading file:', error);
+    }
+}
 
 async function createAd(userId, content, file) {
     try {
@@ -11,7 +49,8 @@ async function createAd(userId, content, file) {
             content,
             fileName: null,
             fileData: null,
-            fileType: null
+            fileType: null,
+            fileURL: null
         };
 
         if (file) {
@@ -21,15 +60,18 @@ async function createAd(userId, content, file) {
             adData.fileType = file.mimetype;
         }
 
-        const postDocRef = firestore.collection(COLLECTION_NAME).doc();
-         return await postDocRef.set(adData).then(() => {
-            console.log('Document successfully written to Firestore.');
-            delete adData.fileData;
-            return {
-              adData
-            };
-          })
-
+        // We add the new firestore document.
+        const postDocRef = await firestore.collection(COLLECTION_NAME).add(adData);
+        if (file) {
+            // If there is a file then we attempt to upload the file to GCS (google cloud storage)
+            successUpload = await uploadFile(file, postDocRef.id, adData.fileType);
+            // Update firestore document with download URL
+            const fileURL = {fileURL: `${GOOGLE_CLOUD_API}/${BUCKET_NAME}/${postDocRef.id}`};
+            await postDocRef.update(fileURL);
+            adData.fileURL = fileURL;
+        }
+        console.log("in mAd.js...adData = ", adData);
+        return adData;
     } catch (error) {
         // Handle error
         console.error('Error creating ad:', error);
@@ -66,25 +108,25 @@ try {
     throw error; // Throw the error for the caller to handle
 }
 }
-async function getAd(postId) {
-    const query = firestore.collection(COLLECTION_NAME).doc(postId);
-    const post = await query.get();
-    const adData = post.data();
+async function getAd(adId) {
+    const query = firestore.collection(COLLECTION_NAME).doc(adId);
+    const ad = await query.get();
+    const adData = ad.data();
     if (adData) {
-        adData.postId = post.id;
+        adData.adId = ad.id;
         return adData;
     } else {
-        return null; // Or handle the case where no document exists for the given postId
+        return null; // Or handle the case where no document exists for the given adId
     }
 }
 
-async function deletePost(postId) {
-    const query = firestore.collection(COLLECTION_NAME).doc(postId);
+async function deleteAd(adId) {
+    const query = firestore.collection(COLLECTION_NAME).doc(adId);
     await query.delete();
     return;
 }
 
-async function deleteAllPosts(nickname) {
+async function deleteAllAds(nickname) {
     const querySnapshot = await firestore.collection(COLLECTION_NAME)
                     .where("nickname", "==", nickname).get();
     querySnapshot.forEach(doc=> {
@@ -93,5 +135,5 @@ async function deleteAllPosts(nickname) {
 }
 
 module.exports = {
-  createAd, getAd, getAds, deleteAllPosts, deletePost
+  createAd, getAd, getAds, deleteAllAds, deleteAd
 }

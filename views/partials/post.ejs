@@ -1,9 +1,13 @@
 <td scope="row" class="text-nowrap">
-    <% if (post_data.fileType && post_data.fileType.startsWith('audio')) { %>
+    <% if (post_data.fileType != null &&post_data.fileURL != null) { %>    <!-- We make sure that fileType and fileURL are not NULL -->
+        <% if (post_data.fileType.startsWith('audio')) { %>                 <!-- Otherwise we get an error when we use startsWith()-->
         <audio controls>
-            <source src="data:<%= post_data.fileType %>;base64,<%= post_data.fileData %>" type="<%= post_data.fileType %>">
+            <source src="<%=post_data.fileURL %>" type="<%= post_data.fileType %>">
         </audio>
-    <% } %>
+    <% } } else { %>
+        <!--Just Diagnostics for now. Can replace with something nicer-->
+        <p>Media File Unavailable fileType=<%=post_data.fileType%>, fileURL =<%=post_data.fileURL%> </p>
+        <% } %>
 </td>
 <td>
     <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
@@ -20,7 +24,7 @@
 
     <span class="badge bg-secondary mx-1"><%= post_data.instrument %></span>
     <span class="badge bg-primary mx-1"><%= post_data.genre%></span>
-        <span class="badge bg-warning mx-1"><%= post_data.skill_level%></span>
+        <span class="badge bg-warning mx-1"><%= post_data.skillLevel%></span>
     <span>
         <% const localDateTime = new Date(post_data.timestamp).toLocaleString(); %>
         Posted on <%= localDateTime %>

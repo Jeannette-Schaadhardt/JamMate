@@ -1,5 +1,5 @@
 <!--  Drop-down to Create a Post  -->
-<button type="button" class="btn btn-link btn-lg" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark" onclick="document.getElementById('postCreationForm').style.display='block';">
+<button type="button" class="p-1 mb-1 bg-primary text-white" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark" onclick="toggleElement('postCreationForm')">
     Create Post
 </button>
 
@@ -24,7 +24,7 @@
             <input list="genreList" name="genre">
             <br>
             <label for="skillLevel">Skill Level:</label>
-            <select class="form-select" name="skill_level">
+            <select class="form-select" name="skillLevel">
                 <option value="" selected>Select skill level</option>
                 <option value="beginner">Beginner</option>
                 <option value="intermediate">Intermediate</option>
