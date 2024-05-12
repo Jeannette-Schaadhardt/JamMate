@@ -8,10 +8,10 @@ const { createAd, getAd, deleteAd, deleteAllAds } = require('../model/mAd.js');
 const { getUsers} = require('../model/mUser.js');
 
 // Ad
-// router.get('/', (req, res) => {
-//     handleAuthenticationFlow(req, res, "profilepage");
-//     //res.send('this is an ad');
-// });
+router.get('/', (req, res) => {
+    handleAuthenticationFlow(req, res, "adpage");
+    //res.send('this is an ad');
+});
 
 router.post('/', upload.single('media'), async (req, res) => {
     console.log("Received fields:", req.body);  // Log form fields to ensure data is coming in correctly

@@ -80,9 +80,10 @@ async function handleAuthenticationFlow(req, res, destination) {
     ads = await getAds();
     console.log("Number of current ads = ", ads.length);
     let randomAdIndex = Math.floor(Math.random() * ads.length);
-    ads = ads[randomAdIndex];
+
     // Render the destination page and be logged in.
     if (user.loggedIn === true) {
+        ads = ads[randomAdIndex];
         postUser(user)
         .then(result => {
             res.render(destination, { ads: ads, posts: posts, user: result, loggedIn: true });
