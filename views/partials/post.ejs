@@ -11,12 +11,12 @@
 </td>
 <td>
     <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
-        Like <%= post_data.likeCount %>
+        Likes: <%= post_data.likeCount %>
     </button>
 </td>
 <td>
-    <div>
-        <%= post_data.content %> -
+    <div class="blockquote text-center">
+        "<%= post_data.content %>"<br>-
         <a href="/user/<%=post_data.nickname %>" class="blue-text">
             <strong><%= post_data.nickname %></strong>
         </a>
@@ -27,20 +27,23 @@
         <span class="badge bg-warning mx-1"><%= post_data.skillLevel%></span>
     <span>
         <% const localDateTime = new Date(post_data.timestamp).toLocaleString(); %>
-        <%= localDateTime %>
+        Posted on <%= localDateTime %>
     </span>
     </div>
 </td>
 <td>
-    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+    <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
         Comments
     </button>
 </td>
+
 <td>
-        <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
-        <i class="fas fa-share me-2"></i>Share
-        </button>
+
+    <button class="btn btn-danger" type="button" onclick="deletePost('<%= post_data.postId %>')">
+        Delete
+    </button>
 </td>
+
 </tr>
 <tr>
 <td colspan="3">

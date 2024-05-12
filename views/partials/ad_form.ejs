@@ -1,35 +1,34 @@
-<!-- Ad Form -->
-<div style="display:none;" id="adCreationForm">
-    <form id="adForm" enctype="multipart/form-data">
-        <textarea name="content" rows="4" cols="50" placeholder="Advertise here..."></textarea><br>
-        <input type="file" name="media" id="fileInput" accept="video/*,audio/*" style="display: none;">
 
-        <button type="button" id="fileButton" class="btn btn-link btn-lg" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark">
-          Choose File
-        </button>
-        <span id="fileName">No file chosen</span><br>
-        <button type="submit" class="btn btn-link btn-lg" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark">
-            Post advertisement
-        </button>
-    </form>
-</div>
-
-
+<!--  Drop-down to Create an Ad  -->
 <button type="button" class="btn btn-link btn-lg" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark" onclick="document.getElementById('adCreationForm').style.display='block';">
     Create Ad
 </button>
 
 <!-- Ads Container -->
 <div id="ads">
-    <!-- Existing ads are displayed here -->
+    <!-- Ad Form -->
+    <div style="display:none;" id="adCreationForm" class="border border-warning">
+        <form id="adForm" enctype="multipart/form-data">
+            <textarea name="content" rows="4" cols="50" placeholder="Advertise here..."></textarea><br>
+            <input type="file" name="media" id="adFileInput" accept="image/*,video/*,audio/*" style="display: none;">
+
+            <button type="button" id="adFileButton" class="btn btn-link btn-lg" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark">
+            Choose File
+            </button>
+            <span id="fileName">No file chosen</span><br>
+            <button type="submit" class="btn btn-link btn-lg" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark">
+                Post advertisement
+            </button>
+        </form>
+    </div>
 </div>
 
 <script>
-document.getElementById('fileButton').addEventListener('click', function() {
-    document.getElementById('fileInput').click();
+document.getElementById('adFileButton').addEventListener('click', function() {
+    document.getElementById('adFileInput').click();
 });
 
-document.getElementById('fileInput').addEventListener('change', function() {
+document.getElementById('adFileInput').addEventListener('change', function() {
     var fileLabel = document.getElementById('fileName');
     var file = this.files[0];
     var fileName = file ? file.name : 'No file chosen';

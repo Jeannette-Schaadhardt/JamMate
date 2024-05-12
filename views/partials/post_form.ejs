@@ -1,47 +1,4 @@
-<!-- Multimedia Post Form -->
-<div style="display:none;" id="postCreationForm">
-    <form id="postForm" enctype="multipart/form-data">
-        <textarea name="content" rows="4" cols="50" placeholder="Write something or share a clip..."></textarea><br>
-        <input type="file" name="media" id="fileInput" accept="video/*,audio/*" style="display: none;">
-
-        <button type="button" id="fileButton" class="btn btn-link btn-lg" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark">
-          Choose File
-        </button>
-        <span id="fileName">No file chosen</span><br>
-        <button type="submit" class="btn btn-link btn-lg" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark">
-            Post
-        </button>
-        <label for="instrument">Instrument:</label>
-        <input list="instrumentList" name="instrument">
-        <br>
-        <label for="genre">Genre:</label>
-        <input list="genreList" name="genre">
-        <br>
-        <label for="skillLevel">Skill Level:</label>
-        <select class="form-select" name="skillLevel">
-            <option value="" selected>Select skill level</option>
-            <option value="beginner">Beginner</option>
-            <option value="intermediate">Intermediate</option>
-            <option value="advanced">Advanced</option>
-        </select>
-        <button type="submit">Post</button>
-    </form>
-</div>
-
-<datalist id="instrumentList">
-    <option value="Guitar">
-    <option value="Piano">
-    <option value="Violin">
-    <!-- Add more instrument options as needed -->
-</datalist>
-
-<datalist id="genreList">
-    <option value="Rock">
-    <option value="Jazz">
-    <option value="Classical">
-    <!-- Add more genre options as needed -->
-</datalist>
-
+<!--  Drop-down to Create a Post  -->
 <button type="button" class="btn btn-link btn-lg" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark" onclick="document.getElementById('postCreationForm').style.display='block';">
     Create Post
 </button>
@@ -49,6 +6,49 @@
 <!-- Posts Container -->
 <div id="posts">
     <!-- Existing posts are displayed here -->
+    <!-- Multimedia Post Form -->
+    <div style="display:none;" id="postCreationForm" class="border border-primary">
+        <form id="postForm" enctype="multipart/form-data">
+            <textarea name="content" rows="4" cols="50" placeholder="Write something or share a clip..."></textarea><br>
+            <input type="file" name="media" id="fileInput" accept="video/*,audio/*" style="display: none;">
+
+            <button type="button" id="fileButton" class="btn btn-link btn-lg" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark">
+            Choose File
+            </button>
+            <span id="fileName">No file chosen</span><br>
+
+            <label for="instrument">Instrument:</label>
+            <input list="instrumentList" name="instrument">
+            <br>
+            <label for="genre">Genre:</label>
+            <input list="genreList" name="genre">
+            <br>
+            <label for="skillLevel">Skill Level:</label>
+            <select class="form-select" name="skillLevel">
+                <option value="" selected>Select skill level</option>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+            </select>
+            <button type="submit" class="btn btn-link btn-lg" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark">
+                Post your content now!
+            </button>
+        </form>
+    </div>
+
+    <datalist id="instrumentList">
+        <option value="Guitar">
+        <option value="Piano">
+        <option value="Violin">
+        <!-- Add more instrument options as needed -->
+    </datalist>
+
+    <datalist id="genreList">
+        <option value="Rock">
+        <option value="Jazz">
+        <option value="Classical">
+        <!-- Add more genre options as needed -->
+    </datalist>
 </div>
 
 <script>
@@ -97,4 +97,3 @@ document.querySelector('#postForm textarea').addEventListener('keydown', functio
     }
 });
 </script>
-
