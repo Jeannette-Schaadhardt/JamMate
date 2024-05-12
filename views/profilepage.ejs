@@ -16,7 +16,7 @@
     </button>
     <p>Contact me for gigs at <%= user.email %></p>
       <%- include('partials/post_form', {user: user}) %>
-      <button onclick="deleteAllPosts('<%= user.nickname %>')">Delete all of <%= user.nickname%>'s posts</button>
+      <button onclick="deleteAllPosts('<%= user.sub %>')">Delete all of <%= user.nickname%>'s posts</button>
 
 <table class="table table-hover table-forum text-center">
     <thead>
