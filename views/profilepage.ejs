@@ -11,7 +11,10 @@
     <%- include('partials/header', {user: loggedIn}) %>
     <h1><%= user.nickname %>'s Profile </h1>
 
-    <p> <%= user.description %></p>
+    <p>Description: <%= user.description %></p>
+    <p>Skill Level: <%= user.skillLevel %></p>
+    <p>Location: <%= user.location %></p>
+    <p>Instrument: <%= user.instrument %></p>
     <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
       <a href="/user/edit">Edit Your Bio</a>
 
