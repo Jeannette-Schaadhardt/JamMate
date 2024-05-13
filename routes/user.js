@@ -19,8 +19,8 @@ router.get('/', isAuthenticated, async (req, res) => {
         if (!userInfo) {
             return res.status(404).send('User not found');
         }
-        const posts = await getPosts();  // Assuming this is correctly defined now
-        const ads = await getAds();      // Fetch ads, assuming getAds is a function that returns an array of ads
+        const posts = await getPosts(); 
+        const ads = await getAds();     
         res.render('profilepage', {
             user: userInfo,
             posts: posts,
@@ -32,8 +32,6 @@ router.get('/', isAuthenticated, async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
-
-
 
 // Redirect to edit bio page
 router.get('/edit', isAuthenticated, async (req, res) => {
