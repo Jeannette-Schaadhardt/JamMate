@@ -39,8 +39,9 @@
                 </tr>
             </div>
           <% }); %>
-          <button onclick="deleteAllPosts('<%= user.nickname %>')">Delete all of <%= user.nickname%>'s posts
-          </button>
+          <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
+            <a href="javascript:void(0);" onclick="deleteAllPosts('<%= user.nickname %>')">Delete all of <%= user.nickname %>'s posts</a>
+        </button>
           <%- include('partials/ad', {ad_data: ads[5]}) %>
 
 </tbody>
