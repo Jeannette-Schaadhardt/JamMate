@@ -19,7 +19,8 @@ router.get('/', isAuthenticated, async (req, res) => {
         if (!userInfo) {
             return res.status(404).send('User not found');
         }
-        const posts = await getPosts(); 
+        // Fetch only the posts for the logged-in user
+        const posts = await getPosts(req.oidc.user.sub); 
         const ads = await getAds();     
         res.render('profilepage', {
             user: userInfo,
