@@ -1,0 +1,19 @@
+<!-- Partial for Ads that the User Posted-->
+
+<div class="border">
+    <p><%= ad_data.content %></p>
+
+    <div class="blockquote text-center">
+        <a href="https://www.google.com"><img src="<%= ad_data.fileURL %>" alt="" width="200px" height="200px"></a>
+    </div>
+
+    <% if (loggedIn === true) {%>
+        <td>
+            <button class="btn btn-danger" type="button" onclick="deleteAd('<%= ad_data.adId %>')">
+                Delete
+            </button>
+        </td>
+    <% }%>
+    </tr>
+    <tr>
+</div>

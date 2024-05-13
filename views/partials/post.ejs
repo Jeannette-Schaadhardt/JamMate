@@ -4,6 +4,7 @@
         <audio controls>
             <source src="<%=post_data.fileURL %>" type="<%= post_data.fileType %>">
         </audio>
+
     <% } } else { %>
         <!--Just Diagnostics for now. Can replace with something nicer-->
         <p>Media File Unavailable fileType=<%=post_data.fileType%>, fileURL =<%=post_data.fileURL%> </p>

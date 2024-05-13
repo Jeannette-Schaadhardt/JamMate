@@ -70,7 +70,6 @@ async function createAd(userId, content, file) {
             await postDocRef.update(fileURL);
             adData.fileURL = fileURL;
         }
-        console.log("in mAd.js...adData = ", adData);
         return adData;
     } catch (error) {
         // Handle error

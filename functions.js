@@ -2,7 +2,7 @@ const { expressjwt: jwt } = require("express-jwt");
 const jwksRsa = require('jwks-rsa');
 const { postUser } = require('./model/mUser');
 const { getPosts } = require('./model/mPost.js');
-const { getAds } = require('./model/mAd.js');
+const { getAds, getAd } = require('./model/mAd.js');
 
 const DOMAIN = 'dev-gblxtkrkmbzldfsv.us.auth0.com';
 
@@ -58,7 +58,8 @@ async function handleAuthenticationFlow(req, res, destination) {
     // Determine if user is logged in
     let user;
     let posts;
-    let ads;
+    let randomAds;
+    let userAds;
     let userID;
     if (req.oidc.isAuthenticated()) {
         user = { "user": req.oidc.user, "jwt": req.oidc.idToken, "loggedIn": true };
@@ -77,22 +78,26 @@ async function handleAuthenticationFlow(req, res, destination) {
         posts = await getPosts();                   // Fetch all posts for other pages like the homepage
     }
 
-    ads = await getAds();
-    console.log("Number of current ads = ", ads.length);
-    let randomAdIndex = Math.floor(Math.random() * ads.length);
-    console.log(ads);
+    randomAds = await getAds();
+    let randomAdIndex = Math.floor(Math.random() * randomAds.length);
+    randomAds = randomAds[randomAdIndex];
     // Render the destination page and be logged in.
     if (user.loggedIn === true) {
-        ads = ads[randomAdIndex];
+        userAds = await getAds();
         postUser(user)
         .then(result => {
-            res.render(destination, { ads: ads, posts: posts, user: result, loggedIn: true });
+            if (destination === "profilepage") {
+            res.render("profilepage", { ads: userAds, posts: posts, user: result, loggedIn: true });
+            }
+            else {
+              res.render(destination, { ads: randomAds, posts: posts, user: result, loggedIn: true });
+            }
         });
     } else {     // User is not logged in so redirect home with undefined data and false login status
     if (destination === "profilepage") {
-        res.render('homepage', { ads: ads, posts: posts, user: user, loggedIn: false});
+        res.render('homepage', { ads: randomAds, posts: posts, user: user, loggedIn: false});
     } else {
-        res.render(destination, { ads: ads, posts: posts, user: user, loggedIn: false });
+        res.render(destination, { ads: randomAds, posts: posts, user: user, loggedIn: false });
     }
 }};
 
