@@ -4,7 +4,6 @@
         <audio controls>
             <source src="<%=post_data.fileURL %>" type="<%= post_data.fileType %>">
         </audio>
-
     <% } } else { %>
         <!--Just Diagnostics for now. Can replace with something nicer-->
         <p>Media File Unavailable fileType=<%=post_data.fileType%>, fileURL =<%=post_data.fileURL%> </p>
@@ -37,9 +36,11 @@
         Comments
     </button>
 </td>
-<% if (loggedIn === true) {%>
+
+<% if (loggedIn === true && post_data.userId === userData.sub) {%>
     <td>
-        <button class="btn btn-danger" type="button" onclick="deletePost('<%= post_data.postId %>')">
+        <button id="deleteButton-<%= post_data.postId %>" class="btn btn-danger" type="button" onclick="deletePost('<%= post_data.postId %>')">
+
             Delete
         </button>
     </td>

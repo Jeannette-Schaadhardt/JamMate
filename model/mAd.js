@@ -107,6 +107,7 @@ try {
     throw error; // Throw the error for the caller to handle
 }
 }
+
 async function getAd(adId) {
     const query = firestore.collection(COLLECTION_NAME).doc(adId);
     const ad = await query.get();
@@ -121,6 +122,7 @@ async function getAd(adId) {
 
 async function deleteAd(adId) {
     const query = firestore.collection(COLLECTION_NAME).doc(adId);
+
     await query.delete();
     return;
 }

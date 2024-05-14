@@ -10,7 +10,6 @@ const GOOGLE_CLOUD_API = "https://storage.googleapis.com"
 
 async function uploadFile(file, postId, fileType) {
     try {
-        console.log(postId);
         // We set up the bucket and file based on the post's Id
         const bucket = storage.bucket(BUCKET_NAME);
         const blob = bucket.file(postId);

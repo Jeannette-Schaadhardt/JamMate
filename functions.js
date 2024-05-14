@@ -61,6 +61,7 @@ async function handleAuthenticationFlow(req, res, destination) {
     let randomAds;
     let userAds;
     let userID;
+  
     if (req.oidc.isAuthenticated()) {
         user = { "user": req.oidc.user, "jwt": req.oidc.idToken, "loggedIn": true };
         userID = req.oidc.user.sub;
@@ -154,3 +155,4 @@ async function submitPost() {
   module.exports = {
     getSecret, getConfig, testJWT, handleAuthenticationFlow, submitPost, submitAd
   }
+

@@ -24,10 +24,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(auth(config));
 app.use('/uploads', express.static(path.join(filePath, 'uploads'))); // Serve static files from uploads directory
+app.use(express.static(path.join(__dirname,"public")));
 app.use('/user', userRouter);
 app.use('/post', postRouter);
 app.use('/search', searchRouter);
 // app.use('/comment', commentRouter);
+
 app.use('/ad', adRouter);
 
 app.use(session({

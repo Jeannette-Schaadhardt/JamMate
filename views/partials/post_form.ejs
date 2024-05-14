@@ -1,5 +1,6 @@
 <!--  Drop-down to Create a Post  -->
 <button type="button" class="p-1 mb-1 bg-primary text-white" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark" onclick="toggleElement('postCreationForm')">
+
     Create Post
 </button>
 
@@ -96,4 +97,5 @@ document.querySelector('#postForm textarea').addEventListener('keydown', functio
         document.getElementById('postForm').dispatchEvent(new Event('submit', { cancelable: true })); // Trigger form submission
     }
 });
+
 </script>
