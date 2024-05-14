@@ -28,6 +28,8 @@ app.use(express.static(path.join(__dirname,"public")));
 app.use('/user', userRouter);
 app.use('/post', postRouter);
 app.use('/search', searchRouter);
+// app.use('/comment', commentRouter);
+
 app.use('/ad', adRouter);
 
 app.use(session({

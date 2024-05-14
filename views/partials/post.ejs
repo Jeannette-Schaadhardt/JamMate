@@ -36,9 +36,11 @@
         Comments
     </button>
 </td>
+
 <% if (loggedIn === true && post_data.userId === userData.sub) {%>
     <td>
         <button id="deleteButton-<%= post_data.postId %>" class="btn btn-danger" type="button" onclick="deletePost('<%= post_data.postId %>')">
+
             Delete
         </button>
     </td>
