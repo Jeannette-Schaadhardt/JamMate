@@ -44,12 +44,14 @@ router.get('/', async(req, res) => {
         let userId = null;
         // Use the username in the query to get the UserId for ease in getting their posts.
         let users = await getUsers(null, q.username?.toLowerCase() ?? null);
-        if (users[0]) userId = users[0].userId;
+        if (users[0]) userId = users[0].user.sub;
         // Convert date string to TimeStamp
         const startDateTimeStamp = q.start_date.value ? new Date(q.start_date.value).getTime() : null;
         const endDateTimeStamp = q.end_date.value ? new Date(q.end_date.value).getTime() : null;
         // Set all of the fields .toLowerCase() to avoid issues with case sensitivity.
-        posts = await getPosts(userId, null,
+        posts = await getPosts(
+            userId,
+            null,
             // Perform qualified lowerCase() operations on the strings.
             q.instrument?.toLowerCase() ?? null,
             q.genre?.toLowerCase() ?? null,
