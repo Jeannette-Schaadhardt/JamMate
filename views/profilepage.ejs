@@ -13,30 +13,10 @@
     <div class="p-3 mb-2 bg-light">
     <%- include('partials/header', {user: loggedIn}) %>
     <h1><%= user.nickname %>'s Profile </h1>
-
     <p>Description: <%= user.description %></p>
     <p>Skill Level: <%= user.skillLevel %></p>
     <p>Location: <%= user.location %></p>
     <p>Instrument: <%= user.instrument %></p>
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
-                    <a href="/user/edit">Edit Your Bio</a>
-                </button>
-            </div>
-            <div class="col">
-                <div>
-                    <%- include('partials/ad_form', {user: user}) %>
-                </div>
-            </div>
-            <div class="col">
-                <div>
-                    <%- include('partials/post_form', {user: user}) %>
-                </div>
-            </div>
-        </div>
-    </div>
 
 <table class="table table-hover table-forum text-center">
     <thead>
@@ -47,8 +27,6 @@
         </tr>
     </thead>
 <tbody>
-
-          <% posts.forEach(function(post) { %>
     <div class="container">
         <div class="row">
             <div class="col">
@@ -82,15 +60,13 @@
             <% posts.forEach(function(post) { %>
             <div  class="post" id="post-<%= post.postId %>">
                 <tr>
-                    <%- include('partials/post', {post_data: post}) %>
+                    <%- include('partials/post', {loggedIn: loggedIn, post_data: post, userData:user}) %>
                 </tr>
             </div>
             <% }); %>
         </div>
     </tbody>
 </table>
-<button class="btn btn-danger" type="button" onclick="deleteAllPosts('<%= user.nickname %>')">Delete all of <%= user.nickname%>'s posts
-</button>
 <h2>My Ads Posted on JamMate</h2>
 <%- include('partials/userAd', {ad_data: ads}) %>
 <% ads.forEach(function(ad) { %>

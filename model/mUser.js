@@ -42,18 +42,41 @@ async function postUser(userEntity) {
 }
 
 async function getUserInfo(userId) {
-    const userRef = firestore.collection(COLLECTION_NAME).doc(userId);
-    const doc = await userRef.get();
-    if (!doc.exists) {
-        console.log(`No user found with ID: ${userId}`);
-        return null;  // Return null if no user is found
+    try {
+        const query = firestore.collection(COLLECTION_NAME);
+        const queryResult = await query.where("user.sub", "==", userId).get();
+        const users = [];
+        queryResult.forEach(doc => {
+            users.push(doc.data());
+        });
+        if (users.length === 0) {
+            console.log(`No user found with ID: ${userId}`);
+            return null;  // Return null if no user is found
+        }
+        return users[0];
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        throw error;
     }
-    return doc.data();
 }
 
 async function updateUserInfo(userId, updateData) {
-    const userRef = firestore.collection(COLLECTION_NAME).doc(userId);
-    await userRef.update(updateData);
+    try {
+        const query = await firestore.collection(COLLECTION_NAME).where("user.sub", "==", userId).get();
+        // We only want to update the fields that are filled in.
+        const updatedUserData = {};
+        for (const field in updateData) {
+            if (updateData[field]) {
+                updatedUserData[`user.${field}`] = updateData[field];
+            }
+        }
+        query.forEach(async doc => {
+                await doc.ref.update(updatedUserData)
+        })
+    } catch (error) {
+        console.error('Error updating user:', error);
+        throw error;
+    }
 }
 
 module.exports = {

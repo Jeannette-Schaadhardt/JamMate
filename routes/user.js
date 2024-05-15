@@ -1,7 +1,7 @@
 const express = require('express');
 const { getUserInfo, updateUserInfo } = require('../model/mUser');
 const { getPosts } = require('../model/mPost');
-const { getAds } = require('../model/mAd'); 
+const { getAds } = require('../model/mAd');
 const router = express.Router();
 
 // Middleware to ensure the user is authenticated
@@ -15,15 +15,15 @@ function isAuthenticated(req, res, next) {
 // Display the user's profile
 router.get('/', isAuthenticated, async (req, res) => {
     try {
-        const userInfo = await getUserInfo(req.oidc.user.sub);
-        if (!userInfo) {
+        const userEntity = await getUserInfo(req.oidc.user.sub);
+        if (!userEntity) {
             return res.status(404).send('User not found');
         }
         // Fetch only the posts for the logged-in user
-        const posts = await getPosts(req.oidc.user.sub); 
-        const ads = await getAds();     
+        const posts = await getPosts(req.oidc.user.sub);
+        const ads = await getAds();
         res.render('profilepage', {
-            user: userInfo,
+            user: userEntity.user,
             posts: posts,
             ads: ads,                    // Include ads here
             loggedIn: req.oidc.isAuthenticated()
