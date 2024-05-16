@@ -32,7 +32,7 @@
     </div>
 </td>
 <td>
-    <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+    <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#postComments-<%=post_data.postId%>" aria-expanded="false" aria-controls="collapseExample">
         Comments
     </button>
 </td>
@@ -49,17 +49,21 @@
 </tr>
 <tr>
 <td colspan="3">
-    <div class="collapse" id="collapseExample">
+    <div class="collapse" id="postComments-<%=post_data.postId%>">
         <section>
             <div class="card">
-                <div class="card-body">
-                <!-- Reactions -->
-                <%- include('input_comment') %>
-                <%- include('comment') %>
-                </div>
-                <!-- Interactions -->
+                <%- include('comment_form', {postId: post_data.postId, userId: userData.userId, nickname: userData.nickname}) %>
             </div>
-            </section>
+            <% post_data.comments.forEach(function(comment) { %>
+                <div class="card">
+                    <div class="card-body">
+                        <div  class="comment" id="comment-<%= comment.commentId %>">
+                            <%- include('comment', {commentData: comment}) %>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </section>
     </div>
 </td>
 

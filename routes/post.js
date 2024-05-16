@@ -3,9 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 
 const storage = multer.memoryStorage()
-const { postUser } = require('../model/mUser.js');
 const { createPost, getPost, deletePost, deleteAllPosts } = require('../model/mPost.js');
-const { getUsers} = require('../model/mUser.js');
 
 const upload = multer({ storage: storage });
 

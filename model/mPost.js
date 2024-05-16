@@ -6,7 +6,7 @@ firestore.settings({ ignoreUndefinedProperties: true }); // Allows us to createP
 const COLLECTION_NAME = "Post";  // Defining kind at the top for consistency
 const BUCKET_NAME = "jammate-cs467_cloudbuild"
 const GOOGLE_CLOUD_API = "https://storage.googleapis.com"
-
+const { getComments } = require('./mComment.js');
 
 async function uploadFile(file, postId, fileType) {
     try {
@@ -140,10 +140,11 @@ try {
     const posts = [];
 
     // Iterate through the documents returned by the query
-    querySnapshot.forEach(doc => {
+    querySnapshot.forEach(async doc => {
         // Convert each document data to a JavaScript object and push it to the posts array
         const postData = doc.data();
         postData.postId = doc.id;
+        postData.comments = await getComments(doc);
     posts.push(postData);
     });
 
