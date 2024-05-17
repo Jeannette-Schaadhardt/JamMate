@@ -24,7 +24,7 @@ async function updateLike(data) {
 
         if (querySnapshot.empty) {
             await firestore.collection(LIKE_COLLECTION).add({
-                userId, relationalId, like
+                userId, relationalId, postId, like
             });
             likeCount = await updateLikeCount(postId, commentId, like, true);
         } else {
