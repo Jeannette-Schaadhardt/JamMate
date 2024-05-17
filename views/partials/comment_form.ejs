@@ -1,12 +1,12 @@
 <!--  Drop-down to Create a Post  -->
-<button type="button" class="p-1 mb-1 bg-primary text-white" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark" onclick="toggleElement('commentCreationForm')">
+<button type="button" class="p-1 mb-1 btn btn-success text-white" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark" onclick="toggleElement('commentForm-<%=postId%>')">
     Create Comment
 </button>
 
-<form action="/comment/<%= postId%>" method="POST" id="commentCreationForm" style="display: none;">
+<form id="commentForm-<%=postId%>" class="commentForm" style="display: none;">
     <input type="hidden" name="postId" value="<%= postId %>">
     <input type="hidden" name="userId" value="<%= userId %>">
     <input type="hidden" name="nickname" value="<%= nickname %>">
-    <textarea id="commentText" name="commentText" rows="4" cols="50"></textarea><br>
+    <textarea name="commentText" rows="4" cols="50"></textarea><br>
     <button type="submit">Submit</button>
 </form>

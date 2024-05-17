@@ -8,7 +8,7 @@ async function createComment(postId, commentData) {
         const postRef = firestore.collection('Post').doc(postId);
         let newCommentData = commentData;
         newCommentData.timestamp = new Date().getTime();
-
+        newCommentData.likeCount = 0;
         // Add the comment to the comments subcollection of the post
         await postRef.collection(COLLECTION_NAME).add(newCommentData);
     } catch (error) {

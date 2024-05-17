@@ -50,3 +50,89 @@ function deleteAllPosts(userId) {
         });
     }
 }
+
+function controlLikeCount(userId, likeBool, postId, commentId=null) {
+    var data = {
+        userId, likeBool, postId, commentId
+    }
+    $.ajax({
+        url: '/post/like',
+        type: 'POST',
+        data: data,
+        success: function(result) {
+            // Exit if the likeCount didn't change
+            if (result.likeCount == null) {return true}
+            // Get the right id for a comment or post
+            let relationalId = commentId !== "" && commentId !== null ? commentId : postId;
+            var postLikeElement = document.getElementById(`likeCount-`+relationalId);
+            if (postLikeElement) {
+                document.getElementById(`likeCount-`+relationalId).innerText = result.likeCount;
+            } else {
+                console.error(`likeCount element not found: likeCount-`+relationalId);
+            }
+        },
+        error: function(xhr, status, error) {
+            alert("Error liking post: " + xhr.responseText);
+        }
+    });
+}
+
+function makeComment(userId, postId, nickname, commentText) {
+    var data = {
+        userId, postId, nickname, commentText
+    }
+    $.ajax({
+        url: '/comment/'+postId,
+        type: 'POST',
+        data: data,
+        success: function(result) {
+            console.log("Post success:", data);
+            document.getElementById('commentForm-'+postId).reset(); // Reset the form after submission
+            document.getElementById('commentForm-'+postId).style.display = 'none'; // Hide the form again
+        },
+        error: function(xhr, status, error) {
+            alert("Error liking post: " + xhr.responseText);
+        }
+    });
+}
+
+// Attach event listeners to like buttons
+document.querySelectorAll('.likeButton').forEach(function(likeButton) {
+    likeButton.addEventListener('click', function() {
+        // Extract post ID from the button's data attribute
+        var userId = this.getAttribute('data-user-id');
+        var postId = this.getAttribute('data-post-id');
+        var commentId = this.getAttribute('data-comment-id');
+        // Call controlLikeCount function with postId
+        controlLikeCount(userId, true, postId, commentId);
+    });
+});
+
+// Attach event listeners to dislike buttons
+document.querySelectorAll('.dislikeButton').forEach(function(dislikeButton) {
+    dislikeButton.addEventListener('click', function() {
+        // Extract ID from the button's data attribute
+        var userId = this.getAttribute('data-user-id');
+        var postId = this.getAttribute('data-post-id');
+        var commentId = this.getAttribute('data-comment-id');
+        // Call controlLikeCount function with postId
+        controlLikeCount(userId, false, postId, commentId);
+    });
+});
+
+// Attach event listeners to comment form buttons
+document.querySelectorAll('.commentForm').forEach(function(commentForm) {
+    commentForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        var formData = new FormData(commentForm);
+        var postId = formData.get('postId');
+        var userId = formData.get('userId');
+        var nickname = formData.get('nickname');
+        var commentText = formData.get('commentText');
+        if (nickname !=="" && nickname !== null) {
+            makeComment(userId, postId, nickname, commentText);
+        } else {
+            return
+        }
+    });
+});

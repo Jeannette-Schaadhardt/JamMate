@@ -1,17 +1,28 @@
-<div class="d-flex align-items-center"> <!-- Use "d-flex" for Flexbox layout -->
-    <!-- Image -->
-    <a href="" class="text-muted small ms-3 me-2"><strong>Like</strong></a>
-    <a href="" class="text-muted small me-2"><strong>Reply</strong></a>
-    <!-- Media body -->
-    <h5 class="fw-bold">
-        <%= commentData.nickname %>
-    </h5>
-    <p>
+<div class="d-flex">
+    <a href="">
+        <img src="https://mdbcdn.b-cdn.net/img/new/avatars/6.webp" class="rounded-circle" alt="Avatar" style="height: 40px" />
+    </a>
+    <div class="bg-body-tertiary rounded-3 px-3 py-1">
+        <img id="likeButton-<%= commentData.commentId %>" class="likeButton"
+        data-post-id="<%= postId %>" data-user-id="<%= userId %>" data-comment-id="<%= commentData.commentId%>"
+        src="https://storage.googleapis.com/jammate-cs467_cloudbuild/htmlMedia/like.png" style="height: 20px" >
+
+        <span id="likeCount-<%= commentData.commentId %>"><%= commentData.likeCount %></span>
+
+        <img id="dislikeButton-<%= commentData.commentId %>" class="dislikeButton"
+        data-post-id="<%= postId %>" data-user-id="<%= userId %>" data-comment-id="<%= commentData.commentId%>"
+        src="https://storage.googleapis.com/jammate-cs467_cloudbuild/htmlMedia/dislike.png" style="height: 20px">
+    </div>
+    <div class="bg-body-tertiary rounded-3 px-3 py-1">
+        <a href="" class="text-dark mb-0">
+            <strong><%= commentData.nickname %></strong>
+        </a>
+    </div>
+    <div class="bg-body-tertiary rounded-3 px-3 py-1">
         <% const localDateTime = new Date(commentData.timestamp).toLocaleString(); %>
-        Posted on <%= localDateTime %>
-    </p>
-    <p>
-        <%= commentData.commentText %>
-    </p>
-    <!-- Media body -->
+        <%= localDateTime %>
+    </div>
+    <div class="bg-body-tertiary rounded-3 px-3 py-1">
+        <p><%= commentData.commentText %></p>
+    </div>
 </div>

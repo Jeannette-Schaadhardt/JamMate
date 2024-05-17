@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
+const commentRouter = require('./comment.js');
 const multer = require('multer');
 
 const storage = multer.memoryStorage()
 const { createPost, getPost, deletePost, deleteAllPosts } = require('../model/mPost.js');
+const { updateLike} = require('../model/mLike.js');
 
 const upload = multer({ storage: storage });
 
@@ -23,6 +25,16 @@ router.post('/', upload.single('media'), async (req, res) => {
         res.status(500).send({error: 'Failed to create post'});
     }
 });
+
+router.post('/like', async (req, res) => {
+    try {
+        const likeCount = await updateLike(req.body)
+        res.json({likeCount})
+    } catch (err) {
+        console.error('Error liking post:', err);
+        res.status(500).send({error: 'Failed to like post'})
+    }
+})
 
 router.delete('/:postId', async (req, res) => {
     if (!req.oidc.isAuthenticated()) {

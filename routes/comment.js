@@ -7,7 +7,7 @@ const { createComment, deleteComment } = require('../model/mComment.js');
 router.post('/:postId', async (req, res) => {
     try {
         createComment(req.params.postId, req.body)
-        res.status(200).send('Success in making comment')
+        res.json(req.body)
     } catch (error) {
         console.error('Error updating user:', error);
         res.status(500).send('Internal Server Error');

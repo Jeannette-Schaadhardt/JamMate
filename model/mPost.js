@@ -12,7 +12,7 @@ async function uploadFile(file, postId, fileType) {
     try {
         // We set up the bucket and file based on the post's Id
         const bucket = storage.bucket(BUCKET_NAME);
-        const blob = bucket.file(postId);
+        const blob = bucket.file(`postMedia/${postId}`);
         // Somehow this knows that we are grabbing the file due to some code magic.
         const blobStream = blob.createWriteStream({
             metadata: {
@@ -72,7 +72,7 @@ async function createPost(userId, content, file, nickname, instrument, genre, sk
             // If there is a file then we attempt to upload the file to GCS (google cloud storage)
             successUpload = await uploadFile(file, postDocRef.id, postData.fileType);
             // Update firestore document with download URL
-            const fileURL = {fileURL: `${GOOGLE_CLOUD_API}/${BUCKET_NAME}/${postDocRef.id}`};
+            const fileURL = {fileURL: `${GOOGLE_CLOUD_API}/${BUCKET_NAME}/postMedia/${postDocRef.id}`};
             await postDocRef.update(fileURL);
             postData.fileURL = fileURL;
         }
@@ -93,43 +93,40 @@ async function createPost(userId, content, file, nickname, instrument, genre, sk
 * @param[in] lon - Optional, used for displaying posts located near given lon
 * @param[in] range - Optional, used for displaying posts within range of lat, lon.
 */
-async function getPosts(userId = null, postId = null,
-    instrument = null, genre=null, skillLevel = null, descriptor=null,
-    lat = null, lon = null, rangeInMiles = null,
-    start_date = null, end_date = null) {
+async function getPosts(queryData) {
 try {
     // Query Firestore to get all posts
     let query = firestore.collection(COLLECTION_NAME);
 
     // If userId is provided, filter posts based on userId
-    if (postId) {
-        query = query.where('postId', '==', postId);
+    if (queryData.postId) {
+        query = query.where('postId', '==', queryData.postId);
 
     } else {
-        if (userId) {
-            query = query.where('userId', '==', userId);
+        if (queryData.userId) {
+            query = query.where('userId', '==', queryData.userId);
         }
-        if (instrument) {
-            query = query.where('instrument', '==', instrument)
+        if (queryData.instrument) {
+            query = query.where('instrument', '==', queryData.instrument)
         }
-        if (genre) {
-            query = query.where('genre', '==', genre);
+        if (queryData.genre) {
+            query = query.where('genre', '==', queryData.genre);
         }
-        if (skillLevel) {
-            query = query.where('skillLevel', '==', skillLevel);
+        if (queryData.skillLevel) {
+            query = query.where('skillLevel', '==', queryData.skillLevel);
         }
         // The lat and lon here is based off the user performing the search.
-        if (lat && lon && rangeInMiles) {
+        if (queryData.lat && queryData.lon && queryData.rangeInMiles) {
             // Calculate the boundaries of our Coordinate Box based on range.
             query = FilterOnRangeBoundaries(query);
         }
-        if (start_date) {
+        if (queryData.start_date) {
             query = query.where('timestamp', '>=',
-            start_date);
+            queryData.start_date);
         }
-        if (end_date) {
+        if (queryData.end_date) {
             query = query.where('timestamp', '<=',
-            end_date);
+            queryData.end_date);
         }
     }
 
@@ -137,23 +134,29 @@ try {
     const querySnapshot = await query.get();
 
     // Array to hold the retrieved posts
-    const posts = [];
-
-    // Iterate through the documents returned by the query
-    querySnapshot.forEach(async doc => {
+    let posts = [];
+    if (querySnapshot.empty) {
+        console.log("query came back is empty");
+    }
+    // Map each document to a promise that resolves when comments are fetched
+    const promises = querySnapshot.docs.map(async doc => {
         // Convert each document data to a JavaScript object and push it to the posts array
         const postData = doc.data();
         postData.postId = doc.id;
         postData.comments = await getComments(doc);
-    posts.push(postData);
+        return postData;
     });
+    // Wait for all promises to resolve
+    const postDataArray = await Promise.all(promises);
+    // Push resolution into the posts array.
+    posts.push(...postDataArray);
 
     // Apply additional filter for descriptor inclusion
-    if (descriptor != null) {
+    if (queryData.descriptor != null) {
         // Filter posts to include only those where the descriptor is found in the description
         const filteredPosts = posts.filter(post => {
             const lowerCaseContent = post.content?.toLowerCase() ?? null;
-            return lowerCaseContent.includes(descriptor);
+            return lowerCaseContent.includes(queryData.descriptor);
         });
         return filteredPosts;
     }
@@ -166,17 +169,17 @@ try {
 }
 // Helper function to handle setting the boundaries for the location filtering.
     function FilterOnRangeBoundaries(query) {
-        const latRadians = lat * Math.PI / 180;
+        const latRadians = queryData.lat * Math.PI / 180;
         const latDegreeOfOneMile = 1 / 69.;
-        const latRange = rangeInMiles * latDegreeOfOneMile;
-        const minLat = lat - latRange;
-        const maxLat = lat + latRange;
+        const latRange = queryData.rangeInMiles * latDegreeOfOneMile;
+        const minLat = queryData.lat - latRange;
+        const maxLat = queryData.lat + latRange;
 
         // Calculate the Longitude Min and Max (range in degrees changes based off of the latitude);
         const lonDegreeOfOneMile = 1 / (69. * Math.cos(latRadians));
-        const lonRange = rangeInMiles * lonDegreeOfOneMile;
-        const minLon = lon - lonRange;
-        const maxLon = lon + lonRange;
+        const lonRange = queryData.rangeInMiles * lonDegreeOfOneMile;
+        const minLon = queryData.lon - lonRange;
+        const maxLon = queryData.lon + lonRange;
         query = query
             .where('location', '>=', new firestore.GeoPoint(minLat, minLon))
             .where('location', '<=', new firestore.GeoPoint(maxLat, maxLon));
@@ -196,21 +199,44 @@ async function getPost(postId) {
 }
 async function deletePost(postId) {
     const query = firestore.collection(COLLECTION_NAME).doc(postId);
+
+    await deleteAssociatedReferences(query, postId);
+
     //TODO: refresh if required!
     await query.delete();
     const bucket = storage.bucket(BUCKET_NAME);
-    const blob = bucket.file(postId);
+    const blob = bucket.file("postMedia/"+postId);
     await blob.delete()                 // Delete from Google Cloud Storage
     return;
 }
 
+async function deleteAssociatedReferences(query, postId) {
+    const commentsSnapshot = await query
+        .collection('Comment')
+        .get();
+    commentsSnapshot.forEach(commentDoc => {
+        commentDoc.ref.delete();
+    });
+    const likesSnapshot = await firestore
+        .collection('Like')
+        .where("postId", "==", postId)
+        .get();
+    likesSnapshot.forEach(likeDoc => {
+        likeDoc.ref.delete();
+    });
+}
+
 async function deleteAllPosts(userId) {
     const bucket = storage.bucket(BUCKET_NAME);
-    const querySnapshot = await firestore.collection(COLLECTION_NAME)
-                    .where("userId", "==", userId).get();
+    const querySnapshot = await firestore
+                    .collection(COLLECTION_NAME)
+                    .where("userId", "==", userId)
+                    .get();
+
     querySnapshot.forEach(async doc=> {
-        bucket.file(doc.id).delete();   // Delete the media from the Google Cloud Storage (I don't think await is necessary.)
-        doc.ref.delete();               // Delete the firestore document
+        await deleteAssociatedReferences(doc.ref, doc.id);
+        await bucket.file("postMedia/"+doc.id).delete();   // Delete the media from the Google Cloud Storage (I don't think await is necessary.)
+        await doc.ref.delete();               // Delete the firestore document
     });
 }
 
