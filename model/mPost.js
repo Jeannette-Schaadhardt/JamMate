@@ -135,9 +135,6 @@ try {
 
     // Array to hold the retrieved posts
     let posts = [];
-    if (querySnapshot.empty) {
-        console.log("query came back is empty");
-    }
     // Map each document to a promise that resolves when comments are fetched
     const promises = querySnapshot.docs.map(async doc => {
         // Convert each document data to a JavaScript object and push it to the posts array
