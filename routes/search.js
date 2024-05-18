@@ -2,27 +2,34 @@ const express = require('express');
 const router = express.Router();
 const { getPosts } = require('../model/mPost.js');
 const { getUsers } = require('../model/mUser.js');
-
+const { authenticateUser} = require('../functions.js');
 
 router.get('/', async(req, res) => {
-    let userId = null;
     let loggedIn = false;
-    let userObject;
-    let lat = null;
-    let lon = null;
-    let range = null;
+    let user;
+    let postData = {
+        userId: null,
+        postId: null,
+        instrument: null,
+        genre: null,
+        skillLevel: null,
+        descriptor: null,
+        lat: null,
+        lon: null,
+        rangeInMiles : null,
+        start_date: null,
+        end_date: null
+    }
+    let userRange = null;
     // We want to use our user's location to perform the range calculations.
     if (req.oidc.isAuthenticated()) {
-        userId = req.oidc.user.sub;
-        const users = await getUsers(null, null, userId)
+        const users = await getUsers(null, null, req.oidc.user.sub)
         if (users.length>0) {
-            userObject=users[0];
-            if (userObject.user.location) {
-                lat = userObject.user.location[0];
-                lon = userObject.user.location[1];
-                if (userObject.user.range) {
-                    range = userObject.user.range;
-                }
+            user=users[0].user;
+            if (user.location) {
+                postData.lat = user.location[0];
+                postData.lon = user.location[1];
+                postData.rangeInMiles = user.range || null;
             }
             loggedIn = true;
         }
@@ -37,40 +44,35 @@ router.get('/', async(req, res) => {
     const searchTerm = req.query.term?.toLowerCase() ?? null;
     const searchType = req.query.search_type;
     // Then if there is a searchType we know we are doing a basic search.
-    if (searchType != null) {
-        posts = await handleBasicSearch(searchType, posts, searchTerm, lat, lon, range);
+    if (searchType) {
+        posts = await handleBasicSearch(postData, searchType, searchTerm);
     } else {    // Otherwise we are doing a advanced search.
         let q = req.query;
-        let userId = null;
         // Use the username in the query to get the UserId for ease in getting their posts.
         let users = await getUsers(null, q.username?.toLowerCase() ?? null);
-        if (users[0]) userId = users[0].user.sub;
-        // Convert date string to TimeStamp
-        const startDateTimeStamp = q.start_date.value ? new Date(q.start_date.value).getTime() : null;
-        const endDateTimeStamp = q.end_date.value ? new Date(q.end_date.value).getTime() : null;
-        // Set all of the fields .toLowerCase() to avoid issues with case sensitivity.
-        posts = await getPosts(
-            userId,
-            null,
-            // Perform qualified lowerCase() operations on the strings.
-            q.instrument?.toLowerCase() ?? null,
-            q.genre?.toLowerCase() ?? null,
-            q.skillLevel?.toLowerCase() ?? null,
-            q.descriptor?.toLowerCase() ?? null,
-            lat, lon, q.range,
-            startDateTimeStamp,
-            endDateTimeStamp);
+        const userId = users[0]?.user.sub || null;
+        postData = {
+            userId: userId,
+            instrument: q.instrument?.toLowerCase() ?? null,
+            genre: q.genre?.toLowerCase() ?? null,
+            skillLevel: q.skillLevel?.toLowerCase() ?? null,
+            descriptor: q.descriptor?.toLowerCase() ?? null,
+            rangeInMiles: q.range,
+            start_date: q.start_date.value ? new Date(q.start_date.value).getTime() : null,
+            end_date: q.end_date.value ? new Date(q.end_date.value).getTime() : null
+        };
+        posts = await getPosts(postData);
     }
-    res.render('searchpage', {posts: posts, user: userObject, loggedIn: loggedIn});
+
+    ({user, userId} = authenticateUser(req, user, userId));
+
+    res.render('searchpage', {posts: posts, user: user, loggedIn: loggedIn});
 });
 
-module.exports = router;
-
-async function handleBasicSearch(searchType, posts, searchTerm, lat, lon, range) {
+async function handleBasicSearch(postData, searchType, searchTerm) {
     switch (searchType) {
         case 'instrument':
-            posts = await getPosts(null, null,
-                searchTerm, null, null, lat, lon, range);
+            postData.instrument = searchTerm
             break;
         case 'user':
             let users = await getUsers(null, searchTerm);
@@ -78,21 +80,19 @@ async function handleBasicSearch(searchType, posts, searchTerm, lat, lon, range)
             if (users[0]) {
                 userId = users[0].user.sub;
             }
-            posts = await getPosts(userId, null,
-                null, null, null, lat, lon, range);
+            postData.userId = userId;
             break;
         case 'genre':
-            posts = await getPosts(null, null,
-                null, searchTerm, null, lat, lon, range);
+            postData.genre = searchTerm
             break;
         case 'descriptor':
-            posts = await getPosts(null, null,
-                null, null, searchTerm, lat, lon, range);
+            postData.descriptor = searchTerm
             break;
         default:
-            posts = await getPosts(null, null,
-                null, null, null, lat, lon, range);
             break;
     }
+    posts = await getPosts(postData);
     return posts;
 }
+
+module.exports = router;

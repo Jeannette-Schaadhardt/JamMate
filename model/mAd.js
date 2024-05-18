@@ -11,7 +11,7 @@ async function uploadFile(file, adId, fileType) {
     try {
         // We set up the bucket and file based on the ad's Id
         const bucket = storage.bucket(BUCKET_NAME);
-        const blob = bucket.file(adId);
+        const blob = bucket.file(`adMedia/${adId}`);
         // Somehow this knows that we are grabbing the file due to some code magic.
         const blobStream = blob.createWriteStream({
             metadata: {
@@ -66,7 +66,7 @@ async function createAd(userId, content, file) {
             // If there is a file then we attempt to upload the file to GCS (google cloud storage)
             successUpload = await uploadFile(file, postDocRef.id, adData.fileType);
             // Update firestore document with download URL
-            const fileURL = {fileURL: `${GOOGLE_CLOUD_API}/${BUCKET_NAME}/${postDocRef.id}`};
+            const fileURL = {fileURL: `${GOOGLE_CLOUD_API}/${BUCKET_NAME}/adMedia/${postDocRef.id}`};
             await postDocRef.update(fileURL);
             adData.fileURL = fileURL;
         }
@@ -122,15 +122,19 @@ async function getAd(adId) {
 
 async function deleteAd(adId) {
     const query = firestore.collection(COLLECTION_NAME).doc(adId);
-
     await query.delete();
+    const bucket = storage.bucket(BUCKET_NAME);
+    const blob = bucket.file("adMedia/"+adId);
+    await blob.delete()                 // Delete from Google Cloud Storage
     return;
 }
 
 async function deleteAllAds(nickname) {
+    const bucket = storage.bucket(BUCKET_NAME);
     const querySnapshot = await firestore.collection(COLLECTION_NAME)
                     .where("nickname", "==", nickname).get();
     querySnapshot.forEach(doc=> {
+        bucket.file("postMedia/"+doc.id).delete();   // Delete the media from the Google Cloud Storage (I don't think await is necessary.)
         doc.ref.delete();
     });
 }

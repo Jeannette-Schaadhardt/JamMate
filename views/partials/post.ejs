@@ -10,9 +10,17 @@
         <% } %>
 </td>
 <td>
-    <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
-        Likes: <%= post_data.likeCount %>
-    </button>
+    <div class="bg-body-tertiary rounded-3 px-3 py-1">
+        <img id="likeButton-<%= post_data.postId %>" class="likeButton"
+        data-post-id="<%= post_data.postId %>" data-user-id="<%= userData.sub %>"
+        src="https://storage.googleapis.com/jammate-cs467_cloudbuild/htmlMedia/like.png" style="height: 20px">
+
+        <span id="likeCount-<%= post_data.postId %>"><%= post_data.likeCount %></span>
+
+        <img id="dislikeButton-<%= post_data.postId %>" class="dislikeButton"
+        data-post-id="<%= post_data.postId %>" data-user-id="<%= userData.sub %>"
+        src="https://storage.googleapis.com/jammate-cs467_cloudbuild/htmlMedia/dislike.png" style="height: 20px">
+    </div>
 </td>
 <td>
     <div class="blockquote text-center">
@@ -32,7 +40,7 @@
     </div>
 </td>
 <td>
-    <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+    <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#postComments-<%=post_data.postId%>" aria-expanded="false" aria-controls="collapseExample">
         Comments
     </button>
 </td>
@@ -49,17 +57,21 @@
 </tr>
 <tr>
 <td colspan="3">
-    <div class="collapse" id="collapseExample">
+    <div class="collapse" id="postComments-<%=post_data.postId%>">
         <section>
             <div class="card">
-                <div class="card-body">
-                <!-- Reactions -->
-                <%- include('input_comment') %>
-                <%- include('comment') %>
-                </div>
-                <!-- Interactions -->
+                <%- include('comment_form', {postId: post_data.postId, userId: userData.sub, nickname: userData.nickname}) %>
             </div>
-            </section>
+            <% post_data.comments.forEach(function(comment) { %>
+                <div class="card">
+                    <div class="card-body">
+                        <div  class="comment" id="comment-<%= comment.commentId %>">
+                            <%- include('comment', {commentData: comment, userId: userData.sub, postId: post_data.postId}) %>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </section>
     </div>
 </td>
 

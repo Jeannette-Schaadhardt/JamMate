@@ -12,10 +12,10 @@ async function getUsers(userEntity = null, username=null, userId=null) {
         } else if (userId != null) {
             query = query.where('user.sub', '==', userId);
         }
-        let query_result = await query.get();
+        let querySnapshot = await query.get();
 
-        const users = [];
-        query_result.forEach(doc => {
+        let users = [];
+        querySnapshot.forEach(doc => {
             users.push(doc.data());
         });
         return users;
