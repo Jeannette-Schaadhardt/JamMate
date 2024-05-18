@@ -47,6 +47,8 @@ const testJWT = jwt({
     return testJWT;
 }
 
+
+
 /**
  * Handles authentication when trying to access webpages
  *
@@ -61,22 +63,17 @@ async function handleAuthenticationFlow(req, res, destination) {
     let randomAds;
     let userAds;
     let userID;
-  
-    if (req.oidc.isAuthenticated()) {
-        user = { "user": req.oidc.user, "jwt": req.oidc.idToken, "loggedIn": true };
-        userID = req.oidc.user.sub;
-    } else {
-        user = { "user": req.oidc.user, "jwt": req.oidc.idToken,  "loggedIn": false };
-    }
+
+    ({ user, userID } = authenticateUser(req, user, userID));
 
     // Gather the posts for the appropriate page.
     if (destination === "profilepage" && user.loggedIn === true) {
         // Fetch only user's posts for the profile page
-        posts = await getPosts(userID);
+        posts = await getPosts({userID});
     } else if (destination === "postpage") {        // Fetch the individual post
         posts = await getPost();
     } else {
-        posts = await getPosts();                   // Fetch all posts for other pages like the homepage
+        posts = await getPosts({});                   // Fetch all posts for other pages like the homepage
     }
 
     randomAds = await getAds();
@@ -101,6 +98,16 @@ async function handleAuthenticationFlow(req, res, destination) {
         res.render(destination, { ads: randomAds, posts: posts, user: user, loggedIn: false });
     }
 }};
+
+function authenticateUser(req, user, userID) {
+    if (req.oidc.isAuthenticated()) {
+        user = { "user": req.oidc.user, "jwt": req.oidc.idToken, "loggedIn": true };
+        userID = req.oidc.user.sub;
+    } else {
+        user = { "user": req.oidc.user, "jwt": req.oidc.idToken, "loggedIn": false };
+    }
+    return { user, userID };
+}
 
 async function submitPost() {
     var formData = new FormData(document.getElementById('postForm'));
@@ -153,6 +160,6 @@ async function submitPost() {
   }
 
   module.exports = {
-    getSecret, getConfig, testJWT, handleAuthenticationFlow, submitPost, submitAd
+    getSecret, getConfig, testJWT, handleAuthenticationFlow, authenticateUser, submitPost, submitAd
   }
 

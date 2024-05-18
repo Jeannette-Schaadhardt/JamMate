@@ -14,7 +14,7 @@ const userRouter = require('./routes/user.js');  // router for User
 const postRouter = require('./routes/post.js');  // router for Post
 const adRouter = require('./routes/ad.js'); // router for Ad
 const searchRouter = require('./routes/search.js');
-
+const commentRouter = require('./routes/comment.js');
 const filePath = path.resolve(__dirname, './views/index.ejs');
 const secret = getSecret(10);
 const config = getConfig(secret);
@@ -28,8 +28,7 @@ app.use(express.static(path.join(__dirname,"public")));
 app.use('/user', userRouter);
 app.use('/post', postRouter);
 app.use('/search', searchRouter);
-// app.use('/comment', commentRouter);
-
+app.use('/comment', commentRouter);
 app.use('/ad', adRouter);
 
 app.use(session({

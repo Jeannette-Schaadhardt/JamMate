@@ -20,7 +20,7 @@ router.get('/', isAuthenticated, async (req, res) => {
             return res.status(404).send('User not found');
         }
         // Fetch only the posts for the logged-in user
-        const posts = await getPosts(req.oidc.user.sub);
+        const posts = await getPosts({userId: req.oidc.user.sub});
         const ads = await getAds();
         res.render('profilepage', {
             user: userEntity.user,

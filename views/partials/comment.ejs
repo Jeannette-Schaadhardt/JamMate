@@ -1,28 +1,28 @@
-<!-- Media object -->
 <div class="d-flex">
-    <!-- Image -->
+    <a href="">
+        <img src="https://mdbcdn.b-cdn.net/img/new/avatars/6.webp" class="rounded-circle" alt="Avatar" style="height: 40px" />
+    </a>
+    <div class="bg-body-tertiary rounded-3 px-3 py-1">
+        <img id="likeButton-<%= commentData.commentId %>" class="likeButton"
+        data-post-id="<%= postId %>" data-user-id="<%= userId %>" data-comment-id="<%= commentData.commentId%>"
+        src="https://storage.googleapis.com/jammate-cs467_cloudbuild/htmlMedia/like.png" style="height: 20px" >
 
-    <img
-      src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
-      alt="John Doe"
-      class="me-3 rounded-circle"
-      style="width: 60px; height: 60px;"
-    />
-    <a href="" class="text-muted small ms-3 me-2"><strong>Like</strong></a>
-    <a href="" class="text-muted small me-2"><strong>Reply</strong></a>
-    <!-- Media body -->
-    <div>
-      <h5 class="fw-bold">
-        John Doe
-        <small class="text-muted">Posted on February 19, 2021</small>
-      </h5>
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-        incididunt ut labore et dolore magna aliqua.
-      </p>
-      <%- include('nested_comment') %>
+        <span id="likeCount-<%= commentData.commentId %>"><%= commentData.likeCount %></span>
 
+        <img id="dislikeButton-<%= commentData.commentId %>" class="dislikeButton"
+        data-post-id="<%= postId %>" data-user-id="<%= userId %>" data-comment-id="<%= commentData.commentId%>"
+        src="https://storage.googleapis.com/jammate-cs467_cloudbuild/htmlMedia/dislike.png" style="height: 20px">
     </div>
-    <!-- Media body -->
-  </div>
-  <!-- Media object -->
+    <div class="bg-body-tertiary rounded-3 px-3 py-1">
+        <a href="" class="text-dark mb-0">
+            <strong><%= commentData.nickname %></strong>
+        </a>
+    </div>
+    <div class="bg-body-tertiary rounded-3 px-3 py-1">
+        <% const localDateTime = new Date(commentData.timestamp).toLocaleString(); %>
+        <%= localDateTime %>
+    </div>
+    <div class="bg-body-tertiary rounded-3 px-3 py-1">
+        <p><%= commentData.commentText %></p>
+    </div>
+</div>
