@@ -60,7 +60,7 @@
             <% posts.forEach(function(post) { %>
             <div  class="post" id="post-<%= post.postId %>">
                 <tr>
-                    <%- include('partials/post', {loggedIn: loggedIn, post_data: post, userData:user}) %>
+                    <%- include('partials/post', {loggedIn: loggedIn, post_data: post, userData: user}) %>
                 </tr>
             </div>
             <% }); %>
@@ -68,12 +68,11 @@
     </tbody>
 </table>
 <h2>My Ads Posted on JamMate</h2>
-<%- include('partials/userAd', {ad_data: ads}) %>
 <% ads.forEach(function(ad) { %>
     <% if (ad.userId === user.sub) { %>
         <div  class="ad" id="ad-<%= ad.adId %>">
             <tr>
-                <%- include('partials/userAd', {ad_data: ad}) %>
+                <%- include('partials/userAd', {ad_data: ad, userData: user}) %>
             </tr>
         </div>
     <% } %>

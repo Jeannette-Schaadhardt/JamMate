@@ -43,7 +43,7 @@ router.delete('/:adId', async (req, res) => {
         if (ad.userId !== req.oidc.user.sub) { // Checking ownership
             return res.status(403).send('Unauthorized to delete this ad');
         }
-        await deletead(adId);
+        await deleteAd(adId);
         res.status(200).send({ message: 'Ad deleted successfully' });
     } catch (error) {
         console.error('Error deleting ad:', error);
