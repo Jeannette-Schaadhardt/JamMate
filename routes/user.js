@@ -1,8 +1,12 @@
 const express = require('express');
-const { getUserInfo, updateUserInfo } = require('../model/mUser');
+const router = express.Router();
+const multer = require('multer');
+const { getUserInfo, updateUserInfo, getUsers } = require('../model/mUser');
+const { saveProfilePicture } = require('../model/storageService');
 const { getPosts } = require('../model/mPost');
 const { getAds } = require('../model/mAd');
-const router = express.Router();
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 // Middleware to ensure the user is authenticated
 function isAuthenticated(req, res, next) {
@@ -19,13 +23,12 @@ router.get('/', isAuthenticated, async (req, res) => {
         if (!userEntity) {
             return res.status(404).send('User not found');
         }
-        // Fetch only the posts for the logged-in user
         const posts = await getPosts({userId: req.oidc.user.sub});
         const ads = await getAds();
         res.render('profilepage', {
             user: userEntity.user,
             posts: posts,
-            ads: ads,                    // Include ads here
+            ads: ads,
             loggedIn: req.oidc.isAuthenticated()
         });
     } catch (error) {
@@ -34,20 +37,7 @@ router.get('/', isAuthenticated, async (req, res) => {
     }
 });
 
-// Redirect to edit bio page
-router.get('/edit', isAuthenticated, async (req, res) => {
-    const userInfo = await getUserInfo(req.oidc.user.sub);
-    if (!userInfo) {
-        return res.status(404).send('User not found');
-    }
-    // Pass the loggedIn status when rendering the editBio template
-    res.render('editBio', {
-        user: userInfo,
-        loggedIn: req.oidc.isAuthenticated() // Ensures that the 'loggedIn' variable is defined
-    });
-});
-
-// Handle updates to the user bio
+// Route to update the user's bio information
 router.post('/update-bio', isAuthenticated, async (req, res) => {
     const { nickname, description, skillLevel, location, instrument } = req.body;
     try {
@@ -65,6 +55,19 @@ router.post('/update-bio', isAuthenticated, async (req, res) => {
     }
 });
 
+// Route to handle profile picture update
+router.post('/update-profile-picture', upload.single('profilePicture'), isAuthenticated, async (req, res) => {
+    try {
+        const filePath = await saveProfilePicture(req.file);
+        await updateUserInfo(req.oidc.user.sub, { profilePicture: filePath });
+        res.json({ success: true, filePath: filePath });
+    } catch (error) {
+        console.error('Error updating profile picture:', error);
+        res.status(500).json({ success: false, error: 'Internal Server Error' });
+    }
+});
 
 module.exports = router;
+
+
 

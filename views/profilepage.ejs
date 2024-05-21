@@ -12,8 +12,16 @@
     <%- include('partials/header', {user: loggedIn}) %>
     <div class="row">
         <div class="col-md-4">
-            <div class="bio-box">
+            <div class="bio-box text-center">
+                <!-- Profile Picture -->
+                <img id="profilePic" src="<%= user.profilePicture || 'path/to/default/image.png' %>" alt="Profile Picture" class="profile-picture">
+                
+                <!-- User's Name and Button for adding profile picture -->
                 <h1><%= user.nickname %>'s Profile</h1>
+                <button id="profilePicButton" class="btn btn-secondary btn-sm">Add Profile Picture</button>
+                <input type="file" id="profilePicInput" style="display: none;" accept="image/*">
+                
+                <!-- User Information -->
                 <p><%= user.description %></p>
                 <p>Skill Level: <%= user.skillLevel %></p>
                 <p>Location: <%= user.location %></p>
@@ -24,6 +32,7 @@
             </div>
         </div>
         <div class="col-md-8">
+            <!-- Content for posts and ads -->
             <div class="d-flex justify-content-start mb-3 form-top-padding">
                 <div class="me-2">
                     <%- include('partials/ad_form', {user: user}) %>
@@ -56,5 +65,39 @@
         </div>
     </div>
     <%- include('partials/footer') %>
+    <script>
+        document.getElementById('profilePicButton').addEventListener('click', function() {
+            document.getElementById('profilePicInput').click(); // Open file dialog
+        });
+        
+        document.getElementById('profilePicInput').addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profilePic').src = e.target.result; // Display chosen image
+                };
+                reader.readAsDataURL(this.files[0]); // Convert image to base64 string
+        
+                var formData = new FormData();
+                formData.append('profilePicture', this.files[0]);
+                fetch('/user/update-profile-picture', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Profile picture updated successfully!');
+                    } else {
+                        console.error('Failed to update profile picture');
+                    }
+                });
+        
+                // Reset the input after the file is selected and event handled
+                this.value = ""; // Clear the file input for next use
+            }
+        });
+        </script>        
 </body>
 </html>
+
+
