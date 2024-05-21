@@ -25,33 +25,41 @@
                 <a class="nav-link" href="/login">Create Post</a>
             </button>
         <% } %>
-    <div>
-        <% try { %>
-        <%- include('partials/ad', { ad_data: ads }) %>
-        <% } catch { %>
-        <% } %>
+        <div class="container text-center">
+            <div class="row">
+              <div class="col-2">
+                <% try { %>
+                    <%- include('partials/ad', { ad_data: ads }) %>
+                    <% } catch { %>
+                    <% } %>
+              </div>
 
-    </div>
-    <table class="table table-hover table-forum text-center">
-        <thead class="border">
-            <tr class="inline-div">
-                <h3>Top 10 Posts</h3>
-            </tr>
-        </thead>
-    <tbody class="container" >
+              <div class="col">
+                <table class="table table-hover table-forum text-center">
+                    <thead class="border">
+                        <tr class="inline-div">
+                            <h3>Top 10 Posts</h3>
+                        </tr>
+                    </thead>
+                <tbody class="container" >
+                    <% if (posts.length > 0 ) { %>
+                        <% for(let i = 0; i < Math.min(9, posts.length); i++) { %>
+                            <tr>
+                            <%- include('partials/post', {user: loggedIn, post_data: posts[i], userData: user}) %>
+                            </tr>
+                        <% } %>
+                    <% } else { %>
+                        <%- include('partials/noPosts') %>
+                        <% } %>
+                </tbody>
+                </table>
+              </div>
 
-        <% if (posts.length > 0 ) { %>
-            <% for(let i = 0; i < Math.min(9, posts.length); i++) { %>
-                <tr>
-                <%- include('partials/post', {user: loggedIn, post_data: posts[i], userData: user}) %>
-                </tr>
-            <% } %>
-        <% } else { %>
-            <%- include('partials/noPosts') %>
-            <% } %>
+            </div>
+          </div>
 
-    </tbody>
-    </table>
+
+
     </div>
 </body>
 </div>

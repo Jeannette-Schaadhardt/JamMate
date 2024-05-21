@@ -1,77 +1,75 @@
-<td scope="row" class="text-nowrap">
-    <% if (post_data.fileType != null &&post_data.fileURL != null) { %>    <!-- We make sure that fileType and fileURL are not NULL -->
-        <% if (post_data.fileType.startsWith('audio')) { %>                 <!-- Otherwise we get an error when we use startsWith()-->
-        <audio controls>
-            <source src="<%=post_data.fileURL %>" type="<%= post_data.fileType %>">
-        </audio>
-    <% } } else { %>
-        <!--Just Diagnostics for now. Can replace with something nicer-->
-        <p>Media File Unavailable fileType=<%=post_data.fileType%>, fileURL =<%=post_data.fileURL%> </p>
-        <% } %>
-</td>
-<td>
-    <div class="bg-body-tertiary rounded-3 px-3 py-1">
-        <img id="likeButton-<%= post_data.postId %>" class="likeButton"
-        data-post-id="<%= post_data.postId %>" data-user-id="<%= userData.sub %>"
-        src="https://storage.googleapis.com/jammate-cs467_cloudbuild/htmlMedia/like.png" style="height: 20px">
-
-        <span id="likeCount-<%= post_data.postId %>"><%= post_data.likeCount %></span>
-
-        <img id="dislikeButton-<%= post_data.postId %>" class="dislikeButton"
-        data-post-id="<%= post_data.postId %>" data-user-id="<%= userData.sub %>"
-        src="https://storage.googleapis.com/jammate-cs467_cloudbuild/htmlMedia/dislike.png" style="height: 20px">
+<div class="card bg-light mb-3">
+    <div class="card-header"><a href="/user/<%=post_data.nickname %>">
+    <%= post_data.nickname %></a>
     </div>
-</td>
-<td>
-    <div class="blockquote text-center">
-        "<%= post_data.content %>"<br>-
-        <a href="/user/<%=post_data.nickname %>" class="blue-text">
-            <strong><%= post_data.nickname %></strong>
-        </a>
-    </div>
-
-    <span class="badge bg-secondary mx-1"><%= post_data.instrument %></span>
-    <span class="badge bg-primary mx-1"><%= post_data.genre%></span>
-        <span class="badge bg-warning mx-1"><%= post_data.skillLevel%></span>
-    <span>
-        <% const localDateTime = new Date(post_data.timestamp).toLocaleString(); %>
-        Posted on <%= localDateTime %>
-    </span>
-    </div>
-</td>
-<td>
-    <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#postComments-<%=post_data.postId%>" aria-expanded="false" aria-controls="collapseExample">
-        Comments
-    </button>
-</td>
-
-<% if (loggedIn === true && post_data.userId === userData.sub) {%>
-    <td>
-        <button id="deleteButton-<%= post_data.postId %>" class="btn btn-danger" type="button" onclick="deletePost('<%= post_data.postId %>')">
-
-            Delete
-        </button>
-    </td>
-<% }%>
-
-</tr>
-<tr>
-<td colspan="3">
-    <div class="collapse" id="postComments-<%=post_data.postId%>">
-        <section>
-            <div class="card">
-                <%- include('comment_form', {postId: post_data.postId, userId: userData.sub, nickname: userData.nickname}) %>
+    <div class="card-body">
+        <h5 class="card-title">
+            <% if (post_data.fileType != null &&post_data.fileURL != null) { %>    <!-- We make sure that fileType and fileURL are not NULL -->
+                <% if (post_data.fileType.startsWith('audio')) { %>                 <!-- Otherwise we get an error when we use startsWith()-->
+                <audio controls>
+                    <source src="<%=post_data.fileURL %>" type="<%= post_data.fileType %>">
+                </audio>
+            <% } } else { %>
+                <!--Just Diagnostics for now. Can replace with something nicer-->
+                <p></p>
+                <% } %>
+        </h5>
+        <div class="blockquote text-center">
+            <%= post_data.content %>
             </div>
-            <% post_data.comments.forEach(function(comment) { %>
-                <div class="card">
-                    <div class="card-body">
-                        <div  class="comment" id="comment-<%= comment.commentId %>">
-                            <%- include('comment', {commentData: comment, userId: userData.sub, postId: post_data.postId}) %>
-                        </div>
+            <span class="badge bg-secondary mx-1"><%= post_data.instrument %></span>
+            <span class="badge bg-primary mx-1"><%= post_data.genre%></span>
+                <span class="badge bg-warning mx-1"><%= post_data.skillLevel%></span>
+            <span>
+                <% const localDateTime = new Date(post_data.timestamp).toLocaleString(); %>
+                Posted on <%= localDateTime %>
+            </span>
+        </div>
+        <div class="text-nowrap">
+            <div class="bg-body-tertiary rounded-3 px-3 py-1">
+                <img id="likeButton-<%= post_data.postId %>" class="likeButton"
+                data-post-id="<%= post_data.postId %>" data-user-id="<%= userData.sub %>"
+                src="https://storage.googleapis.com/jammate-cs467_cloudbuild/htmlMedia/like.png" style="height: 20px">
+
+                <span id="likeCount-<%= post_data.postId %>"><%= post_data.likeCount %></span>
+
+                <img id="dislikeButton-<%= post_data.postId %>" class="dislikeButton"
+                data-post-id="<%= post_data.postId %>" data-user-id="<%= userData.sub %>"
+                src="https://storage.googleapis.com/jammate-cs467_cloudbuild/htmlMedia/dislike.png" style="height: 20px">
+            </div>
+            <div>
+                <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#postComments-<%=post_data.postId%>" aria-expanded="false" aria-controls="collapseExample">
+                    Comments
+                </button>
+            </div>
+            <div>
+                <% if (loggedIn === true && post_data.userId === userData.sub) {%>
+                    <div>
+                        <button id="deleteButton-<%= post_data.postId %>" class="btn btn-danger" type="button" onclick="deletePost('<%= post_data.postId %>')">
+                            Delete
+                        </button>
                     </div>
+                <% }%>
+            </div>
+            <div colspan="3">
+                <div class="collapse" id="postComments-<%=post_data.postId%>">
+                    <section>
+                        <div class="card">
+                            <%- include('comment_form', {postId: post_data.postId, userId: userData.sub, nickname: userData.nickname}) %>
+                        </div>
+                        <% post_data.comments.forEach(function(comment) { %>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div  class="comment" id="comment-<%= comment.commentId %>">
+                                        <%- include('comment', {commentData: comment, userId: userData.sub, postId: post_data.postId}) %>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </section>
                 </div>
-            <% }); %>
-        </section>
-    </div>
-</td>
+            </div>
+        </div>
+  </div>
+
 

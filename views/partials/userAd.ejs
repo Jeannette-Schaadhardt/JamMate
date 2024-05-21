@@ -1,19 +1,20 @@
 <!-- Partial for Ads that the User Posted-->
 
-<div class="border">
-    <p><%= ad_data.content %></p>
-
-    <div class="blockquote text-center">
-        <a href="https://www.google.com"><img src="<%= ad_data.fileURL %>" alt="" width="200px" height="200px"></a>
+<div class="card" style="width: 18rem;">
+    <div class="card-header">
+        <p>Ad ID: <%= ad_data.adId %><p>
     </div>
-
-    <% if (loggedIn === true) {%>
-        <td>
-            <button class="btn btn-danger" type="button" onclick="deleteAd('<%= ad_data.adId %>')">
-                Delete
-            </button>
-        </td>
-    <% }%>
-    </tr>
-    <tr>
-</div>
+    <img src="<%= ad_data.fileURL %>" class="card-img-top" alt="...">
+    <div class="card-body">
+      <p class="card-text"><%= ad_data.content %></p>
+      <div>
+        <% if (loggedIn === true && ad_data.userId === userData.sub) {%>
+            <td>
+                <button id="deleteButton-<%= ad_data.adId %>" class="btn btn-danger" type="button" onclick="deleteAd('<%= ad_data.adId %>')">
+                    Delete Ad
+                </button>
+            </td>
+        <% }%>
+        </div>
+    </div>
+  </div>
