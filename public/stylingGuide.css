@@ -1,0 +1,52 @@
+html {
+    --base-spacing: 1rem;
+    --jm-green: #003049;
+    --jm-red: #D62828;
+    --jm-orange: #F77F00;
+    --jm-yellow: #FCBF49;
+    --jm-yellow-light: #EAE2B7;
+}
+
+.jm-link-button {
+    display: inline-block;
+    padding: 5px 3px; /* Adjust padding as needed */
+    background-color: var(--jm-yellow); /* Button background color */
+    color: var(--jm-green); /* Button text color */
+    text-decoration: none; /* Remove underline */
+    border-color: var(--jm-orange);
+    border-radius: 5px; /* Apply rounded corners */
+    cursor: pointer; /* Show pointer on hover */
+    display: inline-block;
+    box-shadow: 0px 3px, 6px, rgba(0, 0, 0, 0.5); /* Initial box shadow */
+}
+
+.jm-button {
+    cursor: pointer;
+    background-color: var(--jm-yellow);
+    color: var(--jm-green);
+    border-color: var(--jm-orange);
+    border-radius: 5px;
+    text-align: center;
+    display: inline-block;
+}
+
+.jm-outer-border {
+    padding: calc(var(--base-spacing) * .75);
+    background-color: var(--jm-red);
+    margin-bottom: calc(var(--base-spacing) *.25);
+}
+
+.jm-inner-border {
+    padding: calc(var(--base-spacing) * .75);
+    background-color: var(--jm-yellow-light);
+    margin-bottom: calc(var(--base-spacing) *.25);
+}
+
+.jm-navbar {
+    background: linear-gradient(180deg, var(--jm-red) 0%, var(--jm-yellow) 100%);
+
+}
+
+.jm-logo {
+    width: 64px;
+}
