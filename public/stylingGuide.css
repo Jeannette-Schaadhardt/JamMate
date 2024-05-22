@@ -50,3 +50,19 @@ html {
 .jm-logo {
     width: 64px;
 }
+
+.jm-ad {
+    min-width: 15rem;
+    text-align: center;
+}
+
+.jm-post {
+    text-align: center;
+    background-color: #003049;
+}
+
+.jm-header {
+    text-align: center;
+    align-items: center;
+    background-color: #FCBF49;
+}

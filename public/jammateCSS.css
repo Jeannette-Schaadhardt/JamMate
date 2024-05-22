@@ -27,19 +27,3 @@
     margin: 4px 2px;
     cursor: pointer;
 }
-
-.jm-ad {
-    min-width: 15rem;
-    background-color: magenta;
-    text-align: center;
-}
-
-.jm-post {
-    background-color: green;
-    text-align: center;
-}
-
-.jm-header {
-    text-align: center;
-    align-items: center;
-}
