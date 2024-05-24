@@ -1,6 +1,5 @@
 <!--  Drop-down to Create a Post  -->
-<button type="button" class="p-1 mb-1 bg-primary text-white" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark" onclick="toggleElement('postCreationForm')">
-    Create Post
+<button type="button" class="jm-button" onclick="toggleElement('adCreationForm')">Create Post
 </button>
 
 <!-- Posts Container -->
@@ -79,8 +78,13 @@ document.getElementById('postForm').addEventListener('submit', function(event) {
     .then(data => {
         console.log("Post success:", data);
         if (data.content) {  // Check if content is defined
+            if (data.content.length > 140) {
+                alert('Posts must be fewer than 141 characters.');
+                return;
+            }
             var newPostHTML = `<div>New Post: ${data.content}</div>`;
             document.getElementById('posts').innerHTML += newPostHTML;
+
         } else {
             console.error('Content undefined in response:', data);
         }

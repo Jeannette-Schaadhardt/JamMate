@@ -49,6 +49,8 @@ html {
 
 .jm-logo {
     width: 64px;
+    align-items: center;
+    font-size: larger;
 }
 
 .jm-ad {
@@ -58,11 +60,26 @@ html {
 
 .jm-post {
     text-align: center;
-    background-color: #003049;
+    margin-bottom: 10px;
+    background-color: beige;
 }
 
 .jm-header {
     text-align: center;
     align-items: center;
     background-color: #FCBF49;
+
+}
+
+.jm-feed-header {
+    text-align: center;
+    align-items: center;
+    background-color: #003049;
+    font-size: larger;
+    color: white;
+
+}
+
+.jm-card-body {
+    background-color: #003049;
 }

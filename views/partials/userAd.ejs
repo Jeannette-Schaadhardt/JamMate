@@ -8,6 +8,7 @@
     <div class="card-body">
       <p class="card-text"><%= ad_data.content %></p>
       <div>
+
         <% if (loggedIn === true && ad_data.userId === userData.sub) {%>
             <td>
                 <button id="deleteButton-<%= ad_data.adId %>" class="btn btn-danger" type="button" onclick="deleteAd('<%= ad_data.adId %>')">

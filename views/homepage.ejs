@@ -7,11 +7,12 @@
     <%- include('partials/border_start') %>
     <%- include('partials/header', {user: loggedIn}) %>
 
-        <h1 class="card jm-header">Musician Feed
+        <div class="card jm-header">
             <% if (loggedIn) { %>
-                <%- include('partials/post_form', {user: user}) %>
-                <%- include('partials/ad_form', {user: user}) %>
-
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    <%- include('partials/post_form', {user: user}) %>
+                    <%- include('partials/ad_form', {user: user}) %>
+                </div>
             <% } else {%>
                 <div class="btn-group" role="group" aria-label="Basic example">
                     <a class="nav-link" href="/login"><button type="button" class="jm-button" >Create Post</button></a>
@@ -19,23 +20,30 @@
                 </div>
             <% } %>
 
-        </h1>
+        </div>
 
         <div class="container">
             <div class="row" >
                 <div class="col-3 jm-ad">
                     <%- include('partials/ad', { ad_data: ads }) %>
                 </div>
-                <div class="col-9 jm-post">
-                    <% if (posts.length > 0 ) { %>
-                        <% for(let i = 0; i < Math.min(9, posts.length); i++) { %>
-                            <tr>
-                            <%- include('partials/post', {user: loggedIn, post_data: posts[i], userData: user}) %>
-                            </tr>
-                        <% } %>
-                    <% } else { %>
-                        <%- include('partials/noPosts') %>
-                        <% } %>
+                <div class="col-9">
+                        <div class="card-body">
+                            <div class="card-title jm-feed-header">
+                                Music Feed
+                            </div>
+                            <div class="card jm-post">
+                                <% if (posts.length > 0 ) { %>
+                                    <% for(let i = 0; i < Math.min(9, posts.length); i++) { %>
+                                        <tr>
+                                        <%- include('partials/post', {user: loggedIn, post_data: posts[i], userData: user}) %>
+                                        </tr>
+                                    <% } %>
+                                <% } else { %>
+                                    <%- include('partials/noPosts') %>
+                                    <% } %>
+                                </div>
+                        </div>
                 </div>
             </div>
           </div>

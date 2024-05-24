@@ -20,6 +20,7 @@ router.post('/', upload.single('media'), async (req, res) => {
         const post = await createPost(oidc.sub, q.content, req.file,
             oidc.nickname, q.instrument, q.genre, q.skillLevel, oidc.location);
         res.json(post);
+
     } catch (err) {
         console.error('Error creating post:', err);
         res.status(500).send({error: 'Failed to create post'});
