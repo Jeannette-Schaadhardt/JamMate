@@ -126,6 +126,7 @@ async function deleteAd(adId) {
     const bucket = storage.bucket(BUCKET_NAME);
     const blob = bucket.file("adMedia/"+adId);
     await blob.delete()                 // Delete from Google Cloud Storage
+    console.log('delete success');
     return;
 }
 

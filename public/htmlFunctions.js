@@ -51,6 +51,33 @@ function deleteAllPosts(userId) {
     }
 }
 
+function deleteAd(adId) {
+    if (confirm('Are you sure you want to delete this Ad?')) {
+        $.ajax({
+            url: '/ad/' + adId,
+            type: 'DELETE',
+            success: function(result) {
+                var buttonElement = document.getElementById('deleteButton-'+adId);
+                if (buttonElement) {
+                    document.getElementById('deleteButton-'+adId).innerText = "Deleted";
+                } else {
+                    console.error("deleteButton not found: deleteButton-" + adId);
+                }
+                var adElement = document.getElementById('ad-'+adId);
+                if (buttonElement) {
+                    document.getElementById('ad-'+adId).innerHTML = " ";
+                } else {
+                    console.error("ad not found: ad-" + adId);
+                }
+                $('#ad-' + adId).remove();
+            },
+            error: function(xhr, status, error) {
+                alert("Error deleting ad: " + xhr.responseText);
+            }
+        });
+    }
+}
+
 function controlLikeCount(userId, likeBool, postId, commentId=null) {
     var data = {
         userId, likeBool, postId, commentId
