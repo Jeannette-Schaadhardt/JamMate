@@ -44,13 +44,30 @@ html {
 
 .jm-navbar {
     background: linear-gradient(180deg, var(--jm-red) 0%, var(--jm-yellow) 100%);
+}
 
+.jm-clickable-user-name {
+    padding-left: 2em;
+}
+
+.jm-posts-homepage {
+    border: 10px solid;
+    border-image: linear-gradient(45deg, #D62828, #003049) 1;
+    border-radius: 5px;
+    margin-top: 3em;
+    background-color: #003049;
 }
 
 .jm-logo {
     width: 64px;
     align-items: center;
     font-size: larger;
+}
+
+.jm-profile-picture {
+    width: 64px;
+    align-items: center;
+    border-radius: 50%;
 }
 
 .jm-ad {
@@ -62,6 +79,7 @@ html {
     text-align: center;
     margin-bottom: 10px;
     background-color: beige;
+    border-image-width: 20px;
 }
 
 .jm-header {
