@@ -28,8 +28,8 @@ router.get('/', async(req, res) => {
         if (users.length>0) {
             user=users[0].user;
             if (user.location) {
-                postData.lat = user.location[0];
-                postData.lon = user.location[1];
+                postData.lat = user.location.latitude;
+                postData.lon = user.location.longitude;
                 postData.rangeInMiles = user.range || null;
             }
             loggedIn = true;
@@ -57,6 +57,8 @@ router.get('/', async(req, res) => {
             genre: q.genre?.toLowerCase() ?? null,
             skillLevel: q.skillLevel?.toLowerCase() ?? null,
             descriptor: q.descriptor?.toLowerCase() ?? null,
+            lat: postData.lat,
+            lon: postData.lon,
             rangeInMiles: q.range,
             start_date: q.start_date ? new Date(q.start_date).getTime() : null,
             end_date: q.end_date ? new Date(q.end_date).getTime() : null
@@ -70,7 +72,7 @@ router.get('/', async(req, res) => {
 });
 
 async function handleBasicSearch(postData, searchTerm) {
-    
+
     postData.descriptor = searchTerm
     posts = await getPosts(postData);
     return posts;

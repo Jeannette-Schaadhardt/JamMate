@@ -70,11 +70,14 @@ async function updateUserInfo(userId, updateData) {
         for (const field in updateData) {
             // Convert location field to GeoPoint if it exists
             if (field === 'location') {
-                const locationObject = JSON.parse(updateData[field])
-                updatedUserData[`user.${field}`] =
-                    new Firestore.GeoPoint(locationObject.latitude, locationObject.longitude);
-                updatedUserData['user.locationName'] = await getNearestCityName(locationObject);
-
+                if (updateData[field] && updateData[field].length != 0) {
+                    const locationObject = JSON.parse(updateData[field])
+                    updatedUserData[`user.${field}`] =
+                        new Firestore.GeoPoint(locationObject.latitude, locationObject.longitude);
+                    updatedUserData['user.locationName'] = await getNearestCityName(locationObject);
+                } else {
+                    console.error('Location Data not found')
+                }
             } else if (updateData[field]) {
                 updatedUserData[`user.${field}`] = updateData[field];
             }

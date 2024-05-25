@@ -8,6 +8,7 @@ const COLLECTION_NAME = "Post";  // Defining kind at the top for consistency
 const BUCKET_NAME = "jammate-cs467_cloudbuild"
 const GOOGLE_CLOUD_API = "https://storage.googleapis.com"
 const { getComments } = require('./mComment.js');
+const { getUsers } = require("./mUser.js");
 
 async function uploadFile(file, postId, fileType) {
     try {
@@ -43,12 +44,21 @@ async function uploadFile(file, postId, fileType) {
     }
 }
 
-async function createPost(userId, content, file, nickname, instrument, genre, skillLevel, location) {
+async function createPost(userId, content, file, nickname, instrument, genre, skillLevel) {
     try {
         if (nickname != null) nickname = nickname.toLowerCase();
         if (instrument != null) instrument = instrument.toLowerCase();
         if (genre != null) genre = genre.toLowerCase();
         const timestamp = new Date().getTime();
+        const userEntity = await getUsers(null, null, userId);
+        let location = null;
+        let locationName = null;
+        if (userEntity[0].user.location) {
+            location = userEntity[0].user.location;
+        }
+        if (userEntity[0].user.locationName) {
+            locationName = userEntity[0].user.locationName;
+        }
         const postData = {
             userId,
             content,
@@ -57,7 +67,8 @@ async function createPost(userId, content, file, nickname, instrument, genre, sk
             nickname,
             skillLevel,
             timestamp,
-            location,
+            location: new Firestore.GeoPoint(location.latitude, location.longitude),
+            locationName,
             likeCount: 0,
             fileName: null,
             fileType: null,
@@ -116,14 +127,9 @@ try {
         if (queryData.skillLevel) {
             query = query.where('skillLevel', '==', queryData.skillLevel);
         }
-        // The lat and lon here is based off the user performing the search.
-        if (queryData.lat && queryData.lon && queryData.rangeInMiles) {
-            // Calculate the boundaries of our Coordinate Box based on range.
-            query = FilterOnRangeBoundaries(query);
-        }
         // NOTE: Only one field may have range filters, we have chosen timestamp
         if (queryData.start_date) {
-            query = query.where('timestamp', '>=', 
+            query = query.where('timestamp', '>=',
             queryData.start_date);
         }
         if (queryData.end_date) {
@@ -149,16 +155,20 @@ try {
     const postDataArray = await Promise.all(promises);
     // Push resolution into the posts array.
     posts.push(...postDataArray);
-
     // Apply additional filter for descriptor inclusion
     if (queryData.descriptor != null) {
         // Filter posts to include only those where the descriptor is found in the description
-        const filteredPosts = posts.filter(post => {
-            const lowerCaseContent = post.content?.toLowerCase() ?? null;
+        posts = posts.filter(post => {
+            const lowerCaseContent = post.content?.toLowerCase() ?? "";
             return lowerCaseContent.includes(queryData.descriptor);
         });
-        return filteredPosts;
     }
+    // The lat and lon here is based off the user performing the search.
+    if (queryData.lat && queryData.lon && queryData.rangeInMiles) {
+        // Calculate the boundaries of our Coordinate Box based on range.
+        posts = FilterOnRangeBoundaries(posts);
+    }
+    if (posts.length >= 6) {
     // We want to insert the best posts into the timeline
     const thisWeeksBestPosts = posts.filter(post => {
         const postDate = new Date(post.timestamp);
@@ -174,6 +184,7 @@ try {
     topThreePosts.forEach((post, index) => {
         posts.splice(index * 2 + 1, 0, post);
     });
+}
 
     // Return the posts array
     return posts;
@@ -183,7 +194,7 @@ try {
     throw error; // Throw the error for the caller to handle
 }
 // Helper function to handle setting the boundaries for the location filtering.
-    function FilterOnRangeBoundaries(query) {
+    function FilterOnRangeBoundaries(posts) {
         const latRadians = queryData.lat * Math.PI / 180;
         const latDegreeOfOneMile = 1 / 69.;
         const latRange = queryData.rangeInMiles * latDegreeOfOneMile;
@@ -195,10 +206,15 @@ try {
         const lonRange = queryData.rangeInMiles * lonDegreeOfOneMile;
         const minLon = queryData.lon - lonRange;
         const maxLon = queryData.lon + lonRange;
-        query = query
-            .where('location', '>=', new firestore.GeoPoint(minLat, minLon))
-            .where('location', '<=', new firestore.GeoPoint(maxLat, maxLon));
-        return query;
+        return posts.filter(post => {
+            // Check if the location property exists and is a valid GeoPoint object
+            if (!post.location || typeof post.location.latitude !== 'number' || typeof post.location.longitude !== 'number') {
+                return false;
+            }
+            const postLat = post.location.latitude;
+            const postLon = post.location.longitude;
+            return (postLat >= minLat && postLat <= maxLat && postLon >= minLon && postLon <= maxLon);
+        });
     }
 }
 async function getPost(postId) {

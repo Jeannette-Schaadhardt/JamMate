@@ -18,7 +18,7 @@ router.post('/', upload.single('media'), async (req, res) => {
     const oidc = req.oidc.user;
     try {
         const post = await createPost(oidc.sub, q.content, req.file,
-            oidc.nickname, q.instrument, q.genre, q.skillLevel, oidc.location);
+            oidc.nickname, q.instrument, q.genre, q.skillLevel);
         res.json(post);
 
     } catch (err) {
