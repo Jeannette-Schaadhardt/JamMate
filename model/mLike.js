@@ -1,5 +1,6 @@
+const projectId = "jammate-cs467"
 const { Firestore } = require("@google-cloud/firestore");
-const firestore = new Firestore();
+const firestore = new Firestore({projectId});
 const COMMENT_COLLECTION = "Comment";  // Defining kind at the top for consistency
 const POST_COLLECTION = "Post";  // Defining kind at the top for consistency
 const LIKE_COLLECTION = "Like";

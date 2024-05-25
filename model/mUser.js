@@ -1,6 +1,8 @@
+const projectId = "jammate-cs467"
 const { Firestore } = require("@google-cloud/firestore");
-const firestore = new Firestore();
+const firestore = new Firestore({projectId});
 const COLLECTION_NAME = "User";
+const { getNearestCityName } = require('./mGoogle.js');
 
 async function getUsers(userEntity = null, username=null, userId=null) {
     try {
@@ -66,7 +68,14 @@ async function updateUserInfo(userId, updateData) {
         // We only want to update the fields that are filled in.
         const updatedUserData = {};
         for (const field in updateData) {
-            if (updateData[field]) {
+            // Convert location field to GeoPoint if it exists
+            if (field === 'location') {
+                const locationObject = JSON.parse(updateData[field])
+                updatedUserData[`user.${field}`] =
+                    new Firestore.GeoPoint(locationObject.latitude, locationObject.longitude);
+                updatedUserData['user.locationName'] = await getNearestCityName(locationObject);
+
+            } else if (updateData[field]) {
                 updatedUserData[`user.${field}`] = updateData[field];
             }
         }

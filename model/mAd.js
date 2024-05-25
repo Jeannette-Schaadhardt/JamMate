@@ -1,7 +1,8 @@
+const projectId = "jammate-cs467"
 const { Firestore } = require("@google-cloud/firestore");
-const firestore = new Firestore();
+const firestore = new Firestore({projectId});
 const {Storage } = require("@google-cloud/storage");
-const storage = new Storage();
+const storage = new Storage({projectId});
 firestore.settings({ ignoreUndefinedProperties: true }); // Allows us to createPosts with undefined properties.
 const COLLECTION_NAME = "Ad";  // Defining kind at the top for consistency
 const BUCKET_NAME = "jammate-cs467_cloudbuild"

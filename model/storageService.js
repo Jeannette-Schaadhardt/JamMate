@@ -1,7 +1,8 @@
+const projectId = "jammate-cs467"
 // storageService.js
 const { Storage } = require('@google-cloud/storage');
 
-const storage = new Storage();
+const storage = new Storage({projectId});
 
 async function saveProfilePicture(file) {
     const bucketName = "jammate-cs467_cloudbuild"; // Replace 'your-bucket-name' with your actual bucket name

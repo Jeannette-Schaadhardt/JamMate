@@ -22,9 +22,9 @@ This flow was created with Visual Studio in mind.
 2. Install [NodeJS](https://nodejs.org/en) if not already installed and add to path
 2. npm install (the following should get installed from the package.json)
 
-   a. npm i nodemon express ejs express-session multer bootstrap-icons express-jwt jwks-rsa <br>
+   a. npm i nodemon express ejs express-session multer bootstrap-icons express-jwt jwks-rsa core-js<br>
    b. npm i express express-openid-connect --save <br>
-   c. npm i @google-cloud/firestore @google-cloud/storage
+   c. npm i @google-cloud/firestore @google-cloud/storage @googlemaps/google-maps-services-js
 3. gcloud init
 
    a. Login with your account associated with gcloud <br>

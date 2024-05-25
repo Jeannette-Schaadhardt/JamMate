@@ -6,7 +6,8 @@ const { authenticateUser} = require('../functions.js');
 
 router.get('/', async(req, res) => {
     let loggedIn = false;
-    let user;
+    let user = null;
+    let userId = null;
     let postData = {
         userId: null,
         postId: null,
@@ -57,8 +58,8 @@ router.get('/', async(req, res) => {
             skillLevel: q.skillLevel?.toLowerCase() ?? null,
             descriptor: q.descriptor?.toLowerCase() ?? null,
             rangeInMiles: q.range,
-            start_date: q.start_date.value ? new Date(q.start_date.value).getTime() : null,
-            end_date: q.end_date.value ? new Date(q.end_date.value).getTime() : null
+            start_date: q.start_date ? new Date(q.start_date).getTime() : null,
+            end_date: q.end_date ? new Date(q.end_date).getTime() : null
         };
         posts = await getPosts(postData);
     }
