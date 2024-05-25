@@ -23,8 +23,7 @@
                 <option value="Advanced" <%= user.skillLevel === 'Advanced' ? 'selected' : '' %>>Advanced</option>
             </select><br>
 
-            <label for="location">Location:</label>
-            <input type="text" id="location" name="location" value="<%= user.location %>" required><br>
+            <input type="hidden" id="location" name="location"><br>
 
             <label for="instrument">Instrument:</label>
             <select id="instrument" name="instrument">
@@ -39,6 +38,33 @@
             <button type="submit" class="btn btn-primary">Save Changes</button>
         </form>
     </div>
+
+    <script>
+        // Add an event listener to trigger location retrieval when the page loads
+        document.addEventListener("DOMContentLoaded", function() {
+            // Check if Geolocation is supported
+            if ("geolocation" in navigator) {
+                // Use Geolocation API to get the user's location
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        // Success callback: update input field with obtained location
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+                        const location = document.getElementById("location");
+                        location.value = `{"latitude":${latitude}, "longitude":${longitude}}`;
+                    },
+                    function(error) {
+                        // Error callback: handle error (e.g., user denied location access)
+                        console.error("Error getting user's location:", error);
+                    }
+                );
+            } else {
+                // Geolocation API is not supported
+                console.error("Geolocation is not supported by this browser.");
+            }
+        });
+        </script>
+
     <%- include('partials/border_end') %>
 
     <%- include('partials/footer') %>

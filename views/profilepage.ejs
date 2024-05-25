@@ -10,16 +10,16 @@
             <div class="bio-box text-center">
                 <!-- Profile Picture -->
                 <img id="profilePic" src="<%= user.profilePicture || 'path/to/default/image.png' %>" alt="Profile Picture" class="profile-picture">
-                
+
                 <!-- User's Name and Button for adding profile picture -->
                 <h1><%= user.nickname %>'s Profile</h1>
                 <button id="profilePicButton" class="btn btn-secondary btn-sm">Add Profile Picture</button>
                 <input type="file" id="profilePicInput" style="display: none;" accept="image/*">
-                
+
                 <!-- User Information -->
                 <p><%= user.description %></p>
                 <p>Skill Level: <%= user.skillLevel %></p>
-                <p>Location: <%= user.location %></p>
+                <p>Location: <%= user.locationName %></p>
                 <p>Instrument: <%= user.instrument %></p>
                 <button type="button" class="btn btn-primary">
                     <a href="/user/edit" class="text-white">Edit Bio</a>
@@ -64,7 +64,7 @@
         document.getElementById('profilePicButton').addEventListener('click', function() {
             document.getElementById('profilePicInput').click(); // Open file dialog
         });
-        
+
         document.getElementById('profilePicInput').addEventListener('change', function() {
             if (this.files && this.files[0]) {
                 var reader = new FileReader();
@@ -72,7 +72,7 @@
                     document.getElementById('profilePic').src = e.target.result; // Display chosen image
                 };
                 reader.readAsDataURL(this.files[0]); // Convert image to base64 string
-        
+
                 var formData = new FormData();
                 formData.append('profilePicture', this.files[0]);
                 fetch('/user/update-profile-picture', {
@@ -86,12 +86,12 @@
                         console.error('Failed to update profile picture');
                     }
                 });
-        
+
                 // Reset the input after the file is selected and event handled
                 this.value = ""; // Clear the file input for next use
             }
         });
-        </script>        
+        </script>
 </body>
 </html>
 
