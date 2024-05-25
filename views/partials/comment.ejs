@@ -1,28 +1,23 @@
-<div class="d-flex">
-    <a href="">
-        <img src="https://mdbcdn.b-cdn.net/img/new/avatars/6.webp" class="rounded-circle" alt="Avatar" style="height: 40px" />
-    </a>
-    <div class="bg-body-tertiary rounded-3 px-3 py-1">
-        <img id="likeButton-<%= commentData.commentId %>" class="likeButton"
-        data-post-id="<%= postId %>" data-user-id="<%= userId %>" data-comment-id="<%= commentData.commentId%>"
-        src="https://storage.googleapis.com/jammate-cs467_cloudbuild/htmlMedia/like.png" style="height: 20px" >
-
-        <span id="likeCount-<%= commentData.commentId %>"><%= commentData.likeCount %></span>
-
-        <img id="dislikeButton-<%= commentData.commentId %>" class="dislikeButton"
-        data-post-id="<%= postId %>" data-user-id="<%= userId %>" data-comment-id="<%= commentData.commentId%>"
+<div class="card-body jm-comment">
+    <h5 class="card-title"><a href="">
+        <img src="https://mdbcdn.b-cdn.net/img/new/avatars/6.webp" class="rounded-circle" alt="Avatar" style="height: 40px" /></a>
+        <strong><%= commentData.nickname %></strong>
+        <img id="likeButton-<%= post_data.postId %>" class="likeButton"
+        data-post-id="<%= post_data.postId %>" data-user-id="<%= userData.sub %>"
+        src="https://storage.googleapis.com/jammate-cs467_cloudbuild/htmlMedia/like.png" style="height: 20px">
+        <span id="likeCount-<%= post_data.postId %>"><%= post_data.likeCount %></span>
+        <img id="dislikeButton-<%= post_data.postId %>" class="dislikeButton"
+        data-post-id="<%= post_data.postId %>" data-user-id="<%= userData.sub %>"
         src="https://storage.googleapis.com/jammate-cs467_cloudbuild/htmlMedia/dislike.png" style="height: 20px">
-    </div>
-    <div class="bg-body-tertiary rounded-3 px-3 py-1">
-        <a href="" class="text-dark mb-0">
-            <strong><%= commentData.nickname %></strong>
-        </a>
-    </div>
-    <div class="bg-body-tertiary rounded-3 px-3 py-1">
-        <% const localDateTime = new Date(commentData.timestamp).toLocaleString(); %>
-        <%= localDateTime %>
-    </div>
-    <div class="bg-body-tertiary rounded-3 px-3 py-1">
-        <p><%= commentData.commentText %></p>
+    </h5>
+    <h6 class="card-subtitle mb-2 text-muted"><a href="" class="text-dark mb-0">
+
+    </a></h6>
+    <p class="card-text"><p><%= commentData.commentText %></p>
+    <div>
+        <div class="jm-comment">-
+            <% const localDateTime = new Date(commentData.timestamp).toLocaleString(); %>
+            <%= localDateTime %>
+        </div>
     </div>
 </div>

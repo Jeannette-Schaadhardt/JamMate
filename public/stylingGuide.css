@@ -73,6 +73,7 @@ html {
 .jm-ad {
     min-width: 15rem;
     text-align: center;
+    margin-top: 3em;
 }
 
 .jm-post {
@@ -80,6 +81,7 @@ html {
     margin-bottom: 10px;
     background-color: beige;
     border-image-width: 20px;
+    min-width: 20em;
 }
 
 .jm-header {
@@ -100,4 +102,9 @@ html {
 
 .jm-card-body {
     background-color: #003049;
+}
+
+.jm-comment {
+    text-align: left;
+    min-width: 15rem;
 }

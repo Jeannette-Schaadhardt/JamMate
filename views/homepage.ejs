@@ -24,7 +24,7 @@
 
         <div class="container">
             <div class="row" >
-                <div class="col-3 jm-ad">
+                <div class="col-3">
                     <%- include('partials/ad', { ad_data: ads }) %>
                 </div>
                 <div class="col-9 jm-posts-homepage">
@@ -32,17 +32,14 @@
                             <div class="card-title jm-feed-header">
                                 Music Feed
                             </div>
-                            <div class="card jm-post">
                                 <% if (posts.length > 0 ) { %>
                                     <% for(let i = 0; i < Math.min(9, posts.length); i++) { %>
-                                        <tr>
                                         <%- include('partials/post', {user: loggedIn, post_data: posts[i], userData: user}) %>
                                         </tr>
                                     <% } %>
                                 <% } else { %>
                                     <%- include('partials/noPosts') %>
                                     <% } %>
-                                </div>
                         </div>
                 </div>
             </div>
