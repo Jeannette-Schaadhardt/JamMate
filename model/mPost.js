@@ -120,8 +120,9 @@ try {
             // Calculate the boundaries of our Coordinate Box based on range.
             query = FilterOnRangeBoundaries(query);
         }
+        // NOTE: Only one field may have range filters, we have chosen timestamp
         if (queryData.start_date) {
-            query = query.where('timestamp', '>=',
+            query = query.where('timestamp', '>=', 
             queryData.start_date);
         }
         if (queryData.end_date) {
@@ -129,7 +130,7 @@ try {
             queryData.end_date);
         }
     }
-
+    query = query.orderBy('timestamp', 'desc');
     // Execute the query
     const querySnapshot = await query.get();
 
@@ -157,6 +158,22 @@ try {
         });
         return filteredPosts;
     }
+    // We want to insert the best posts into the timeline
+    const thisWeeksBestPosts = posts.filter(post => {
+        const postDate = new Date(post.timestamp);
+        const currentDate = new Date();
+        const startOfWeek = new Date(currentDate);
+        startOfWeek.setDate(currentDate.getDate() - currentDate.getDay()); // Start of current week (Sunday)
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 7); // End of current week (next Sunday)
+        return postDate >= startOfWeek && postDate <= endOfWeek;
+    });
+    thisWeeksBestPosts.sort((a, b) => (b.likeCount || 0) - (a.likeCount || 0));
+    const topThreePosts = thisWeeksBestPosts.slice(0,3);
+    topThreePosts.forEach((post, index) => {
+        posts.splice(index * 2 + 1, 0, post);
+    });
+
     // Return the posts array
     return posts;
 } catch (error) {

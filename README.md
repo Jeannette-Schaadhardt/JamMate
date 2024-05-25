@@ -11,43 +11,34 @@ Develop a web app called JamMate for finding musicians and artists via social me
 
 ## Requirements:
 
-Create a profile with various items like your instrument, experience level, preferred genre/styles, etc.
-Create posts detailing what you are looking for and allow users to post their own personal ads
-Enable users to upload audio and/or video samples of their music
+Create a profile with various items like your instrument, experience level, preferred genre/styles, etc. <br>
+Create posts detailing what you are looking for and allow users to post their own personal ads. <br>
+Enable users to upload audio and/or video samples of their music. <br>
 Create a review system allowing other users to drop comments Allow search functionality so users can filter by an acceptable radius, instrument, skill level, etc.
 
 ## Development:
+This flow was created with Visual Studio in mind.
+1. Install [Google Cloud CLI](https://cloud.google.com/sdk/docs/install-sdk#installing_the_latest_version)
+2. Install [NodeJS](https://nodejs.org/en) if not already installed and add to path
+2. npm install (the following should get installed from the package.json)
 
-Developing Locally (for us. this might get complicated the more dependencies we include, so we will expand more for our sake.) <br>
+   a. npm i nodemon express ejs express-session multer bootstrap-icons express-jwt jwks-rsa <br>
+   b. npm i express express-openid-connect --save <br>
+   c. npm i @google-cloud/firestore @google-cloud/storage
+3. gcloud init
 
-1. npm install
-2. npm i nodemon express ejs express-session multer bootstrap-icons express-jwt jwks-rsa
-   # nodemon - for auto server restart after a change is detected
-3. npm install express express-openid-connect --save
-   # for auth0 compliance
-4. gcloud init
-5. npm i @google-cloud/firestore @google-cloud/storage
-6. gcloud config set project jammate-cs467
-   # Configure gcloud for your project
-7. either<br>(command line) nodemon server.js <br> (visual studio code) start debugger.
-8. In browser go to localhost:9001
-
-A sample work flow is to use Visual Studio Code, fetch the repository from Github, run the above commands, then with context on the server.js go to **Run -> Start Debugging**. This will recognize this as a nodejs application and run it accordingly.
+   a. Login with your account associated with gcloud <br>
+   b. It automatically should let you select your project in the terminal but if not use: gcloud config set project jammate-cs467
+4. gcloud auth application-default login
+5. Launch server either with:<br>(command line) nodemon server.js <br> (visual studio code) Launch Program.
+6. In browser go to localhost:9001
 
 ## [Auth0](https://auth0.com/docs/quickstart/webapp/express/interactive)
-
 1. To simulate the login, got to locahost:9001/login
 2. To simulate a logout, go to localhost:9001/logout
-   should redirect to home page bug signed out
-
-You can create a fake account (helpful to save info for repeated tests!) <br>
-eg.
-betty@bop.com - email address <br>
-Betty1234! - password <br>
-should redirect to home page but signed in
 
 [auth0 docs](https://auth0.com/docs/quickstart/webapp/express/interactive) <br>
-So basically this 3rd party site lets a developer use their application
+This 3rd party site lets a developer use their application
 to authenticate users. I signed up with my OSU email, and created an app that
 handles all this routing that integrates with JamMate. When a user is
 authenticated, our running server sends the logged in home page, else it sends

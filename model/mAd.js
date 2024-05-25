@@ -74,6 +74,7 @@ async function createAd(userId, content, file) {
     } catch (error) {
         // Handle error
         console.error('Error creating ad:', error);
+        // TODO Brandon: Let user know that there was an error (ERROR: 3 INVALID_ARGUMENT: The value of property "fileData" is longer than 1048487 bytes.)
     }
 }
 
