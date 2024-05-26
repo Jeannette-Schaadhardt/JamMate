@@ -6,7 +6,7 @@ const storage = new Storage({projectId});
 async function saveProfilePicture(userId, file) {
     const bucketName = "jammate-cs467_cloudbuild";
     const bucket = storage.bucket(bucketName);
-    const fileName = `profile-pictures/${userId}`;
+    const fileName = `profile-pictures/${userId}`; // Use userId for file name
 
     // Create a reference to the file to be uploaded
     const fileHandle = bucket.file(fileName);
@@ -27,10 +27,11 @@ async function saveProfilePicture(userId, file) {
     await fileHandle.makePublic();
 
     // Return the public URL to the file
-    const publicUrl = `https://storage.googleapis.com/${bucketName}/${fileName}`;
+    const publicUrl = `https://storage.googleapis.com/${bucketName}/${fileName}?t=${Date.now()}`;
     return publicUrl;
 }
 
 module.exports = {
     saveProfilePicture
 };
+
