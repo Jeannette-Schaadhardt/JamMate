@@ -76,12 +76,16 @@ router.post('/update-bio', isAuthenticated, async (req, res) => {
 // Route to handle profile picture update
 router.post('/update-profile-picture', upload.single('profilePicture'), isAuthenticated, async (req, res) => {
     try {
-        const filePath = await saveProfilePicture(req.file);
-        await updateUserInfo(req.oidc.user.sub, { profilePicture: filePath });
-        res.json({ success: true, filePath: filePath });
+        // Get user ID from the authentication context
+        const userId = req.oidc.user.sub;
+        // Save the new profile picture and get the URL
+        const newProfilePicUrl = await saveProfilePicture(userId, req.file);
+        // Update user info in the database
+        await updateUserInfo(userId, { profilePicture: newProfilePicUrl });
+        res.redirect('/user'); // Or return JSON response
     } catch (error) {
         console.error('Error updating profile picture:', error);
-        res.status(500).json({ success: false, error: 'Internal Server Error' });
+        res.status(500).send('Internal Server Error');
     }
 });
 
