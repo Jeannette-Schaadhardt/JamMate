@@ -1,37 +1,56 @@
 <!--  Drop-down to Create a Post  -->
-<button type="button" class="jm-button" onclick="toggleElement('postCreationForm')">Create Post
+<button type="button" class="jm-link-button" onclick="toggleElement('postCreationForm')">Create Post
 </button>
 
 <!-- Posts Container -->
 <div id="posts">
     <!-- Existing posts are displayed here -->
     <!-- Multimedia Post Form -->
-    <div style="display:none;" id="postCreationForm" class="border border-primary">
+    <div style="display:none;" id="postCreationForm">
         <form id="postForm" enctype="multipart/form-data">
-            <textarea name="content" rows="4" cols="50" placeholder="Write something or share a clip..."></textarea><br>
-            <input type="file" name="media" id="fileInput" accept="video/*,audio/*" style="display: none;">
+            <div class="card jm-post">
+                <div class="card-body">
+                    <div class="card-title">
+                        <textarea name="content" rows="4" cols="50" placeholder="Write something or share a clip..."></textarea><br>
+                    </div>
+                    <div class="card-text">
+                        <div>Upload your music (optional)</div>
+                        <input type="file" name="media" id="fileInput" accept="video/*,audio/*" style="display: none;">
 
-            <button type="button" id="fileButton" class="btn btn-link btn-lg" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark">
-            Choose File
-            </button>
-            <span id="fileName">No file chosen</span><br>
+                        <button type="button" id="fileButton" class="jm-link-button" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark">
+                        Choose File
+                        </button>
+                <span id="postFileName">No file chosen</span><br>
+                    </div>
+                </div>
+            </div>
 
-            <label for="instrument">Instrument:</label>
-            <input list="instrumentList" name="instrument">
-            <br>
-            <label for="genre">Genre:</label>
-            <input list="genreList" name="genre">
-            <br>
-            <label for="skillLevel">Skill Level:</label>
-            <select class="form-select" name="skillLevel">
-                <option value="" selected>Select skill level</option>
-                <option value="beginner">Beginner</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="advanced">Advanced</option>
-            </select>
-            <button type="submit" class="btn btn-link btn-lg" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark">
-                Post your content now!
-            </button>
+            <div class="card jm-post">
+                <div class="card-body">
+                    <p class="card-title">Are you seeking someone to Jam with? Enter below...</p>
+                <div class="form-group jm-input-form"">
+                    <label for="instrument"></label>
+                    <input  list="instrumentList" name="instrument" placeholder="Instrument(s)"">
+                    <label for="genre"></label>
+                    <input list="genreList" name="genre" placeholder="Genre">
+                    <br>
+                    <label for="skillLevel">Skill Level:</label>
+                    <select class="form-select" name="skillLevel">
+                        <option value="" selected></option>
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                    </select>
+                    <button type="submit" class="jm-link-button" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark">
+                        Post your content now!
+                    </button>
+                </div>
+            </div>
+
+            </div>
+
+
+
         </form>
     </div>
 
@@ -56,11 +75,11 @@ document.getElementById('fileButton').addEventListener('click', function() {
 });
 
 document.getElementById('fileInput').addEventListener('change', function() {
-    var fileLabel = document.getElementById('fileName');
+    var fileLabel = document.getElementById('postFileName');
     var file = this.files[0];
-    var fileName = file ? file.name : 'No file chosen';
-    fileLabel.textContent = fileName; // Update the text content with the file name
-    console.log("File selected:", fileName);
+    var postFileName = file ? file.name : 'No file chosen';
+    fileLabel.textContent = postFileName; // Update the text content with the file name
+    console.log("File selected:", postFileName);
 });
 
 document.getElementById('postForm').addEventListener('submit', function(event) {

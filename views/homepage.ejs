@@ -7,31 +7,35 @@
     <%- include('partials/border_start') %>
     <%- include('partials/header', {user: loggedIn}) %>
 
-        <div class="card jm-header">
+    <div class="container">
+        <div class="row">
             <% if (loggedIn) { %>
-                <div class="btn-group" role="group" aria-label="Basic example">
+                <div class="col">
                     <%- include('partials/post_form', {user: user}) %>
+                </div>
+                <div class="col">
                     <%- include('partials/ad_form', {user: user}) %>
                 </div>
             <% } else {%>
-                <div class="btn-group" role="group" aria-label="Basic example">
-                    <a class="nav-link" href="/login"><button type="button" class="jm-button" >Create Post</button></a>
-                    <a class="nav-link" href="/login"><button type="button" class="jm-button" >Create Ad</button></a>
+                <div class="col">
+                    <a class="nav-link" href="/login"><button type="button" class="jm-link-button" >Create Post</button></a>
                 </div>
+                <div class="col">
+                    <a class="nav-link" href="/login"><button type="button" class="jm-link-button" >Create Ad</button></a>
+                </div>
+
             <% } %>
-
         </div>
-
-        <div class="container">
-            <div class="row" >
-                <div class="col-3">
-                    <%- include('partials/ad', { ad_data: ads }) %>
-                </div>
-                <div class="col-9 jm-posts-homepage">
-                        <div class="card-body">
-                            <div class="card-title jm-feed-header">
-                                Music Feed
-                            </div>
+        <div class="row">
+            <div class="col">
+                <%- include('partials/ad', { ad_data: ads }) %>
+            </div>
+            <div class="col jm-posts-homepage">
+                    <div class="card-body">
+                        <div class="card-title jm-feed-header">
+                            <h5>Music Feed</h5>
+                        </div>
+                            <div class="card-text">
                                 <% if (posts.length > 0 ) { %>
                                     <% for(let i = 0; i < Math.min(9, posts.length); i++) { %>
                                         <%- include('partials/post', {user: loggedIn, post_data: posts[i], userData: user}) %>
@@ -40,10 +44,13 @@
                                 <% } else { %>
                                     <%- include('partials/noPosts') %>
                                     <% } %>
+                            </div>
                         </div>
-                </div>
+                    </div>
             </div>
-          </div>
+        </div>
+        </div>
+    </div>
 
 
     <%- include('partials/border_end') %>

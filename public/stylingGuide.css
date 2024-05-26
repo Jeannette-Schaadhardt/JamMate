@@ -9,6 +9,7 @@ html {
 
 .jm-link-button {
     display: inline-block;
+    margin: 10px;
     padding: 5px 3px; /* Adjust padding as needed */
     background-color: var(--jm-yellow); /* Button background color */
     color: var(--jm-green); /* Button text color */
@@ -88,14 +89,14 @@ html {
     text-align: center;
     align-items: center;
     background-color: #FCBF49;
-
+    font-size: x-large;
 }
 
 .jm-feed-header {
     text-align: center;
     align-items: center;
     background-color: #003049;
-    font-size: larger;
+    font-size: x-large;
     color: white;
 
 }
@@ -107,4 +108,9 @@ html {
 .jm-comment {
     text-align: left;
     min-width: 15rem;
+}
+
+.jm-input-form {
+    margin: 10px;
+    padding: 10px;
 }

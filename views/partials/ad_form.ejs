@@ -1,24 +1,35 @@
 
 <!--  Drop-down to Create an Ad  -->
-<button type="button" class="jm-button" onclick="toggleElement('adCreationForm')">Create Ad
+<button type="button" class="jm-link-button" onclick="toggleElement('adCreationForm')">Create Ad
 </button>
 
 
 <!-- Ads Container -->
 <div id="ads">
     <!-- Ad Form -->
-    <div style="display:none;" id="adCreationForm" class="border border-warning">
+    <div style="display:none;" id="adCreationForm">
         <form id="adForm" enctype="multipart/form-data">
-            <textarea name="content" rows="4" cols="50" placeholder="Advertise here..."></textarea><br>
-            <input type="file" name="media" id="adFileInput" accept="image/*,video/*,audio/*" style="display: none;">
+            <div class="card jm-post">
+                <div class="card-body">
+                    <div class="card-title">
+                        <textarea name="content" rows="4" cols="50" placeholder="Your ad text goes here..."></textarea>
+                    </div>
+                </div>
+                <div class="card-text">
+                    <div>Upload your ad photo (optional)</div>
+                    <input type="file" name="media" id="adFileInput" accept="image/*,video/*,audio/*" style="display: none;">
 
-            <button type="button" id="adFileButton" class="btn btn-link btn-lg" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark">
-            Choose File
-            </button>
-            <span id="fileName">No file chosen</span><br>
-            <button type="submit" class="btn btn-link btn-lg" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark">
-                Post advertisement
-            </button>
+                    <button type="button" id="adFileButton" class="jm-link-button" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark">
+                    Choose File
+                    </button>
+                    <span id="adFileName">No file chosen</span><br>
+                    <button type="submit" class="jm-link-button" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark">
+                        Post advertisement
+                    </button>
+                        </div>
+                    </div>
+
+
         </form>
     </div>
 </div>
@@ -29,11 +40,11 @@ document.getElementById('adFileButton').addEventListener('click', function() {
 });
 
 document.getElementById('adFileInput').addEventListener('change', function() {
-    var fileLabel = document.getElementById('fileName');
+    var fileLabel = document.getElementById('adFileName');
     var file = this.files[0];
-    var fileName = file ? file.name : 'No file chosen';
-    fileLabel.textContent = fileName; // Update the text content with the file name
-    console.log("File selected:", fileName);
+    var adFileName = file ? file.name : 'No file chosen';
+    fileLabel.textContent = adFileName; // Update the text content with the file name
+    console.log("File selected:", adFileName);
 });
 
 document.getElementById('adForm').addEventListener('submit', function(event) {
