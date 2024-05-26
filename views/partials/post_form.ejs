@@ -4,17 +4,17 @@
 
 <!-- Posts Container -->
 <div id="posts">
-    <!-- Existing posts are displayed here -->
     <!-- Multimedia Post Form -->
     <div style="display:none;" id="postCreationForm" class="border border-primary">
         <form id="postForm" enctype="multipart/form-data">
             <textarea name="content" rows="4" cols="50" placeholder="Write something or share a clip..."></textarea><br>
-            <input type="file" name="media" id="fileInput" accept="video/*,audio/*" style="display: none;">
+            <input type="file" name="media" id="postFileInput" accept="video/*,audio/*" style="display: none;"
+                   onchange="document.getElementById('postFileName').textContent = this.files[0] ? this.files[0].name : 'No file chosen';">
 
-            <button type="button" id="fileButton" class="btn btn-link btn-lg" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark">
-            Choose File
+            <button type="button" id="postFileButton" class="btn btn-link btn-lg" onclick="document.getElementById('postFileInput').click();">
+                Choose File
             </button>
-            <span id="fileName">No file chosen</span><br>
+            <span id="postFileName">No file chosen</span><br>
 
             <label for="instrument">Instrument:</label>
             <input list="instrumentList" name="instrument">
@@ -51,16 +51,15 @@
 </div>
 
 <script>
-document.getElementById('fileButton').addEventListener('click', function() {
-    document.getElementById('fileInput').click();
+document.getElementById('postFileButton').addEventListener('click', function() {
+    document.getElementById('postFileInput').click();
 });
 
-document.getElementById('fileInput').addEventListener('change', function() {
-    var fileLabel = document.getElementById('fileName');
+document.getElementById('postFileInput').addEventListener('change', function() {
+    var fileLabel = document.getElementById('postFileName');
     var file = this.files[0];
-    var fileName = file ? file.name : 'No file chosen';
-    fileLabel.textContent = fileName; // Update the text content with the file name
-    console.log("File selected:", fileName);
+    fileLabel.textContent = file ? file.name : 'No file chosen';
+    console.log("File selected:", file ? file.name : 'No file chosen');
 });
 
 document.getElementById('postForm').addEventListener('submit', function(event) {
@@ -78,15 +77,8 @@ document.getElementById('postForm').addEventListener('submit', function(event) {
     .then(data => {
         console.log("Post success:", data);
         if (data.content) {  // Check if content is defined
-            if (data.content.length > 140) {
-                alert('Posts must be fewer than 141 characters.');
-                return;
-            }
             var newPostHTML = `<div>New Post: ${data.content}</div>`;
             document.getElementById('posts').innerHTML += newPostHTML;
-
-        } else {
-            console.error('Content undefined in response:', data);
         }
         document.getElementById('postForm').reset(); // Reset the form after submission
         document.getElementById('postCreationForm').style.display = 'none'; // Hide the form again
