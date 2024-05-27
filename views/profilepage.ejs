@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <%- include('partials/headMetaData') %>
+    <link rel="stylesheet" href="/styles/jammateCSS.css"> <!-- Ensure this path is correct -->
 </head>
 <body>
     <%- include('partials/border_start') %>
@@ -24,6 +25,14 @@
                 </div>
 
             <% } %>
+        </div>
+        <div class="row">
+          <!-- Cover Photo -->
+              <div class="cover-photo-box">
+                  <img id="coverPhoto" src="<%= user.coverPhoto || 'JamMate/public/no-profile-picture-15257.png' %>" alt="Cover Photo" class="cover-photo" onerror="this.onerror=null; this.src='/no-profile-picture-15257.png'">
+                  <button id="coverPhotoButton" class="btn btn-secondary btn-sm">Add Cover Photo</button>
+                  <input type="file" id="coverPhotoInput" style="display: none;" accept="image/*">
+              </div>
         </div>
         <div class="row">
             <div class="col-md-4">
@@ -85,14 +94,14 @@
     <%- include('partials/footer') %>
     <script>
         document.getElementById('profilePicButton').addEventListener('click', function() {
-            document.getElementById('profilePicInput').click(); // Open file dialog
+            document.getElementById('profilePicInput').click();
         });
 
         document.getElementById('profilePicInput').addEventListener('change', function() {
             if (this.files && this.files[0]) {
                 var reader = new FileReader();
                 reader.onload = function(e) {
-                    document.getElementById('profilePic').src = e.target.result; // Display chosen image
+                    document.getElementById('profilePic').src = e.target.result;
                 };
                 reader.readAsDataURL(this.files[0]); // Convert image to base64 string
 
@@ -110,12 +119,45 @@
                     }
                 });
 
-                // Reset the input after the file is selected and event handled
                 this.value = ""; // Clear the file input for next use
             }
         });
-        </script>
+
+        document.getElementById('coverPhotoButton').addEventListener('click', function() {
+            document.getElementById('coverPhotoInput').click();
+        });
+
+        document.getElementById('coverPhotoInput').addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('coverPhoto').src = e.target.result;
+                };
+                reader.readAsDataURL(this.files[0]);
+
+                var formData = new FormData();
+                formData.append('coverPhoto', this.files[0]);
+                fetch('/user/update-cover-photo', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Cover photo updated successfully!');
+                    } else {
+                        console.error('Failed to update cover photo');
+                    }
+                });
+
+                this.value = "";
+            }
+        });
+    </script>
 </body>
 </html>
+
+
+
+
 
 

@@ -6,7 +6,8 @@ const { authenticateUser} = require('../functions.js');
 
 router.get('/', async(req, res) => {
     let loggedIn = false;
-    let user;
+    let user = null;
+    let userId = null;
     let postData = {
         userId: null,
         postId: null,
@@ -27,8 +28,8 @@ router.get('/', async(req, res) => {
         if (users.length>0) {
             user=users[0].user;
             if (user.location) {
-                postData.lat = user.location[0];
-                postData.lon = user.location[1];
+                postData.lat = user.location.latitude;
+                postData.lon = user.location.longitude;
                 postData.rangeInMiles = user.range || null;
             }
             loggedIn = true;
@@ -42,10 +43,9 @@ router.get('/', async(req, res) => {
     // First we handle the basic search function that is found in the header.
     // So we get the searchTerm if its available and set it toLowerCase();
     const searchTerm = req.query.term?.toLowerCase() ?? null;
-    const searchType = req.query.search_type;
     // Then if there is a searchType we know we are doing a basic search.
-    if (searchType) {
-        posts = await handleBasicSearch(postData, searchType, searchTerm);
+    if (searchTerm) {
+        posts = await handleBasicSearch(postData, searchTerm);
     } else {    // Otherwise we are doing a advanced search.
         let q = req.query;
         // Use the username in the query to get the UserId for ease in getting their posts.
@@ -57,9 +57,11 @@ router.get('/', async(req, res) => {
             genre: q.genre?.toLowerCase() ?? null,
             skillLevel: q.skillLevel?.toLowerCase() ?? null,
             descriptor: q.descriptor?.toLowerCase() ?? null,
+            lat: postData.lat,
+            lon: postData.lon,
             rangeInMiles: q.range,
-            start_date: q.start_date.value ? new Date(q.start_date.value).getTime() : null,
-            end_date: q.end_date.value ? new Date(q.end_date.value).getTime() : null
+            start_date: q.start_date ? new Date(q.start_date).getTime() : null,
+            end_date: q.end_date ? new Date(q.end_date).getTime() : null
         };
         posts = await getPosts(postData);
     }
@@ -69,28 +71,9 @@ router.get('/', async(req, res) => {
     res.render('searchpage', {posts: posts, user: user, loggedIn: loggedIn});
 });
 
-async function handleBasicSearch(postData, searchType, searchTerm) {
-    switch (searchType) {
-        case 'instrument':
-            postData.instrument = searchTerm
-            break;
-        case 'user':
-            let users = await getUsers(null, searchTerm);
-            let userId = null
-            if (users[0]) {
-                userId = users[0].user.sub;
-            }
-            postData.userId = userId;
-            break;
-        case 'genre':
-            postData.genre = searchTerm
-            break;
-        case 'descriptor':
-            postData.descriptor = searchTerm
-            break;
-        default:
-            break;
-    }
+async function handleBasicSearch(postData, searchTerm) {
+
+    postData.descriptor = searchTerm
     posts = await getPosts(postData);
     return posts;
 }
