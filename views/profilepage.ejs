@@ -4,67 +4,93 @@
     <%- include('partials/headMetaData') %>
     <link rel="stylesheet" href="/styles/jammateCSS.css"> <!-- Ensure this path is correct -->
 </head>
-<body class="container bg-light">
+<body>
+    <%- include('partials/border_start') %>
     <%- include('partials/header', {user: loggedIn}) %>
-    <div class="row">
-        <div class="col-md-4">
-            <div class="bio-box text-center">
-                <!-- Profile Picture -->
-                <img id="profilePic" src="<%= user.profilePicture || 'path/to/default/image.png' %>" alt="Profile Picture" class="profile-picture" onerror="this.onerror=null; this.src='/no-profile-picture-15257.png'">
-                <button id="profilePicButton" class="btn btn-secondary btn-sm">Add Profile Picture</button>
-                <input type="file" id="profilePicInput" style="display: none;" accept="image/*">
-
-                <!-- User Information -->
-                <h1><%= user.nickname %>'s Profile</h1>
-                <p><%= user.description %></p>
-                <p>Skill Level: <%= user.skillLevel %></p>
-                <p>Location: <%= user.locationName %></p>
-                <p>Instrument: <%= user.instrument %></p>
-                <button type="button" class="btn btn-primary">
-                    <a href="/user/edit" class="text-white">Edit Bio</a>
-                </button>
-            </div>
-        </div>
-        <div class="col-md-8">
-            <!-- Cover Photo -->
-            <div class="cover-photo-box">
-                <img id="coverPhoto" src="<%= user.coverPhoto || 'JamMate/public/no-profile-picture-15257.png' %>" alt="Cover Photo" class="cover-photo" onerror="this.onerror=null; this.src='/no-profile-picture-15257.png'">
-                <button id="coverPhotoButton" class="btn btn-secondary btn-sm">Add Cover Photo</button>
-                <input type="file" id="coverPhotoInput" style="display: none;" accept="image/*">
-            </div>
-
-            <!-- Content for posts and ads -->
-            <div class="d-flex justify-content-start mb-3 form-top-padding">
-                <div class="me-2">
-                    <%- include('partials/ad_form', {user: user}) %>
-                </div>
-                <div>
+    <div class="container">
+        <div class="row">
+            <% if (loggedIn) { %>
+                <div class="col">
                     <%- include('partials/post_form', {user: user}) %>
                 </div>
-            </div>
-            <h2>My Ads Posted on JamMate</h2>
-            <% ads.forEach(function(ad) { %>
-                <% if (ad.userId === user.sub) { %>
-                    <div class="ad" id="ad-<%= ad.adId %>">
-                        <%- include('partials/userAd', {ad_data: ad, userData: user}) %>
-                    </div>
-                <% } %>
-            <% }); %>
-            <h2>My posts on JamMate</h2>
-            <% posts.forEach(function(post) { %>
-                <div class="post" id="post-<%= post.postId %>">
-                    <div class="post-content">
-                        <%- include('partials/post', {loggedIn: loggedIn, post_data: post, userData: user}) %>
+                <div class="col">
+                    <%- include('partials/ad_form', {user: user}) %>
+                </div>
+            <% } else {%>
+                <div class="col">
+                    <a class="nav-link" href="/login"><button type="button" class="jm-link-button" >Create Post</button></a>
+                </div>
+                <div class="col">
+                    <a class="nav-link" href="/login"><button type="button" class="jm-link-button" >Create Ad</button></a>
+                </div>
+
+            <% } %>
+        </div>
+        <div class="row">
+          <!-- Cover Photo -->
+              <div class="cover-photo-box">
+                  <img id="coverPhoto" src="<%= user.coverPhoto || 'JamMate/public/no-profile-picture-15257.png' %>" alt="Cover Photo" class="cover-photo" onerror="this.onerror=null; this.src='/no-profile-picture-15257.png'">
+                  <button id="coverPhotoButton" class="btn btn-secondary btn-sm">Add Cover Photo</button>
+                  <input type="file" id="coverPhotoInput" style="display: none;" accept="image/*">
+              </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="bio-box jm-post">
+                    <!-- Profile Picture -->
+                    <img id="profilePic" src="<%= user.profilePicture || 'path/to/default/image.png' %>" alt="Profile Picture" class="profile-picture">
+
+                    <!-- User's Name and Button for adding profile picture -->
+                    <h1><%= user.nickname %>'s Profile</h1>
+                    <button id="profilePicButton" class="btn btn-secondary btn-sm">Add Profile Picture</button>
+                    <input type="file" id="profilePicInput" style="display: none;" accept="image/*">
+
+                    <!-- User Information -->
+                    <p><%= user.description %></p>
+                    <p>Skill Level: <%= user.skillLevel %></p>
+                    <p>Location: <%= user.location %></p>
+                    <p>Instrument: <%= user.instrument %></p>
+                    <button type="button" class="jm-edit-button">
+                        <a href="/user/edit" class="text-white">Edit Bio</a>
+                    </button>
+                    <div class="mt-3">
+                        <button onclick="deleteAllPosts('<%= user.nickname %>')" class="jm-comment-delete-button">
+                            Delete All Posts
+                        </button>
                     </div>
                 </div>
-            <% }); %>
-            <div class="mt-3 text-end">
-                <button onclick="deleteAllPosts('<%= user.nickname %>')" class="btn btn-danger">
-                    Delete All Posts
-                </button>
+            </div>
+            <div class="col-md-8">
+                <!-- Content for posts and ads -->
+                <div class="card jm-post">
+                    <div class="card-body">
+                        <div class="card-title jm-feed-header">
+                            My posts on JamMate
+                        </div>
+                        <div class="card-text">
+                            <% posts.forEach(function(post) { %>
+                                <div class="post" id="post-<%= post.postId %>">
+                                    <div class="post-content">
+                                        <%- include('partials/post', {loggedIn: loggedIn, post_data: post, userData: user}) %>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    </div>
+                </div>
+
+                <h2>My Ads Posted on JamMate</h2>
+                <% ads.forEach(function(ad) { %>
+                    <% if (ad.userId === user.sub) { %>
+                        <div class="ad" id="ad-<%= ad.adId %>">
+                            <%- include('partials/userAd', {ad_data: ad, userData: user}) %>
+                        </div>
+                    <% } %>
+                <% }); %>
             </div>
         </div>
     </div>
+
     <%- include('partials/footer') %>
     <script>
         document.getElementById('profilePicButton').addEventListener('click', function() {
@@ -77,7 +103,7 @@
                 reader.onload = function(e) {
                     document.getElementById('profilePic').src = e.target.result;
                 };
-                reader.readAsDataURL(this.files[0]);
+                reader.readAsDataURL(this.files[0]); // Convert image to base64 string
 
                 var formData = new FormData();
                 formData.append('profilePicture', this.files[0]);

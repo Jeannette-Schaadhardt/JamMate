@@ -1,57 +1,76 @@
+<!--  <a href="https://www.flaticon.com/free-icons/user" title="user icons">User icons created by Freepik - Flaticon</a>  -->
 <div class="card jm-post">
     <div class="card-header jm-feed-header"><a href="/user/<%=post_data.nickname %>">
-    <img src="https://storage.googleapis.com/jammate-cs467_cloudbuild/profile-pictures/<%= post_data.userId %>?t=<%= Date.now() %>" class="rounded-circle" alt="User's Profile Picture" style="height: 40px" onerror="this.onerror=null; this.src='/no-profile-picture-15257.png'">
-    <%= post_data.nickname %></a>
+      <% if (!userData.profilePicture) { %>
+          <img class="jm-profile-picture" src="/icons/profile-user.png" alt="">
+      <%  } else { %>
+          <img class="jm-profile-picture" src="https://storage.googleapis.com/jammate-cs467_cloudbuild/profile-pictures/<%= post_data.userId %>?t=<%= Date.now() %>" class="rounded-circle" alt="User's Profile Picture" style="height: 40px" onerror="this.onerror=null; this.src='/no-profile-picture-15257.png'">
+      <%  } %>
+      <a class="jm-clickable-user-name" href="/user/<%=post_data.nickname %>">
+          <%= post_data.nickname %></a>
     </div>
-    <div class="card-body">
-        <h5 class="card-title">
-            <% if (post_data.fileType != null &&post_data.fileURL != null) { %>    <!-- We make sure that fileType and fileURL are not NULL -->
-                <% if (post_data.fileType.startsWith('audio')) { %>                 <!-- Otherwise we get an error when we use startsWith()-->
-                <audio controls>
-                    <source src="<%=post_data.fileURL %>" type="<%= post_data.fileType %>">
-                </audio>
-            <% } } else { %>
-                <!--Just Diagnostics for now. Can replace with something nicer-->
-                <p></p>
-                <% } %>
-        </h5>
-        <div class="blockquote text-center">
-            <%= post_data.content %>
-            </div>
-            <span class="badge bg-secondary mx-1"><%= post_data.instrument %></span>
-            <span class="badge bg-primary mx-1"><%= post_data.genre%></span>
-                <span class="badge bg-warning mx-1"><%= post_data.skillLevel%></span>
-            <span>
-                <% const localDateTime = new Date(post_data.timestamp).toLocaleString(); %>
-                Posted on <%= localDateTime %>
-            </span>
-        </div>
-        <div class="text-nowrap">
-            <div class="bg-body-tertiary rounded-3 px-3 py-1">
-                <img id="likeButton-<%= post_data.postId %>" class="likeButton"
-                data-post-id="<%= post_data.postId %>" data-user-id="<%= userData.sub %>"
-                src="https://storage.googleapis.com/jammate-cs467_cloudbuild/htmlMedia/like.png" style="height: 20px">
 
-                <span id="likeCount-<%= post_data.postId %>"><%= post_data.likeCount %></span>
 
-                <img id="dislikeButton-<%= post_data.postId %>" class="dislikeButton"
-                data-post-id="<%= post_data.postId %>" data-user-id="<%= userData.sub %>"
-                src="https://storage.googleapis.com/jammate-cs467_cloudbuild/htmlMedia/dislike.png" style="height: 20px">
-            </div>
-            <div>
-                <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#postComments-<%=post_data.postId%>" aria-expanded="false" aria-controls="collapseExample">
-                    Comments
-                </button>
-            </div>
-            <div>
-                <% if (loggedIn === true && post_data.userId === userData.sub) {%>
-                    <div>
-                        <button id="deleteButton-<%= post_data.postId %>" class="btn btn-danger" type="button" onclick="deletePost('<%= post_data.postId %>')">
-                            Delete
-                        </button>
+    <div class="container">
+        <div class="row">
+                <div class="card-body">
+                    <div class="card-title">
+                        <div>
+                        <% if (post_data.fileType != null &&post_data.fileURL != null) { %>    <!-- We make sure that fileType and fileURL are not NULL -->
+                            <% if (post_data.fileType.startsWith('audio')) { %>                 <!-- Otherwise we get an error when we use startsWith()-->
+                            <audio controls>
+                                <source src="<%=post_data.fileURL %>" type="<%= post_data.fileType %>">
+                            </audio>
+                        <% } } else { %>
+                            <!--Just Diagnostics for now. Can replace with something nicer-->
+                            <p></p>
+                            <% } %>
+                        </div>
                     </div>
-                <% }%>
-            </div>
+                    <div class="card-text">
+                        <div class="jm-post-content">
+                            <%= post_data.content %>
+                        </div>
+                        <div class="jm-post-time">
+                            <% const localDateTime = new Date(post_data.timestamp).toLocaleString(); %>
+                            - <%= localDateTime %>
+                            <div class="jm-vote">
+                                <img id="likeButton-<%= post_data.postId %>" class="likeButton"
+                                data-post-id="<%= post_data.postId %>" data-user-id="<%= userData.sub %>"
+                                src="/icons/like.png" style="height: 30px">
+
+                                <span id="likeCount-<%= post_data.postId %>"><h5><%= post_data.likeCount %></h5></span>
+
+                                <img id="dislikeButton-<%= post_data.postId %>" class="dislikeButton"
+                                data-post-id="<%= post_data.postId %>" data-user-id="<%= userData.sub %>"
+                                src="/icons/dislike.png" style="height: 30px">
+
+                            </div>
+                        </div>
+
+                        <div class="jm-post-time">
+                            <span class="badge bg-secondary mx-1 jm-badge"><%= post_data.instrument %></span>
+                            <span class="badge bg-primary mx-1"><%= post_data.genre%></span>
+                                <span class="badge bg-warning mx-1"><%= post_data.skillLevel%></span>
+                            <span>
+                                <% if (loggedIn === true && post_data.userId === userData.sub) {%>
+                                    <div>
+                                        <button id="deleteButton-<%= post_data.postId %>" class="jm-comment-delete-button" type="button" onclick="deletePost('<%= post_data.postId %>')">
+                                            Delete
+                                        </button>
+                                    </div>
+                                <% }%>
+                            </span>
+                            <div>
+                                <button type="button" class="jm-comment-button" data-bs-toggle="collapse" data-bs-target="#postComments-<%=post_data.postId%>" aria-expanded="false" aria-controls="collapseExample">
+                                    Comments
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+          </div>
+        <div class="row">
             <div colspan="3">
                 <div class="collapse" id="postComments-<%=post_data.postId%>">
                     <section>
@@ -61,7 +80,7 @@
                         <% post_data.comments.forEach(function(comment) { %>
                             <div class="card">
                                 <div class="card-body">
-                                    <div  class="comment" id="comment-<%= comment.commentId %>">
+                                    <div class="comment" id="comment-<%= comment.commentId %>">
                                         <%- include('comment', {commentData: comment, userId: userData.sub, postId: post_data.postId}) %>
                                     </div>
                                 </div>
@@ -71,6 +90,10 @@
                 </div>
             </div>
         </div>
+
+
+    </div>
+
   </div>
 
 

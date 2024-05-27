@@ -1,19 +1,63 @@
 html {
     --base-spacing: 1rem;
-    --jm-green: #003049;
-    --jm-red: #D62828;
-    --jm-orange: #F77F00;
-    --jm-yellow: #FCBF49;
-    --jm-yellow-light: #EAE2B7;
+    --jm-dark-purple: #18141D;
+    --jm-purple-grey: #3C313D;
+    --jm-grey: #55535B;
+    --jm-light-grey: #9D9BA2;
+    --jm-white: #EBEAEC;
 }
 
 .jm-link-button {
     display: inline-block;
+    margin: 10px;
     padding: 5px 3px; /* Adjust padding as needed */
-    background-color: var(--jm-yellow); /* Button background color */
-    color: var(--jm-green); /* Button text color */
+    background-color: var(--jm-light-grey); /* Button background color */
+    color: var(--jm-dark-purple); /* Button text color */
     text-decoration: none; /* Remove underline */
-    border-color: var(--jm-orange);
+    border-color: var(--jm-grey);
+    border-radius: 5px; /* Apply rounded corners */
+    cursor: pointer; /* Show pointer on hover */
+    display: inline-block;
+    box-shadow: 0px 3px, 6px, rgba(0, 0, 0, 0.5); /* Initial box shadow */
+}
+
+.jm-comment-button {
+    display: inline-block;
+    margin: 10px;
+    padding: 10px 5px; /* Adjust padding as needed */
+    background-color: #391842; /* Button background color */
+    color: var(--jm-white); /* Button text color */
+    text-decoration: none; /* Remove underline */
+    border-color: var(--jm-grey);
+    border-radius: 5px; /* Apply rounded corners */
+    cursor: pointer; /* Show pointer on hover */
+    display: inline-block;
+    box-shadow: 0px 3px, 6px, rgba(0, 0, 0, 0.5); /* Initial box shadow */
+}
+
+.jm-edit-button {
+    display: inline-block;
+    margin: 10px;
+    padding: 10px 5px; /* Adjust padding as needed */
+    background-color: #451938; /* Button background color */
+    color: var(--jm-white); /* Button text color */
+    text-decoration: none; /* Remove underline */
+    border-color: var(--jm-grey);
+    border-radius: 5px; /* Apply rounded corners */
+    cursor: pointer; /* Show pointer on hover */
+    display: inline-block;
+    box-shadow: 0px 3px, 6px, rgba(0, 0, 0, 0.5); /* Initial box shadow */
+}
+
+
+.jm-comment-delete-button {
+    background-color: #732F3e;
+    display: inline-block;
+    margin: 10px;
+    padding: 10px 5px; /* Adjust padding as needed */
+    color: var(--jm-white); /* Button text color */
+    text-decoration: none; /* Remove underline */
+    border-color: var(--jm-grey);
     border-radius: 5px; /* Apply rounded corners */
     cursor: pointer; /* Show pointer on hover */
     display: inline-block;
@@ -22,9 +66,9 @@ html {
 
 .jm-button {
     cursor: pointer;
-    background-color: var(--jm-yellow);
-    color: var(--jm-green);
-    border-color: var(--jm-orange);
+    background-color: var(--jm-light-grey);
+    color: var(--jm-dark-purple);
+    border-color: var(--jm-grey);
     border-radius: 5px;
     text-align: center;
     display: inline-block;
@@ -32,19 +76,40 @@ html {
 
 .jm-outer-border {
     padding: calc(var(--base-spacing) * .75);
-    background-color: var(--jm-red);
+    background-color: var(--jm-white);
     margin-bottom: calc(var(--base-spacing) *.25);
 }
 
 .jm-inner-border {
     padding: calc(var(--base-spacing) * .75);
-    background-color: var(--jm-yellow-light);
+    background-color: var(--jm-light-grey-light);
     margin-bottom: calc(var(--base-spacing) *.25);
 }
 
 .jm-navbar {
-    background: linear-gradient(180deg, var(--jm-red) 0%, var(--jm-yellow) 100%);
+    background: linear-gradient(180deg, var(--jm-purple-grey) 0%, var(--jm-light-grey) 100%);
+}
 
+.jm-clickable-user-name {
+    padding-left: 2em;
+}
+
+.jm-posts-homepage {
+    border-radius: 5px;
+    margin-top: 3em;
+    background-color: var(--jm-light-grey);
+}
+
+.jm-post-content {
+    border: 2px solid var(--jm-dark-purple);
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 3px 2px;
+}
+
+.jm-post-time {
+    text-align: right;
+    margin-top: 5px;
 }
 
 .jm-logo {
@@ -53,33 +118,54 @@ html {
     font-size: larger;
 }
 
+.jm-profile-picture {
+    width: 64px;
+    align-items: center;
+    border-radius: 50%;
+}
+
 .jm-ad {
+    background-color: var(--jm-light-grey);
+    max-width: 30%;
     min-width: 15rem;
     text-align: center;
+    margin-top: 3em;
+    padding: 1em;
 }
 
 .jm-post {
-    text-align: center;
     margin-bottom: 10px;
-    background-color: beige;
+    background-color: white;
+    border-image-width: 20px;
+    min-width: 20em;
 }
 
 .jm-header {
     text-align: center;
     align-items: center;
     background-color: #FCBF49;
-
+    font-size: x-large;
 }
 
 .jm-feed-header {
     text-align: center;
     align-items: center;
-    background-color: #003049;
-    font-size: larger;
-    color: white;
-
+    background-color: var(--jm-dark-purple);
+    font-size: x-large;
+    color: var(--jm-white);
+    padding: 10px;
 }
 
 .jm-card-body {
-    background-color: #003049;
+    background-color: var(--jm-dark-purple);
+}
+
+.jm-comment {
+    text-align: left;
+    min-width: 15rem;
+}
+
+.jm-input-form {
+    margin: 10px;
+    padding: 10px;
 }
