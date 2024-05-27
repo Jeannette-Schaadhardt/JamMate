@@ -67,8 +67,6 @@ async function updateLike(data) {
     }
 }
 
-
-
 module.exports = {
     updateLike
   }

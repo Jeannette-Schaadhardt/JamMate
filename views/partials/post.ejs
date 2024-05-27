@@ -1,5 +1,6 @@
 <div class="card jm-post">
     <div class="card-header jm-feed-header"><a href="/user/<%=post_data.nickname %>">
+    <img src="https://storage.googleapis.com/jammate-cs467_cloudbuild/profile-pictures/<%= post_data.userId %>?t=<%= Date.now() %>" class="rounded-circle" alt="User's Profile Picture" style="height: 40px" onerror="this.onerror=null; this.src='/no-profile-picture-15257.png'">
     <%= post_data.nickname %></a>
     </div>
     <div class="card-body">

@@ -14,7 +14,7 @@
             <button type="button" id="fileButton" class="btn btn-link btn-lg" data-mdb-button-init data-mdb-ripple-init data-mdb-ripple-color="dark">
             Choose File
             </button>
-            <span id="fileName">No file chosen</span><br>
+            <span id="postFileName">No file chosen</span><br>
 
             <label for="instrument">Instrument:</label>
             <input list="instrumentList" name="instrument">
@@ -56,11 +56,11 @@ document.getElementById('fileButton').addEventListener('click', function() {
 });
 
 document.getElementById('fileInput').addEventListener('change', function() {
-    var fileLabel = document.getElementById('fileName');
+    var fileLabel = document.getElementById('postFileName');
     var file = this.files[0];
-    var fileName = file ? file.name : 'No file chosen';
-    fileLabel.textContent = fileName; // Update the text content with the file name
-    console.log("File selected:", fileName);
+    var postFileName = file ? file.name : 'No file chosen';
+    fileLabel.textContent = postFileName; // Update the text content with the file name
+    console.log("File selected:", postFileName);
 });
 
 document.getElementById('postForm').addEventListener('submit', function(event) {
