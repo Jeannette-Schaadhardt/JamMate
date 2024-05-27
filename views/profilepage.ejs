@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <%- include('partials/headMetaData') %>
+    <link rel="stylesheet" href="/styles/jammateCSS.css"> <!-- Ensure this path is correct -->
 </head>
 <body class="container bg-light">
     <%- include('partials/header', {user: loggedIn}) %>
@@ -9,14 +10,12 @@
         <div class="col-md-4">
             <div class="bio-box text-center">
                 <!-- Profile Picture -->
-                <img id="profilePic" src="<%= user.profilePicture || 'path/to/default/image.png' %>" alt="Profile Picture" class="profile-picture">
-
-                <!-- User's Name and Button for adding profile picture -->
-                <h1><%= user.nickname %>'s Profile</h1>
+                <img id="profilePic" src="<%= user.profilePicture || 'path/to/default/image.png' %>" alt="Profile Picture" class="profile-picture" onerror="this.onerror=null; this.src='/no-profile-picture-15257.png'">
                 <button id="profilePicButton" class="btn btn-secondary btn-sm">Add Profile Picture</button>
                 <input type="file" id="profilePicInput" style="display: none;" accept="image/*">
 
                 <!-- User Information -->
+                <h1><%= user.nickname %>'s Profile</h1>
                 <p><%= user.description %></p>
                 <p>Skill Level: <%= user.skillLevel %></p>
                 <p>Location: <%= user.locationName %></p>
@@ -27,6 +26,13 @@
             </div>
         </div>
         <div class="col-md-8">
+            <!-- Cover Photo -->
+            <div class="cover-photo-box">
+                <img id="coverPhoto" src="<%= user.coverPhoto || 'JamMate/public/no-profile-picture-15257.png' %>" alt="Cover Photo" class="cover-photo" onerror="this.onerror=null; this.src='/no-profile-picture-15257.png'">
+                <button id="coverPhotoButton" class="btn btn-secondary btn-sm">Add Cover Photo</button>
+                <input type="file" id="coverPhotoInput" style="display: none;" accept="image/*">
+            </div>
+
             <!-- Content for posts and ads -->
             <div class="d-flex justify-content-start mb-3 form-top-padding">
                 <div class="me-2">
@@ -62,16 +68,16 @@
     <%- include('partials/footer') %>
     <script>
         document.getElementById('profilePicButton').addEventListener('click', function() {
-            document.getElementById('profilePicInput').click(); // Open file dialog
+            document.getElementById('profilePicInput').click();
         });
 
         document.getElementById('profilePicInput').addEventListener('change', function() {
             if (this.files && this.files[0]) {
                 var reader = new FileReader();
                 reader.onload = function(e) {
-                    document.getElementById('profilePic').src = e.target.result; // Display chosen image
+                    document.getElementById('profilePic').src = e.target.result;
                 };
-                reader.readAsDataURL(this.files[0]); // Convert image to base64 string
+                reader.readAsDataURL(this.files[0]);
 
                 var formData = new FormData();
                 formData.append('profilePicture', this.files[0]);
@@ -87,12 +93,45 @@
                     }
                 });
 
-                // Reset the input after the file is selected and event handled
                 this.value = ""; // Clear the file input for next use
             }
         });
-        </script>
+
+        document.getElementById('coverPhotoButton').addEventListener('click', function() {
+            document.getElementById('coverPhotoInput').click();
+        });
+
+        document.getElementById('coverPhotoInput').addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('coverPhoto').src = e.target.result;
+                };
+                reader.readAsDataURL(this.files[0]);
+
+                var formData = new FormData();
+                formData.append('coverPhoto', this.files[0]);
+                fetch('/user/update-cover-photo', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Cover photo updated successfully!');
+                    } else {
+                        console.error('Failed to update cover photo');
+                    }
+                });
+
+                this.value = "";
+            }
+        });
+    </script>
 </body>
 </html>
+
+
+
+
 
 
