@@ -14,7 +14,8 @@
     <div class="container">
         <div class="row">
                 <div class="card-body">
-                    <h5 class="card-title">
+                    <div class="card-title">
+                        <div>
                         <% if (post_data.fileType != null &&post_data.fileURL != null) { %>    <!-- We make sure that fileType and fileURL are not NULL -->
                             <% if (post_data.fileType.startsWith('audio')) { %>                 <!-- Otherwise we get an error when we use startsWith()-->
                             <audio controls>
@@ -24,46 +25,52 @@
                             <!--Just Diagnostics for now. Can replace with something nicer-->
                             <p></p>
                             <% } %>
-                    </h5>
-                    <div class="blockquote text-center">
-                        <%= post_data.content %>
                         </div>
-                        <span class="badge bg-secondary mx-1"><%= post_data.instrument %></span>
-                        <span class="badge bg-primary mx-1"><%= post_data.genre%></span>
-                            <span class="badge bg-warning mx-1"><%= post_data.skillLevel%></span>
-                        <span>
+                    </div>
+                    <div class="card-text">
+                        <div class="jm-post-content">
+                            <%= post_data.content %>
+                        </div>
+                        <div class="jm-post-time">
                             <% const localDateTime = new Date(post_data.timestamp).toLocaleString(); %>
-                            Posted on <%= localDateTime %>
-                            <% if (loggedIn === true && post_data.userId === userData.sub) {%>
-                                <div>
-                                    <button id="deleteButton-<%= post_data.postId %>" class="btn btn-danger" type="button" onclick="deletePost('<%= post_data.postId %>')">
-                                        Delete
-                                    </button>
-                                </div>
-                            <% }%>
-                        </span>
-                        <div class="bg-body-tertiary rounded-3 px-3 py-1">
-                            <img id="likeButton-<%= post_data.postId %>" class="likeButton"
-                            data-post-id="<%= post_data.postId %>" data-user-id="<%= userData.sub %>"
-                            src="https://storage.googleapis.com/jammate-cs467_cloudbuild/htmlMedia/like.png" style="height: 20px">
+                            - <%= localDateTime %>
+                            <div class="jm-vote">
+                                <img id="likeButton-<%= post_data.postId %>" class="likeButton"
+                                data-post-id="<%= post_data.postId %>" data-user-id="<%= userData.sub %>"
+                                src="/icons/like.png" style="height: 30px">
 
-                            <span id="likeCount-<%= post_data.postId %>"><%= post_data.likeCount %></span>
+                                <span id="likeCount-<%= post_data.postId %>"><h5><%= post_data.likeCount %></h5></span>
 
-                            <img id="dislikeButton-<%= post_data.postId %>" class="dislikeButton"
-                            data-post-id="<%= post_data.postId %>" data-user-id="<%= userData.sub %>"
-                            src="https://storage.googleapis.com/jammate-cs467_cloudbuild/htmlMedia/dislike.png" style="height: 20px">
+                                <img id="dislikeButton-<%= post_data.postId %>" class="dislikeButton"
+                                data-post-id="<%= post_data.postId %>" data-user-id="<%= userData.sub %>"
+                                src="/icons/dislike.png" style="height: 30px">
 
+                            </div>
+                        </div>
+
+                        <div class="jm-post-time">
+                            <span class="badge bg-secondary mx-1 jm-badge"><%= post_data.instrument %></span>
+                            <span class="badge bg-primary mx-1"><%= post_data.genre%></span>
+                                <span class="badge bg-warning mx-1"><%= post_data.skillLevel%></span>
+                            <span>
+                                <% if (loggedIn === true && post_data.userId === userData.sub) {%>
+                                    <div>
+                                        <button id="deleteButton-<%= post_data.postId %>" class="jm-comment-delete-button" type="button" onclick="deletePost('<%= post_data.postId %>')">
+                                            Delete
+                                        </button>
+                                    </div>
+                                <% }%>
+                            </span>
+                            <div>
+                                <button type="button" class="jm-comment-button" data-bs-toggle="collapse" data-bs-target="#postComments-<%=post_data.postId%>" aria-expanded="false" aria-controls="collapseExample">
+                                    Comments
+                                </button>
+                            </div>
                         </div>
 
                     </div>
           </div>
         <div class="row">
-            <div>
-                <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#postComments-<%=post_data.postId%>" aria-expanded="false" aria-controls="collapseExample">
-                    Comments
-                </button>
-            </div>
-
             <div colspan="3">
                 <div class="collapse" id="postComments-<%=post_data.postId%>">
                     <section>

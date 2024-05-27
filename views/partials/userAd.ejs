@@ -11,7 +11,7 @@
 
         <% if (loggedIn === true && ad_data.userId === userData.sub) {%>
             <td>
-                <button id="deleteButton-<%= ad_data.adId %>" class="btn btn-danger" type="button" onclick="deleteAd('<%= ad_data.adId %>')">
+                <button id="deleteButton-<%= ad_data.adId %>" class="jm-comment-delete-button" type="button" onclick="deleteAd('<%= ad_data.adId %>')">
                     Delete Ad
                 </button>
             </td>
