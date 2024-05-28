@@ -63,15 +63,15 @@ async function handleAuthenticationFlow(req, res, destination) {
     let randomAds;
     let userAds;
     let userID;
-
+    let visitingUserId = null;
     ({ user, userID } = authenticateUser(req, user, userID));
 
     // Gather the posts for the appropriate page.
     if (destination === "profilepage" && user.loggedIn === true) {
         // Fetch only user's posts for the profile page
         posts = await getPosts({userID});
-    } else if (destination === "postpage") {        // Fetch the individual post
-        posts = await getPost();
+    } else if (destination === "profilepage" && user.loggedIn === false) {
+        posts = await getPosts({visitingUserId})
     } else {
         posts = await getPosts({});                   // Fetch all posts for other pages like the homepage
     }

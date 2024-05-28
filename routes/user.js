@@ -54,6 +54,27 @@ router.get('/edit', isAuthenticated, async (req, res) => {
     }
 });
 
+// Display the user's profile
+router.get('/:userId', isAuthenticated, async (req, res) => {
+    const userId = req.params.userId;
+    try {
+        const userEntity = await getUserInfo(userId);
+        if (!userEntity) {
+            return res.status(404).send('User not found');
+        }
+        const posts = await getPosts({userId});
+        const ads = await getAds({userId});
+        res.render('visitUserProfile', {
+            user: userEntity.user,
+            posts: posts,
+            ads: ads,
+            loggedIn: req.oidc.isAuthenticated()
+        });
+    } catch (error) {
+        console.error('Error fetching profile data:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
 
 // Route to update the user's bio information
 router.post('/update-bio', isAuthenticated, async (req, res) => {

@@ -26,14 +26,8 @@
             <input type="hidden" id="location" name="location"><br>
 
             <label for="instrument">Instrument:</label>
-            <select id="instrument" name="instrument">
-                <option value="Guitar" <%= user.instrument === 'Guitar' ? 'selected' : '' %>>Guitar</option>
-                <option value="Bass" <%= user.instrument === 'Bass' ? 'selected' : '' %>>Bass</option>
-                <option value="Drums" <%= user.instrument === 'Drums' ? 'selected' : '' %>>Drums</option>
-                <option value="Keyboard" <%= user.instrument === 'Keyboard' ? 'selected' : '' %>>Keyboard</option>
-                <option value="Vocals" <%= user.instrument === 'Vocals' ? 'selected' : '' %>>Vocals</option>
-                <!-- Add other instruments as needed -->
-            </select><br>
+            <input type="text" id="instrument" name="instrument" list="instruments" value="<%= user.instrument %>"><br>
+
 
             <button type="submit" class="btn btn-primary">Save Changes</button>
         </form>

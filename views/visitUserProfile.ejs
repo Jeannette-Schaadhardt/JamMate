@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/headMetaData') %>
+</head>
+
+<body>
+    <%- include('partials/header', {user: loggedIn}) %>
+    <div class="container">
+        <div class="row">
+            <!-- Cover Photo -->
+                <div class="cover-photo-box">
+                    <img id="coverPhoto" src="<%= user.coverPhoto || 'JamMate/public/no-profile-picture-15257.png' %>" alt="Cover Photo" class="cover-photo" onerror="this.onerror=null; this.src='/no-profile-picture-15257.png'">
+                    <button id="coverPhotoButton" class="btn btn-secondary btn-sm">Add Cover Photo</button>
+                    <input type="file" id="coverPhotoInput" style="display: none;" accept="image/*">
+                </div>
+          </div>
+          <div class="row">
+              <div class="col-md-4">
+                  <%- include('partials/bio_box') %>
+              </div>
+              <div class="col-md-8">
+                <!-- Content for posts and ads -->
+                <div class="card jm-post">
+                    <div class="card-body">
+                        <div class="card-title jm-feed-header">
+                            My posts on JamMate
+                        </div>
+                        <div class="card-text">
+                            <% posts.forEach(function(post) { %>
+                                <div class="post" id="post-<%= post.postId %>">
+                                    <div class="post-content">
+                                        <%- include('partials/post', {loggedIn: loggedIn, post_data: post, userData: user}) %>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    </div>
+                </div>
+
+                <h2>My Ads Posted on JamMate</h2>
+                <% ads.forEach(function(ad) { %>
+                    <% if (ad.userId === user.sub) { %>
+                        <div class="ad" id="ad-<%= ad.adId %>">
+                            <%- include('partials/userAd', {ad_data: ad, userData: user}) %>
+                        </div>
+                    <% } %>
+                <% }); %>
+            </div>
