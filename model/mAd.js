@@ -124,20 +124,26 @@ async function getAd(adId) {
 
 async function deleteAd(adId) {
     const query = firestore.collection(COLLECTION_NAME).doc(adId);
+    const ad = await query.get();
+    const adData = ad.data();
+    if (adData.fileURL) {
+        const bucket = storage.bucket(BUCKET_NAME);
+        const blob = bucket.file("adMedia/"+adId);
+        await blob.delete()                 // Delete from Google Cloud Storage
+    }
     await query.delete();
-    const bucket = storage.bucket(BUCKET_NAME);
-    const blob = bucket.file("adMedia/"+adId);
-    await blob.delete()                 // Delete from Google Cloud Storage
     console.log('delete success');
     return;
 }
 
-async function deleteAllAds(nickname) {
+async function deleteAllAds(userId) {
     const bucket = storage.bucket(BUCKET_NAME);
     const querySnapshot = await firestore.collection(COLLECTION_NAME)
-                    .where("nickname", "==", nickname).get();
+                    .where("userId", "==", userId).get();
     querySnapshot.forEach(doc=> {
-        bucket.file("postMedia/"+doc.id).delete();   // Delete the media from the Google Cloud Storage (I don't think await is necessary.)
+        if (doc.fileURL) {
+            bucket.file("postMedia/"+doc.id).delete();   // Delete the media from the Google Cloud Storage (I don't think await is necessary.)
+        }
         doc.ref.delete();
     });
 }

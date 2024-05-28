@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <%- include('partials/headMetaData') %>
-    <link rel="stylesheet" href="/styles/jammateCSS.css"> <!-- Ensure this path is correct -->
 </head>
 <body>
     <%- include('partials/border_start') %>
@@ -10,17 +9,17 @@
     <div class="container">
         <div class="row">
             <% if (loggedIn) { %>
-                <div class="col">
+                <div class="col-2">
                     <%- include('partials/post_form', {user: user}) %>
                 </div>
-                <div class="col">
+                <div class="col-2">
                     <%- include('partials/ad_form', {user: user}) %>
                 </div>
             <% } else {%>
-                <div class="col">
+                <div class="col-2">
                     <a class="nav-link" href="/login"><button type="button" class="jm-link-button" >Create Post</button></a>
                 </div>
-                <div class="col">
+                <div class="col-2">
                     <a class="nav-link" href="/login"><button type="button" class="jm-link-button" >Create Ad</button></a>
                 </div>
 
@@ -48,7 +47,7 @@
                     <!-- User Information -->
                     <p><%= user.description %></p>
                     <p>Skill Level: <%= user.skillLevel %></p>
-                    <p>Location: <%= user.location %></p>
+                    <p>Location: <%= user.locationName || "unknown" %></p>
                     <p>Instrument: <%= user.instrument %></p>
                     <button type="button" class="jm-edit-button">
                         <a href="/user/edit" class="text-white">Edit Bio</a>

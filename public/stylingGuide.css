@@ -1,20 +1,41 @@
 html {
     --base-spacing: 1rem;
-    --jm-dark-purple: #18141D;
-    --jm-purple-grey: #3C313D;
-    --jm-grey: #55535B;
-    --jm-light-grey: #9D9BA2;
-    --jm-white: #EBEAEC;
+    --jm-color-darkest: #18141D;
+    --jm-color-dark: #3C313D;
+    --jm-color-neutral: #55535B;
+    --jm-color-light: #9D9BA2;
+    --jm-color-lightest: #EBEAEC;
+}
+
+a {
+    text-decoration: none;
+    color: var(--jm-color-lightest)
+}
+
+.jm-color-darkest {
+    background-color: var(--jm-color-darkest);
+}
+.jm-color-dark {
+    background-color: var(--jm-color-dark);
+}
+.jm-color-neutral {
+    background-color: var(--jm-color-neutral);
+}
+.jm-color-light{
+    background-color: var(--jm-color-light);
+}
+.jm-color-lightest{
+    background-color: var(--jm-color-lightest);
 }
 
 .jm-link-button {
     display: inline-block;
     margin: 10px;
     padding: 5px 3px; /* Adjust padding as needed */
-    background-color: var(--jm-light-grey); /* Button background color */
-    color: var(--jm-dark-purple); /* Button text color */
+    background-color: var(--jm-color-light); /* Button background color */
+    color: var(--jm-color-darkest); /* Button text color */
     text-decoration: none; /* Remove underline */
-    border-color: var(--jm-grey);
+    border-color: var(--jm-color-neutral);
     border-radius: 5px; /* Apply rounded corners */
     cursor: pointer; /* Show pointer on hover */
     display: inline-block;
@@ -26,9 +47,9 @@ html {
     margin: 10px;
     padding: 10px 5px; /* Adjust padding as needed */
     background-color: #391842; /* Button background color */
-    color: var(--jm-white); /* Button text color */
+    color: var(--jm-color-lightest); /* Button text color */
     text-decoration: none; /* Remove underline */
-    border-color: var(--jm-grey);
+    border-color: var(--jm-color-neutral);
     border-radius: 5px; /* Apply rounded corners */
     cursor: pointer; /* Show pointer on hover */
     display: inline-block;
@@ -40,9 +61,9 @@ html {
     margin: 10px;
     padding: 10px 5px; /* Adjust padding as needed */
     background-color: #451938; /* Button background color */
-    color: var(--jm-white); /* Button text color */
+    color: var(--jm-color-lightest); /* Button text color */
     text-decoration: none; /* Remove underline */
-    border-color: var(--jm-grey);
+    border-color: var(--jm-color-neutral);
     border-radius: 5px; /* Apply rounded corners */
     cursor: pointer; /* Show pointer on hover */
     display: inline-block;
@@ -55,9 +76,9 @@ html {
     display: inline-block;
     margin: 10px;
     padding: 10px 5px; /* Adjust padding as needed */
-    color: var(--jm-white); /* Button text color */
+    color: var(--jm-color-lightest); /* Button text color */
     text-decoration: none; /* Remove underline */
-    border-color: var(--jm-grey);
+    border-color: var(--jm-color-neutral);
     border-radius: 5px; /* Apply rounded corners */
     cursor: pointer; /* Show pointer on hover */
     display: inline-block;
@@ -66,9 +87,9 @@ html {
 
 .jm-button {
     cursor: pointer;
-    background-color: var(--jm-light-grey);
-    color: var(--jm-dark-purple);
-    border-color: var(--jm-grey);
+    background-color: var(--jm-color-light);
+    color: var(--jm-color-darkest);
+    border-color: var(--jm-color-neutral);
     border-radius: 5px;
     text-align: center;
     display: inline-block;
@@ -76,7 +97,7 @@ html {
 
 .jm-outer-border {
     padding: calc(var(--base-spacing) * .75);
-    background-color: var(--jm-white);
+    background-color: var(--jm-color-lightest);
     margin-bottom: calc(var(--base-spacing) *.25);
 }
 
@@ -87,7 +108,7 @@ html {
 }
 
 .jm-navbar {
-    background: linear-gradient(180deg, var(--jm-purple-grey) 0%, var(--jm-light-grey) 100%);
+    background: linear-gradient(180deg, var(--jm-color-dark) 0%, var(--jm-color-light) 100%);
 }
 
 .jm-clickable-user-name {
@@ -96,12 +117,12 @@ html {
 
 .jm-posts-homepage {
     border-radius: 5px;
-    margin-top: 3em;
-    background-color: var(--jm-light-grey);
+    margin-top: 0em;
+    background-color: var(--jm-color-light);
 }
 
 .jm-post-content {
-    border: 2px solid var(--jm-dark-purple);
+    border: 2px solid var(--jm-color-darkest);
     border-radius: 5px;
     padding: 10px;
     box-shadow: 3px 2px;
@@ -110,31 +131,39 @@ html {
 .jm-post-time {
     text-align: right;
     margin-top: 5px;
+    margin-left: auto;
+}
+
+.jm-post-metadata{
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .jm-logo {
     width: 64px;
+    height: auto;
     align-items: center;
     font-size: larger;
 }
 
 .jm-profile-picture {
     width: 64px;
+    height: auto;
     align-items: center;
     border-radius: 50%;
 }
 
 .jm-ad {
-    background-color: var(--jm-light-grey);
+    background-color: var(--jm-color-light);
     max-width: 30%;
     min-width: 15rem;
     text-align: center;
-    margin-top: 3em;
+    margin-top: 0em;
     padding: 1em;
 }
 
 .jm-post {
-    margin-bottom: 10px;
+    margin-bottom: 0px;
     background-color: white;
     border-image-width: 20px;
     min-width: 20em;
@@ -147,17 +176,29 @@ html {
     font-size: x-large;
 }
 
+.jm-post-elements {
+    display: flex;
+    align-items: center; /* Align items vertically centered */
+    margin-top: 5px;
+}
+.jm-post-elements img {
+    margin: 0 5px; /* Optional: Add some spacing between the images and the count */
+}
+.jm-post-elements span {
+    margin: 0 10px; /* Optional: Add some spacing between the like and dislike buttons */
+}
+
 .jm-feed-header {
     text-align: center;
     align-items: center;
-    background-color: var(--jm-dark-purple);
+    background-color: var(--jm-color-dark);
     font-size: x-large;
-    color: var(--jm-white);
+    color: var(--jm-color-lightest);
     padding: 10px;
 }
 
 .jm-card-body {
-    background-color: var(--jm-dark-purple);
+    background-color: var(--jm-color-darkest);
 }
 
 .jm-comment {

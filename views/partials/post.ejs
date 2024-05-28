@@ -1,10 +1,10 @@
 <!--  <a href="https://www.flaticon.com/free-icons/user" title="user icons">User icons created by Freepik - Flaticon</a>  -->
-<div class="card jm-post">
+<div class="card jm-post" id="post-<%=post_data.postId%>">
     <div class="card-header jm-feed-header"><a href="/user/<%=post_data.nickname %>">
       <% if (!userData.profilePicture) { %>
           <img class="jm-profile-picture" src="/icons/profile-user.png" alt="">
       <%  } else { %>
-          <img class="jm-profile-picture" src="https://storage.googleapis.com/jammate-cs467_cloudbuild/profile-pictures/<%= post_data.userId %>?t=<%= Date.now() %>" class="rounded-circle" alt="User's Profile Picture" style="height: 40px" onerror="this.onerror=null; this.src='/no-profile-picture-15257.png'">
+          <img class="jm-profile-picture" src="https://storage.googleapis.com/jammate-cs467_cloudbuild/profile-pictures/<%= post_data.userId %>?t=<%= Date.now() %>" class="rounded-circle" alt="User's Profile Picture" style="width: 40px" onerror="this.onerror=null; this.src='/no-profile-picture-15257.png'">
       <%  } %>
       <a class="jm-clickable-user-name" href="/user/<%=post_data.nickname %>">
           <%= post_data.nickname %></a>
@@ -28,48 +28,42 @@
                         </div>
                     </div>
                     <div class="card-text">
-                        <div class="jm-post-content">
-                            <%= post_data.content %>
-                        </div>
-                        <div class="jm-post-time">
-                            <% const localDateTime = new Date(post_data.timestamp).toLocaleString(); %>
-                            - <%= localDateTime %>
-                            <div class="jm-vote">
-                                <img id="likeButton-<%= post_data.postId %>" class="likeButton"
-                                data-post-id="<%= post_data.postId %>" data-user-id="<%= userData.sub %>"
-                                src="/icons/like.png" style="height: 30px">
-
-                                <span id="likeCount-<%= post_data.postId %>"><h5><%= post_data.likeCount %></h5></span>
-
-                                <img id="dislikeButton-<%= post_data.postId %>" class="dislikeButton"
-                                data-post-id="<%= post_data.postId %>" data-user-id="<%= userData.sub %>"
-                                src="/icons/dislike.png" style="height: 30px">
-
-                            </div>
-                        </div>
-
-                        <div class="jm-post-time">
-                            <span class="badge bg-secondary mx-1 jm-badge"><%= post_data.instrument %></span>
-                            <span class="badge bg-primary mx-1"><%= post_data.genre%></span>
-                                <span class="badge bg-warning mx-1"><%= post_data.skillLevel%></span>
-                            <span>
-                                <% if (loggedIn === true && post_data.userId === userData.sub) {%>
-                                    <div>
-                                        <button id="deleteButton-<%= post_data.postId %>" class="jm-comment-delete-button" type="button" onclick="deletePost('<%= post_data.postId %>')">
-                                            Delete
-                                        </button>
-                                    </div>
-                                <% }%>
-                            </span>
-                            <div>
-                                <button type="button" class="jm-comment-button" data-bs-toggle="collapse" data-bs-target="#postComments-<%=post_data.postId%>" aria-expanded="false" aria-controls="collapseExample">
-                                    Comments
-                                </button>
-                            </div>
-                        </div>
-
+                    <div class="jm-post-content">
+                        <%= post_data.content %>
                     </div>
-          </div>
+                    <div class="jm-post-elements">
+                            <img id="likeButton-<%= post_data.postId %>" class="likeButton"
+                            data-post-id="<%= post_data.postId %>" data-user-id="<%= userData.sub %>"
+                            src="/icons/like.png" style="width: 30px">
+                            <span id="likeCount-<%= post_data.postId %>"><h5><%= post_data.likeCount %></h5></span>
+                            <img id="dislikeButton-<%= post_data.postId %>" class="dislikeButton"
+                            data-post-id="<%= post_data.postId %>" data-user-id="<%= userData.sub %>"
+                            src="/icons/dislike.png" style="width: 30px">
+                        <div class="jm-post-metadata">
+                            <span class="badge mx-1 jm-color-darkest jm-badge"><%= post_data.instrument %></span>
+                            <span class="badge mx-1 jm-color-dark"><%= post_data.genre%></span>
+                            <span class="badge mx-1 jm-color-neutral"><%= post_data.skillLevel%></span>
+                        </div>
+                        <div class ="jm-post-time">
+                            <span><% const localDateTime = new Date(post_data.timestamp).toLocaleString(); %>
+                        - <%= localDateTime %>
+                        </span>
+                        </div>
+                    </div>
+                    <div class="jm-post-elements">
+                        <div class="jm-post-time">
+                        <% if (loggedIn === true && post_data.userId === userData.sub) {%>
+                                <button id="deleteButton-<%= post_data.postId %>" class="jm-comment-delete-button" type="button" onclick="deletePost('<%= post_data.postId %>')">
+                                    Delete
+                                </button>
+                        <% }%>
+                        <button type="button" class="jm-comment-button" data-bs-toggle="collapse" data-bs-target="#postComments-<%=post_data.postId%>" aria-expanded="false" aria-controls="collapseExample">
+                            Comments
+                        </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         <div class="row">
             <div colspan="3">
                 <div class="collapse" id="postComments-<%=post_data.postId%>">
@@ -90,10 +84,8 @@
                 </div>
             </div>
         </div>
-
-
     </div>
-
   </div>
+</div>
 
 

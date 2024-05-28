@@ -64,7 +64,7 @@ router.delete('/all/:userId', async (req, res) => {
         if (targetUserId !== userEntities[0].user.nickname) {
             return res.status(403).send('Unauthorized to delete ads');
         }
-        await deleteAllAds(userEntities[0].user.nickname);
+        await deleteAllAds(userEntities[0].user.sub);
         res.status(200).send({ message: 'Ad deleted successfully' });
     } catch (error) {
         console.error('Error deleting ad:', error);

@@ -55,6 +55,7 @@ async function createPost(userId, content, file, nickname, instrument, genre, sk
         let locationName = null;
         if (userEntity[0].user.location) {
             location = userEntity[0].user.location;
+            location = new Firestore.GeoPoint(location.latitude, location.longitude)
         }
         if (userEntity[0].user.locationName) {
             locationName = userEntity[0].user.locationName;
@@ -229,15 +230,21 @@ async function getPost(postId) {
     }
 }
 async function deletePost(postId) {
-    const query = firestore.collection(COLLECTION_NAME).doc(postId);
-
-    await deleteAssociatedReferences(query, postId);
-
+    const queryRef = firestore.collection(COLLECTION_NAME).doc(postId);
+    const querySnapshot = await queryRef.get();
+    if (!querySnapshot) {return}
+    const data = querySnapshot.data();
+    // Attempt to delete the file
+    try {
+        const bucket = storage.bucket(BUCKET_NAME);
+        const blob = bucket.file("postMedia/"+postId);
+        await blob.delete()                 // Delete from Google Cloud Storage
+    } catch (error) {
+        console.error("Error deleting file from Cloud Storage: May already be deleted.", );
+    }
     //TODO: refresh if required!
-    await query.delete();
-    const bucket = storage.bucket(BUCKET_NAME);
-    const blob = bucket.file("postMedia/"+postId);
-    await blob.delete()                 // Delete from Google Cloud Storage
+    await deleteAssociatedReferences(queryRef, postId);
+    await queryRef.delete();
     return;
 }
 
@@ -265,8 +272,14 @@ async function deleteAllPosts(userId) {
                     .get();
 
     querySnapshot.forEach(async doc=> {
+        try{
+            const blob = bucket.file("postMedia/"+postId);
+            await blob.delete()                 // Delete from Google Cloud Storage
+        }
+        catch {
+            console.error("Error deleting file from Cloud Storage: May already be deleted.", );
+        }
         await deleteAssociatedReferences(doc.ref, doc.id);
-        await bucket.file("postMedia/"+doc.id).delete();   // Delete the media from the Google Cloud Storage (I don't think await is necessary.)
         await doc.ref.delete();               // Delete the firestore document
     });
 }

@@ -1,11 +1,20 @@
 // Function used to toggle forms opened or closed.
-function toggleElement(elementId) {
-    var element = document.getElementById(elementId);
-    var style = window.getComputedStyle(element);
-    if (style.display === 'block' || style.display === '') {
-        element.style.display = 'none';
-    } else {
-        element.style.display = 'block';
+function toggleElement(elementId, otherElementId) {
+    {
+        var element = document.getElementById(elementId);
+        var style = window.getComputedStyle(element);
+        if (style.display === 'block' || style.display === '') {
+            element.style.display = 'none';
+        } else {
+            element.style.display = 'block';
+        }
+    }
+    {
+        var otherElement = document.getElementById(otherElementId);
+        var otherStyle = window.getComputedStyle(otherElement);
+        if (otherStyle.display === `block`) {
+            otherElement.style.display = `none`;
+        }
     }
 }
 
