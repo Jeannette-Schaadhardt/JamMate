@@ -169,24 +169,31 @@ try {
         // Calculate the boundaries of our Coordinate Box based on range.
         posts = FilterOnRangeBoundaries(posts);
     }
-    if (posts.length >= 6) {
-    // We want to insert the best posts into the timeline
-    const thisWeeksBestPosts = posts.filter(post => {
-        const postDate = new Date(post.timestamp);
-        const currentDate = new Date();
-        const startOfWeek = new Date(currentDate);
-        startOfWeek.setDate(currentDate.getDate() - currentDate.getDay()); // Start of current week (Sunday)
-        const endOfWeek = new Date(startOfWeek);
-        endOfWeek.setDate(startOfWeek.getDate() + 7); // End of current week (next Sunday)
-        return postDate >= startOfWeek && postDate <= endOfWeek;
-    });
-    thisWeeksBestPosts.sort((a, b) => (b.likeCount || 0) - (a.likeCount || 0));
-    const topThreePosts = thisWeeksBestPosts.slice(0,3);
-    topThreePosts.forEach((post, index) => {
-        posts.splice(index * 2 + 1, 0, post);
-    });
-}
+        // Identify this week's best posts
+        const thisWeeksBestPosts = posts.filter(post => {
+            const postDate = new Date(post.timestamp);
+            const currentDate = new Date();
+            const startOfWeek = new Date(currentDate);
+            startOfWeek.setDate(currentDate.getDate() - currentDate.getDay()); // Start of current week (Sunday)
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(startOfWeek.getDate() + 7); // End of current week (next Sunday)
+            return postDate >= startOfWeek && postDate <= endOfWeek;
+        });
 
+        // Sort by likeCount
+        thisWeeksBestPosts.sort((a, b) => (b.likeCount || 0) - (a.likeCount || 0));
+
+        // Get top three posts
+        const topThreePosts = thisWeeksBestPosts.slice(0, 3);
+
+        // Remove original instances of the top posts
+        const postIdsToRemove = new Set(topThreePosts.map(post => post.id));
+        const filteredPosts = posts.filter(post => !postIdsToRemove.has(post.id));
+
+        // Insert top posts in desired positions
+        topThreePosts.forEach((post, index) => {
+            filteredPosts.splice(index * 2 + 1, 0, post);
+        });
     // Return the posts array
     return posts;
 } catch (error) {
