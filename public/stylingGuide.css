@@ -115,6 +115,11 @@ a {
     padding-left: 2em;
 }
 
+.jm-comment-clickable-user-name {
+    padding-left: 2em;
+    color: var(--jm-color-darkest);
+}
+
 .jm-posts-homepage {
     border-radius: 5px;
     margin-top: 0em;
