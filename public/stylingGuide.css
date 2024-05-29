@@ -70,7 +70,6 @@ a {
     box-shadow: 0px 3px, 6px, rgba(0, 0, 0, 0.5); /* Initial box shadow */
 }
 
-
 .jm-comment-delete-button {
     background-color: #732F3e;
     display: inline-block;
@@ -93,6 +92,10 @@ a {
     border-radius: 5px;
     text-align: center;
     display: inline-block;
+}
+
+.jm-text-area {
+    max-width: 280px;
 }
 
 .jm-outer-border {
@@ -154,12 +157,15 @@ a {
 }
 
 .jm-ad {
-    background-color: var(--jm-color-light);
+    background-color: #EBEAEC;
     max-width: 30%;
     min-width: 15rem;
     text-align: center;
     margin-top: 0em;
     padding: 1em;
+    margin-right: 2em;
+    margin-bottom: 2em;
+    font-weight: bold;
 }
 
 .jm-post {
@@ -186,6 +192,15 @@ a {
 }
 .jm-post-elements span {
     margin: 0 10px; /* Optional: Add some spacing between the like and dislike buttons */
+}
+
+.jm-user-ad {
+    margin-bottom: 1em;
+}
+
+.jm-main-cards {
+    margin-top: 1em;
+    align-items: center;
 }
 
 .jm-feed-header {

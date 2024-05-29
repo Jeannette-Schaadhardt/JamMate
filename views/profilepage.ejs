@@ -7,7 +7,7 @@
     <%- include('partials/border_start') %>
     <%- include('partials/header', {user: loggedIn}) %>
     <div class="container">
-        <div class="row">
+        <div class="row justify-content-center">
             <% if (loggedIn) { %>
                 <div class="col-2">
                     <%- include('partials/post_form', {user: user}) %>
@@ -29,26 +29,28 @@
           <!-- Cover Photo -->
               <div class="cover-photo-box">
                   <img id="coverPhoto" src="<%= user.coverPhoto || 'JamMate/public/no-profile-picture-15257.png' %>" alt="Cover Photo" class="cover-photo" onerror="this.onerror=null; this.src='/no-profile-picture-15257.png'">
-                  <button id="coverPhotoButton" class="btn btn-secondary btn-sm">Add Cover Photo</button>
+                  <button id="coverPhotoButton" class="btn btn-secondary btn-sm" style="margin-top: 10px;">Add Cover Photo</button>
                   <input type="file" id="coverPhotoInput" style="display: none;" accept="image/*">
               </div>
         </div>
         <div class="row">
             <div class="col-md-4">
-                <div class="bio-box jm-post">
+                <div class="bio-box">
                     <!-- Profile Picture -->
                     <img id="profilePic" src="<%= user.profilePicture || 'path/to/default/image.png' %>" alt="Profile Picture" class="profile-picture">
 
                     <!-- User's Name and Button for adding profile picture -->
                     <h1><%= user.nickname %>'s Profile</h1>
-                    <button id="profilePicButton" class="btn btn-secondary btn-sm">Add Profile Picture</button>
-                    <input type="file" id="profilePicInput" style="display: none;" accept="image/*">
+
 
                     <!-- User Information -->
                     <p><%= user.description %></p>
                     <p>Skill Level: <%= user.skillLevel %></p>
                     <p>Location: <%= user.locationName || "unknown" %></p>
                     <p>Instrument: <%= user.instrument %></p>
+
+                    <button id="profilePicButton" class="btn btn-secondary btn-sm" style="margin-bottom: 10px;">Add Profile Picture</button>
+                    <input type="file" id="profilePicInput" style="display: none;" accept="image/*">
                     <button type="button" class="jm-edit-button">
                         <a href="/user/edit" class="text-white">Edit Bio</a>
                     </button>
@@ -59,7 +61,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-8 jm-main-cards">
                 <!-- Content for posts and ads -->
                 <div class="card jm-post">
                     <div class="card-body">
@@ -78,14 +80,22 @@
                     </div>
                 </div>
 
-                <h2>My Ads Posted on JamMate</h2>
-                <% ads.forEach(function(ad) { %>
-                    <% if (ad.userId === user.sub) { %>
-                        <div class="ad" id="ad-<%= ad.adId %>">
-                            <%- include('partials/userAd', {ad_data: ad, userData: user}) %>
+                <div class="card jm-post jm-main-cards">
+                    <div class="card-body">
+                        <div class="card-title jm-feed-header">
+                            My ads on JamMate
                         </div>
-                    <% } %>
-                <% }); %>
+                        <div class="card-text">
+                            <% ads.forEach(function(ad) { %>
+                                <% if (ad.userId === user.sub) { %>
+                                    <div class="ad" id="ad-<%= ad.adId %>">
+                                        <%- include('partials/userAd', {ad_data: ad, userData: user}) %>
+                                    </div>
+                                <% } %>
+                            <% }); %>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -153,6 +163,11 @@
         });
     </script>
 </body>
+
+<footer>
+    <%- include('partials/footer') %>
+</footer>
+
 </html>
 
 
