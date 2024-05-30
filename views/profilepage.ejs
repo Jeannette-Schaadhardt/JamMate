@@ -4,7 +4,6 @@
     <%- include('partials/headMetaData') %>
 </head>
 <body>
-    <%- include('partials/border_start') %>
     <%- include('partials/header', {user: loggedIn}) %>
     <div class="container">
         <div class="row justify-content-center">
@@ -35,31 +34,7 @@
         </div>
         <div class="row">
             <div class="col-md-4">
-                <div class="bio-box">
-                    <!-- Profile Picture -->
-                    <img id="profilePic" src="<%= user.profilePicture || 'path/to/default/image.png' %>" alt="Profile Picture" class="profile-picture">
-
-                    <!-- User's Name and Button for adding profile picture -->
-                    <h1><%= user.nickname %>'s Profile</h1>
-
-
-                    <!-- User Information -->
-                    <p><%= user.description %></p>
-                    <p>Skill Level: <%= user.skillLevel %></p>
-                    <p>Location: <%= user.locationName || "unknown" %></p>
-                    <p>Instrument: <%= user.instrument %></p>
-
-                    <button id="profilePicButton" class="btn btn-secondary btn-sm" style="margin-bottom: 10px;">Add Profile Picture</button>
-                    <input type="file" id="profilePicInput" style="display: none;" accept="image/*">
-                    <button type="button" class="jm-edit-button">
-                        <a href="/user/edit" class="text-white">Edit Bio</a>
-                    </button>
-                    <div class="mt-3">
-                        <button onclick="deleteAllPosts('<%= user.nickname %>')" class="jm-comment-delete-button">
-                            Delete All Posts
-                        </button>
-                    </div>
-                </div>
+                <%- include('partials/bio_box') %>
             </div>
             <div class="col-md-8 jm-main-cards">
                 <!-- Content for posts and ads -->
@@ -97,8 +72,7 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+
 
     <%- include('partials/footer') %>
     <script>
