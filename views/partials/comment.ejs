@@ -1,6 +1,11 @@
 <div class="card-body jm-comment">
     <h5 class="card-title"><a href="">
-        <img src="https://mdbcdn.b-cdn.net/img/new/avatars/6.webp" class="rounded-circle" alt="Avatar" style="width: 40px" /></a>
+        <% if (!userData.profilePicture) { %>
+            <img class="jm-profile-picture" src="/icons/profile-user.png" alt="">
+        <%  } else { %>
+            <img class="jm-profile-picture" src="https://storage.googleapis.com/jammate-cs467_cloudbuild/profile-pictures/<%= commentData.userId %>?t=<%= Date.now() %>" class="rounded-circle" alt="User's Profile Picture" style="width: 40px" onerror="this.onerror=null; this.src='/no-profile-picture-15257.png'">
+        <%  } %>
+        <a class="jm-comment-clickable-user-name" href="/user/<%=commentData.userId %>">
         <strong><%= commentData.nickname %></strong>
     </h5>
     <h6 class="card-subtitle mb-2 text-muted"><a href="" class="text-dark mb-0">
