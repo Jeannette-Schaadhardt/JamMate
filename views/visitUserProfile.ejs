@@ -5,6 +5,7 @@
 </head>
 
 <body>
+    <% const globalTimestamp = Date.now(); %>
     <%- include('partials/header', {user: loggedIn}) %>
     <div class="container">
         <div class="row">
@@ -30,7 +31,7 @@
                             <% posts.forEach(function(post) { %>
                                 <div class="post" id="post-<%= post.postId %>">
                                     <div class="post-content">
-                                        <%- include('partials/post', {loggedIn: loggedIn, post_data: post, userData: user}) %>
+                                        <%- include('partials/post', {loggedIn: loggedIn, post_data: post, userData: user, globalTimestamp: globalTimestamp}) %>
                                     </div>
                                 </div>
                             <% }); %>

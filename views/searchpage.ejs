@@ -4,7 +4,7 @@
     <%- include('partials/headMetaData') %>
 </head>
 <body>
-    <%- include('partials/border_start') %>
+    <% const globalTimestamp = Date.now(); %>
     <%- include('partials/header', {user: loggedIn}) %>
 
 
@@ -45,13 +45,12 @@
 <% if (posts.length > 0 ) { %>
             <% for(let i = 0; i < Math.min(9, posts.length); i++) { %>
                 <tr>
-                    <%- include('partials/post', {user: loggedIn, post_data: posts[i], userData: user}) %>
+                    <%- include('partials/post', {user: loggedIn, post_data: posts[i], userData: user, globalTimestamp:globalTimestamp}) %>
                 </tr>
             <% } %>
         <% } %>
     </tbody>
 </table>
-    <%- include('partials/border_end') %>
 </body>
 <footer>
     <%- include('partials/footer') %>

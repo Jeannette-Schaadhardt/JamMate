@@ -4,6 +4,7 @@
     <%- include('partials/headMetaData') %>
 </head>
 <body>
+    <% const globalTimestamp = Date.now(); %>
     <%- include('partials/header', {user: loggedIn}) %>
     <div class="container">
         <div class="row justify-content-center">
@@ -47,7 +48,7 @@
                             <% posts.forEach(function(post) { %>
                                 <div class="post" id="post-<%= post.postId %>">
                                     <div class="post-content">
-                                        <%- include('partials/post', {loggedIn: loggedIn, post_data: post, userData: user}) %>
+                                        <%- include('partials/post', {loggedIn: loggedIn, post_data: post, userData: user, globalTimestamp: globalTimestamp}) %>
                                     </div>
                                 </div>
                             <% }); %>
@@ -72,9 +73,6 @@
                     </div>
                 </div>
             </div>
-
-
-    <%- include('partials/footer') %>
     <script>
         document.getElementById('profilePicButton').addEventListener('click', function() {
             document.getElementById('profilePicInput').click();

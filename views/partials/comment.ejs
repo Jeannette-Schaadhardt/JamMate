@@ -1,21 +1,18 @@
-<div class="card-body jm-comment">
-    <h5 class="card-title"><a href="">
-        <% if (!userData.profilePicture) { %>
-            <img class="jm-profile-picture" src="/icons/profile-user.png" alt="">
-        <%  } else { %>
-            <img class="jm-profile-picture" src="https://storage.googleapis.com/jammate-cs467_cloudbuild/profile-pictures/<%= commentData.userId %>?t=<%= Date.now() %>" class="rounded-circle" alt="User's Profile Picture" style="width: 40px" onerror="this.onerror=null; this.src='/no-profile-picture-15257.png'">
-        <%  } %>
+<div class="" id="comment-<%= commentData.commentId %>">
+    <div class="card-title jm-post-elements"><a href="">
+        <img
+            class="jm-profile-picture rounded-circle jm-square-small"
+            src="https://storage.googleapis.com/jammate-cs467_cloudbuild/profile-pictures/<%= commentData.userId %>?t=<%= globalTimestamp %>"
+            alt="User's Profile Picture"
+            onerror="this.onerror=null; this.src='/icons/profile-user.png'"
+        >
         <a class="jm-comment-clickable-user-name" href="/user/<%=commentData.userId %>">
         <strong><%= commentData.nickname %></strong>
-    </h5>
-    <h6 class="card-subtitle mb-2 text-muted"><a href="" class="text-dark mb-0">
-
-    </a></h6>
-    <p class="card-text"><p><%= commentData.commentText %></p>
-    <div>
+        </a>
         <div class="jm-post-time">-
             <% const localDateTime = new Date(commentData.timestamp).toLocaleString(); %>
             <%= localDateTime %>
         </div>
     </div>
+    <p class="card-text"><p><%= commentData.commentText %></p>
 </div>

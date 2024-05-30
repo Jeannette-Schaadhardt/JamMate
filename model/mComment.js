@@ -2,6 +2,7 @@ const projectId = "jammate-cs467"
 const { Firestore } = require("@google-cloud/firestore");
 const firestore = new Firestore({projectId});
 const COLLECTION_NAME = "Comment";  // Defining kind at the top for consistency
+const POST_COLLECTION = "Post";  // Defining kind at the top for consistency
 
 async function createComment(postId, commentData) {
     try {
@@ -12,6 +13,7 @@ async function createComment(postId, commentData) {
         newCommentData.likeCount = 0;
         // Add the comment to the comments subcollection of the post
         await postRef.collection(COLLECTION_NAME).add(newCommentData);
+        updateCommentCount(postId, true)
     } catch (error) {
         console.error('Error creating comment:', error);
         throw error;
@@ -49,6 +51,17 @@ async function getComments(doc){
     // Attach comments to the post object
     return comments;
 }
+
+async function updateCommentCount(postId, newComment) {
+    let postDocRef = await firestore.collection(POST_COLLECTION).doc(postId).get();
+    let commentCount = postDocRef.data().commentCount || 0; // Ensure commentCount is initialized
+    commentCount += newComment ? 1 : -1;
+    await postDocRef.ref.update({
+        commentCount
+    });
+    return commentCount;
+}
+
 
 module.exports = {
     getComments, createComment, deleteComment

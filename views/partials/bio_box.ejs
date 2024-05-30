@@ -1,17 +1,19 @@
-<div class="bio-box jm-post">
+<div class="bio-box">
     <!-- Profile Picture -->
-    <img id="profilePic" src="<%= user.profilePicture || 'path/to/default/image.png' %>" alt="Profile Picture" class="profile-picture">
+    <img class="jm-profile-picture jm-square-big" id="profilePic" src="<%= user.profilePicture || 'path/to/default/image.png' %>" alt="Profile Picture" >
 
     <!-- User's Name and Button for adding profile picture -->
     <h1><%= user.nickname %>'s Profile</h1>
-    <button id="profilePicButton" class="btn btn-secondary btn-sm">Add Profile Picture</button>
-    <input type="file" id="profilePicInput" style="display: none;" accept="image/*">
+
 
     <!-- User Information -->
     <p><%= user.description %></p>
     <p>Skill Level: <%= user.skillLevel %></p>
     <p>Location: <%= user.locationName || "unknown" %></p>
     <p>Instrument: <%= user.instrument %></p>
+
+    <button id="profilePicButton" class="btn btn-secondary btn-sm" style="margin-bottom: 10px;">Add Profile Picture</button>
+    <input type="file" id="profilePicInput" style="display: none;" accept="image/*">
     <button type="button" class="jm-edit-button">
         <a href="/user/edit" class="text-white">Edit Bio</a>
     </button>
