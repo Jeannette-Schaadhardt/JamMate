@@ -9,6 +9,7 @@ const BUCKET_NAME = "jammate-cs467_cloudbuild"
 const GOOGLE_CLOUD_API = "https://storage.googleapis.com"
 const { getComments } = require('./mComment.js');
 const { getUsers } = require("./mUser.js");
+const { getNearestCityName } = require('./mGoogle.js');
 
 async function uploadFile(file, postId, fileType) {
     try {
@@ -68,7 +69,7 @@ async function createPost(userId, content, file, nickname, instrument, genre, sk
             nickname,
             skillLevel,
             timestamp,
-            location: new Firestore.GeoPoint(location.latitude, location.longitude),
+            location,
             locationName,
             likeCount: 0,
             fileName: null,
@@ -291,7 +292,30 @@ async function deleteAllPosts(userId) {
     });
 }
 
+async function updatePostInfo(postId, updateData) {
+    try {
+        const query = await firestore.collection(COLLECTION_NAME).doc(postId);;
+        // We only want to update the fields that are filled in.
+        const updatedPostData = {};
+        for (const field in updateData) {
+            // Convert location field to GeoPoint if it exists
+            if (field = commentCount) {
+
+            }
+            if (updateData[field]) {
+                updatedPostData[`${field}`] = updateData[field];
+            }
+        }
+        query.forEach(async doc => {
+                await doc.ref.update(updatedPostData)
+        })
+    } catch (error) {
+        console.error('Error updating user:', error);
+        throw error;
+    }
+}
+
 
 module.exports = {
-  createPost, getPosts, deletePost, deleteAllPosts, getPost
+  createPost, getPosts, deletePost, deleteAllPosts, getPost, updatePostInfo
 }

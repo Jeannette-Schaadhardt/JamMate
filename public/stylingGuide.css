@@ -115,11 +115,11 @@ a {
 }
 
 .jm-clickable-user-name {
-    padding-left: 2em;
+    padding-left: 1em;
 }
 
 .jm-comment-clickable-user-name {
-    padding-left: 2em;
+    padding-left: .5em;
     color: var(--jm-color-darkest);
 }
 
@@ -156,9 +156,19 @@ a {
 
 .jm-profile-picture {
     width: 64px;
-    height: auto;
+    height: 64px;
+    object-fit: cover;
     align-items: center;
     border-radius: 50%;
+    display: inline-block;
+}
+.jm-square-small {
+    width: 40px;
+    height: 40px;
+}
+.jm-square-big {
+    width: 128px;
+    height: 128px;
 }
 
 .jm-ad {

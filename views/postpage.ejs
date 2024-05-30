@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/headMetaData') %>
+</head>
+<body class="container">
+    <%- include('partials/border_start') %>
+    <%- include('partials/header', {user: loggedIn}) %>
+    <table class="table table-hover table-forum text-center">
+    <tbody>
+            <%- include('partials/post', {post_data: post}) %>
+    </tbody>
+    </table>
+    <%- include('partials/border_end') %>
+
+
+</body>
+<footer>
+    <%- include('partials/footer') %>
+</footer>
+</html>

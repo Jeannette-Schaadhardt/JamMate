@@ -4,6 +4,7 @@
     <%- include('partials/headMetaData') %>
 </head>
 <body>
+    <% const globalTimestamp = Date.now(); %>
     <%- include('partials/header', {user: loggedIn}) %>
     <div class="container">
         <div class="row justify-content-center">
@@ -33,7 +34,7 @@
                             <div class="card-text">
                                 <% if (posts.length > 0 ) { %>
                                     <% for(let i = 0; i < Math.min(9, posts.length); i++) { %>
-                                        <%- include('partials/post', {user: loggedIn, post_data: posts[i], userData: user}) %>
+                                        <%- include('partials/post', {user: loggedIn, post_data: posts[i], userData: user, globalTimestamp: globalTimestamp}) %>
                                         </tr>
                                     <% } %>
                                 <% } else { %>
