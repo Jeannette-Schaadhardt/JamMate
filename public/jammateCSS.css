@@ -34,12 +34,13 @@
 }
 
 .bio-box {
-    border: 2px solid black;
+    border: 5px solid  var(--jm-color-darkest);
     border-radius: 10px;
     margin-top: 10px;
     padding: 20px;
-    background-color: #fff;
+    background-color: var(--jm-color-light);;
     box-shadow: 0 2px 4px rgba(0,0,0,.1);
+    font-weight: bold;
 }
 
 .post-buttons {
@@ -65,7 +66,7 @@
 .cover-photo-box {
     margin-top: 10px;
     padding: 10px;
-    background-color: #f8f9fa;
+    background-color: var(--jm-color-darkest);
     box-shadow: 0 2px 4px rgba(0,0,0,.1);
     text-align: center;
 }
@@ -76,5 +77,15 @@
     height: 200px;
     border-radius: 10px;
     object-fit: cover;
+}
+
+footer {
+    background-color: var(--jm-color-light);
+    bottom: 0;
+    left: 0;
+    width: 100%;
+
+    padding: 15px 0;
+    text-align: center;
 }
 

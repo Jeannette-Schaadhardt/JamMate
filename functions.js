@@ -19,6 +19,8 @@ function getSecret(len) {
     }
     return res;
 }
+//baseURL: 'https://jammate-6aiy3r5blq-uw.a.run.app/',
+
 // --------- auth0 authentication --------- //
 function getConfig(secret) {
     const config = {
