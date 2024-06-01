@@ -24,27 +24,42 @@
                 </div>
             <% } %>
         </div>
-        <div class="row">
-            <%- include('partials/ad', { ad_data: ads }) %>
+        <%- include('partials/ad', { ad_data: ads }) %>
+
+        <div class="card jm-posts-homepage">
+            <div class="card-body">
+                <div class="card-title jm-feed-header">
+                    <h5>Featured Jam Sessions</h5>
+                </div>
+                <div class="card-text">
+
+                    <% for(let i = 0; i < Math.min(50, posts.length); i++) { %>
+                        <% let audioPost = posts[i]; %>
+                        <% if (audioPost.fileURL) { %>
+                            <%- include('partials/post', {user: loggedIn, post_data: posts[i], userData: user, globalTimestamp: globalTimestamp}) %>
+                        <% } %>
+                    <% } %>
+                </div>
+            </div>
+        </div>
             <div class="col jm-posts-homepage">
                     <div class="card-body">
                         <div class="card-title jm-feed-header">
-                            <h5>Music Feed</h5>
+                            <h2>Music Feed</h2>
                         </div>
-                            <div class="card-text">
-                                <% if (posts.length > 0 ) { %>
-                                    <% for(let i = 0; i < Math.min(9, posts.length); i++) { %>
-                                        <%- include('partials/post', {user: loggedIn, post_data: posts[i], userData: user, globalTimestamp: globalTimestamp}) %>
-                                        </tr>
-                                    <% } %>
-                                <% } else { %>
-                                    <%- include('partials/noPosts') %>
-                                    <% } %>
-                            </div>
+                        <div class="card-text">
+                            <% if (posts.length > 0 ) { %>
+                                <% for(let i = 0; i < Math.min(9, posts.length); i++) { %>
+                                    <%- include('partials/post', {user: loggedIn, post_data: posts[i], userData: user, globalTimestamp: globalTimestamp}) %>
+                                    </tr>
+                                <% } %>
+                            <% } else { %>
+                                <%- include('partials/noPosts') %>
+                                <% } %>
                         </div>
                     </div>
+                </div>
             </div>
-        </div>
         </div>
     </div>
 
