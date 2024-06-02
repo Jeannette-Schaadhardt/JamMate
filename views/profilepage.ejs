@@ -28,7 +28,7 @@
         <div class="row">
           <!-- Cover Photo -->
               <div class="cover-photo-box">
-                  <img id="coverPhoto" src="<%= user.coverPhoto || 'JamMate/public/no-profile-picture-15257.png' %>" alt="Cover Photo" class="cover-photo" onerror="this.onerror=null; this.src='/no-profile-picture-15257.png'">
+                <img id="coverPhoto" src="<%= user.coverPhoto || 'JamMate/public/Default_cover_photo.jpg' %>" alt="Cover Photo" class="cover-photo" onerror="this.onerror=null; this.src='/Default_cover_photo.jpg'">
                   <button id="coverPhotoButton" class="btn btn-secondary btn-sm" style="margin-top: 10px;">Add Cover Photo</button>
                   <input type="file" id="coverPhotoInput" style="display: none;" accept="image/*">
               </div>
