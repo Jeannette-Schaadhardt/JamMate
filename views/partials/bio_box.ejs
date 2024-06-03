@@ -11,7 +11,7 @@
     <p>Skill Level: <%= user.skillLevel %></p>
     <p>Location: <%= user.locationName || "unknown" %></p>
     <p>Instrument: <%= user.instrument %></p>
-
+    <% if (visiting == false) { %>
     <button id="profilePicButton" class="btn btn-secondary btn-sm" style="margin-bottom: 10px;">Add Profile Picture</button>
     <input type="file" id="profilePicInput" style="display: none;" accept="image/*">
     <button type="button" class="jm-edit-button">
@@ -22,4 +22,5 @@
             Delete All Posts
         </button>
     </div>
+    <% } %>
 </div>

@@ -27,7 +27,7 @@ function getConfig(secret) {
         authRequired: false,
         auth0Logout: true,
         secret: secret,
-        baseURL: 'https://jammate-6aiy3r5blq-uw.a.run.app/',
+        baseURL: 'http://localhost:9001/',
         clientID: 'm8ieh2LZtQAtr5AcFevaw99k6tZ3KqCw',
         issuerBaseURL: 'https://dev-gblxtkrkmbzldfsv.us.auth0.com'
       };
