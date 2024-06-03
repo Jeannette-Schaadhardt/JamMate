@@ -44,7 +44,7 @@ router.get('/edit', isAuthenticated, async (req, res) => {
         if (!userEntity) {
             return res.status(404).send('User not found');
         }
-        res.render('editbio', {
+        res.render('editBio', {
             user: userEntity.user,
             loggedIn: req.oidc.isAuthenticated()
         });
